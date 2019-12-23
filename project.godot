@@ -9,24 +9,31 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "Entity",
-"class": "Actor",
+"base": "Entity2D",
+"class": "Actor2D",
 "language": "GDScript",
-"path": "res://scripts/Actor.gd"
+"path": "res://scripts/Actor2D.gd"
 }, {
 "base": "Node",
 "class": "Entity",
 "language": "GDScript",
 "path": "res://scripts/Entity.gd"
+}, {
+"base": "Entity",
+"class": "Entity2D",
+"language": "GDScript",
+"path": "res://scripts/Entity2D.gd"
 } ]
 _global_script_class_icons={
-"Actor": "",
-"Entity": ""
+"Actor2D": "",
+"Entity": "",
+"Entity2D": ""
 }
 
 [application]
 
 config/name="SimLab"
+run/main_scene="res://scenes/World.tscn"
 config/icon="res://icon.png"
 
 [display]
