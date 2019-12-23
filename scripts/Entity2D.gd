@@ -6,19 +6,18 @@ const GRID_SIZE : int = 32
 
 var __position : Vector2 setget setPosition, getPosition
 var __rotation : float setget setRotation, getRotation
-var anchor : Node2D
+var anchor : Node2D setget setAnchor, getAnchor
 
 func _init() -> void:
-	anchor = Node2D.new()
-	anchor.name = "anchor"
-	.add_child(anchor, true)
+	pass
 
 func _ready() -> void:
 	pass
 
 func setPosition(newPosition : Vector2) -> void:
 	__position = newPosition * GRID_SIZE + Vector2(GRID_SIZE, GRID_SIZE) * 0.5
-	anchor.position = getPosition()
+	if getAnchor() != null:
+		anchor.position = getPosition()
 func getPosition() -> Vector2:
 	return __position
 
@@ -29,9 +28,17 @@ func setRotation(newRotation : float) -> void:
 		__rotation = 0.0
 	else:
 		__rotation = newRotation
-	anchor.rotation_degrees = getRotation() * 360
+	if getAnchor() != null:
+		anchor.rotation_degrees = getRotation() * 360
 func getRotation() -> float:
 	return __rotation
+
+func setAnchor(newAnchor : Node2D) -> void:
+	anchor = newAnchor
+	setPosition(getPosition())
+	setRotation(getRotation())
+func getAnchor() -> Node2D:
+	return anchor
 
 func make_relative(node : Node) -> void:
 	anchor.add_child(node, true)

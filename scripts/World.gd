@@ -1,10 +1,10 @@
 extends Node
 
-#var actor2d = preload("res://scenes/Actor2D.tscn")
+var waiterScene = preload("res://scenes/Waiter.tscn")
 var waiter
 
 func _ready():
-	waiter = Actor2D.new("waiter", Actor2D.Types.WAITER)
+	waiter = waiterScene.instance()
 	add_child(waiter)
 	waiter.setPosition(Vector2(5,5))
 	pass
