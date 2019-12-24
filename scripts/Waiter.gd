@@ -1,9 +1,9 @@
 extends Actor2D
 
-class_name Waiter
+class_name Waiter, "res://Assets/sprites/waiter.png"
 
 # percent of a tile in a tick
-const WALKING_SPEED : float = 100.0
+const WALKING_SPEED : float = 200.0
 const GRID_SIZE : int = 32
 # tick length in seconds
 const TICK_LENGTH : float = .5
@@ -37,6 +37,7 @@ func physics_observe_world(delta : float) -> void:
 
 func physics_action(delta: float) -> void:
 	$KinematicBody2D.move_and_slide(movement * WALKING_SPEED)
+	#$KinematicBody2D.move_and_collide(movement)
 
 func reset_movement() -> void:
 	movement = Vector2(0,0)

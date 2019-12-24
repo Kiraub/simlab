@@ -80,6 +80,9 @@ func getOrientation() -> int:
 	return __orientation
 
 func update_movement() -> void:
+	if BehaviourFlags & Behaviours.MANUAL_CONTROL == 0:
+		setOrientation(MovementDirections.NONE)
+		return
 	var newDirection = MovementDirections.NONE
 	if Input.is_action_pressed("ui_down"):
 		newDirection |= MovementDirections.DOWN

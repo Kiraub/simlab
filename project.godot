@@ -33,7 +33,7 @@ _global_script_class_icons={
 "Actor2D": "",
 "Entity": "",
 "Entity2D": "",
-"Waiter": ""
+"Waiter": "res://Assets/sprites/waiter.png"
 }
 
 [application]
