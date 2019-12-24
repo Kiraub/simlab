@@ -2,8 +2,6 @@ extends Entity2D
 
 class_name Actor2D
 
-#var WAITER_TEXTURE = load("res://Assets/sprites/waiter.png")
-
 enum Types {
 	IDLE,
 	WAITER,
@@ -28,26 +26,22 @@ enum Orientations {
 	UPRIGHT		= 9,
 	DOWNRIGHT	= 10,
 }
+enum Behaviours {
+	MANUAL_CONTROL	= 1,
+	RESET_ROTATION	= 2,
+}
+export(Behaviours, FLAGS) var BehaviourFlags
 
 var __type : int setget setType, getType
 var __orientation : int setget setOrientation, getOrientation
-#var __texture : Texture setget setTexture, getTexture
-#var __sprite : Sprite
 
 var mapO2R : Dictionary
 
-func _init(displayName:String = "", type : int = 0) -> void:
-	#__sprite = Sprite.new()
-	#__sprite.name = "sprite"
-	name = displayName
-	setDisplayName(displayName)
-	setType(type)
+func _init() -> void:
 	__orientation = Orientations.DEFAULT
 	setRotation(0.5)
 
 func _ready() -> void:
-	#anchor.add_child(__sprite, true)
-	#chooseTexturebyType()
 	mapO2R[Orientations.DEFAULT]	= .5
 	mapO2R[Orientations.UP]			= .0
 	mapO2R[Orientations.UPRIGHT]	= .125
@@ -59,10 +53,33 @@ func _ready() -> void:
 	mapO2R[Orientations.UPLEFT]		= .875
 
 func _process(delta : float) -> void:
+	update_flags()
 	observe_world(delta)
 	action(delta)
 
 func _physics_process(delta : float) -> void:
+	update_movement()
+	physics_observe_world(delta)
+	physics_action(delta)
+
+func setType(newType : int) -> void:
+	match newType:
+		Types.IDLE, Types.WAITER, Types.CHEF, Types.CUSTOMER:
+			__type = newType
+		_:
+			__type = Types.IDLE
+func getType() -> int:
+	return __type
+
+func setOrientation(newOrientation : int) -> void:
+	__orientation = newOrientation
+	if getOrientation() == Orientations.DEFAULT && not BehaviourFlags & Behaviours.RESET_ROTATION:
+		return
+	setRotation(mapO2R[__orientation])
+func getOrientation() -> int:
+	return __orientation
+
+func update_movement() -> void:
 	var newDirection = MovementDirections.NONE
 	if Input.is_action_pressed("ui_down"):
 		newDirection |= MovementDirections.DOWN
@@ -78,43 +95,21 @@ func _physics_process(delta : float) -> void:
 	if newDirection & MovementDirections.UP && newDirection & MovementDirections.DOWN:
 		newDirection &= ~MovementDirections.UP & ~MovementDirections.DOWN
 	setOrientation(newDirection)
-	physics_observe_world(delta)
-	physics_action(delta)
 
-func setType(newType : int) -> void:
-	match newType:
-		Types.IDLE, Types.WAITER, Types.CHEF, Types.CUSTOMER:
-			__type = newType
-		_:
-			__type = Types.IDLE
-func getType() -> int:
-	return __type
+func update_flags() -> void:
+	var bit = 1
+	var flag = 0
+	while flag <= 9:
+		if Input.is_action_just_pressed("flag_" + str(flag)):
+			BehaviourFlags ^= bit
+		flag += 1
+		bit *= 2
 
-func setOrientation(newOrientation : int) -> void:
-	if __orientation != newOrientation:
-		__orientation = newOrientation
-		setRotation(mapO2R[__orientation])
-func getOrientation() -> int:
-	return __orientation
-"""
-func setTexture(newTexture : Texture) -> void:
-	__texture = newTexture
-	__sprite.texture = getTexture()
-func getTexture() -> Texture:
-	return __texture
-
-func chooseTexturebyType() -> void:
-	match getType():
-		Types.WAITER:
-			setTexture(WAITER_TEXTURE)
-		_:
-			setTexture(WAITER_TEXTURE)
-"""
-func physics_observe_world(_delta : float) -> void:
-	pass
 func observe_world(_delta : float) -> void:
 	pass
-func physics_action(_delta: float) -> void:
-	pass
 func action(_delta: float) -> void:
+	pass
+func physics_observe_world(_delta : float) -> void:
+	pass
+func physics_action(_delta: float) -> void:
 	pass

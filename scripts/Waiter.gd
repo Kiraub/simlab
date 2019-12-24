@@ -1,15 +1,21 @@
 extends Actor2D
 
+class_name Waiter
+
 # percent of a tile in a tick
 const WALKING_SPEED : float = 100.0
+const GRID_SIZE : int = 32
+# tick length in seconds
+const TICK_LENGTH : float = .5
 
 var movement : Vector2
 
-func _ready():
-	setDisplayName("waiter")
+func _init():
+	setDisplayName("Waiter")
 	setType(Types.WAITER)
+
+func _ready():
 	setAnchor($KinematicBody2D)
-	reset_movement()
 
 func observe_world(delta : float) -> void:
 	reset_movement()
@@ -30,8 +36,7 @@ func physics_observe_world(delta : float) -> void:
 	pass
 
 func physics_action(delta: float) -> void:
-	var k = getAnchor() as KinematicBody2D
-	k.move_and_slide_with_snap(movement * WALKING_SPEED, Vector2(GRID_SIZE, GRID_SIZE))
+	$KinematicBody2D.move_and_slide(movement * WALKING_SPEED)
 
 func reset_movement() -> void:
 	movement = Vector2(0,0)
