@@ -18,7 +18,12 @@ func _ready():
 	setAnchor($KinematicBody2D)
 
 func observe_world(_delta : float) -> void:
-	reset_movement()
+	pass
+
+func action(_delta : float) -> void:
+	pass
+
+func physics_observe_world(_delta : float) -> void:
 	var movement_direction = MovementDirection()
 	if movement_direction & B_MovementDirections.UP:
 		_movement += Vector2(0, -1)
@@ -29,15 +34,13 @@ func observe_world(_delta : float) -> void:
 	if movement_direction & B_MovementDirections.RIGHT:
 		_movement += Vector2(1, 0)
 
-func action(_delta : float) -> void:
-	setOrientation(MovementDirection())
-
-func physics_observe_world(_delta : float) -> void:
-	pass
-
-func physics_action(_delta: float) -> void:
-	$KinematicBody2D.move_and_slide(_movement * WALKING_SPEED)
-	#$KinematicBody2D.move_and_collide(movement)
+func physics_action(_delta : float) -> void:
+	if _movement.length() != 0:
+		setOrientation(MovementDirection())
+		$KinematicBody2D.move_and_slide(_movement * WALKING_SPEED)
+		reset_movement()
+	else:
+		setOrientation(B_MovementDirections.NONE)
 
 func reset_movement() -> void:
 	_movement = Vector2(0,0)
