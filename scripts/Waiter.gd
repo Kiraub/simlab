@@ -8,6 +8,10 @@ const WALKING_SPEED : float = 100.0
 # tick length in seconds
 #const TICK_LENGTH : float = .5
 
+# added from tutorial
+var path : = PoolVector2Array() setget set_path
+var travel : bool
+
 var _movement : Vector2
 
 func _init():
@@ -16,8 +20,17 @@ func _init():
 
 func _ready():
 	setAnchor($KinematicBody2D)
+	travel = false
+
+# added from tutorial
+func _process(delta : float) -> void:
+	if not travel:
+		return
+	var move_distance : = WALKING_SPEED * delta
+	move_along_path(move_distance)
 
 func observe_world(_delta : float) -> void:
+	pass
 	reset_movement()
 	var movement_direction = MovementDirection()
 	if movement_direction & B_MovementDirections.UP:
@@ -30,14 +43,54 @@ func observe_world(_delta : float) -> void:
 		_movement += Vector2(1, 0)
 
 func action(_delta : float) -> void:
+	pass
 	setOrientation(MovementDirection())
 
 func physics_observe_world(_delta : float) -> void:
 	pass
 
 func physics_action(_delta: float) -> void:
+	pass
 	$KinematicBody2D.move_and_slide(_movement * WALKING_SPEED)
 	#$KinematicBody2D.move_and_collide(movement)
 
 func reset_movement() -> void:
 	_movement = Vector2(0,0)
+
+# added from tutorial
+func set_path(value : PoolVector2Array) -> void:
+	path = value
+	if value.size() == 0:
+		return
+	travel = true
+
+func move_along_path(distance : float) -> void:
+	var start_point : = Anchor().global_position
+	for i in range(path.size()):
+		var distance_to_next : = start_point.distance_to(path[0])
+		if distance <= distance_to_next and distance >= 0.0:
+			Anchor().global_position = start_point.linear_interpolate(path[0], distance / distance_to_next)
+			break
+		elif distance < 0.0:
+			Anchor().global_position = path[0]
+			travel = false
+			break
+		distance -= distance_to_next
+		start_point = path[0]
+		path.remove(0)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
