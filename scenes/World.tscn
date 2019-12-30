@@ -22,3 +22,4 @@ texture_mode = 76803571
 
 [node name="Waiter" parent="." instance=ExtResource( 4 )]
 position = Vector2( 271.304, 178.782 )
+Behaviour = null

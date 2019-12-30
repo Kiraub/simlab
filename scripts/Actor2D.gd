@@ -16,16 +16,22 @@ enum B_MovementDirections {
 	RIGHT	= 8
 }
 enum B_Orientations {
-	NONE		= 0
-	UP			= 1
-	DOWN		= 2
-	LEFT		= 4
-	UPLEFT		= 5
-	DOWNLEFT	= 6
-	RIGHT		= 8
-	UPRIGHT		= 9
-	DOWNRIGHT	= 10
-	DEFAULT		= 15
+	NONE			= 0
+	UP				= 1
+	DOWN			= 2
+	_up_down		= 3
+	LEFT			= 4
+	UPLEFT			= 5
+	DOWNLEFT		= 6
+	_up_down_left	= 7
+	RIGHT			= 8
+	UPRIGHT			= 9
+	DOWNRIGHT		= 10
+	_up_down_right	= 11
+	_left_right		= 12
+	_up_left_right	= 13
+	_down_left_right= 14
+	DEFAULT			= 15
 }
 enum B_Behaviours {
 	MANUAL_CONTROL	= 1
@@ -44,16 +50,6 @@ func _init() -> void:
 func _ready() -> void:
 	pass
 
-func _process(delta : float) -> void:
-	update_flags()
-	observe_world(delta)
-	action(delta)
-
-func _physics_process(delta : float) -> void:
-	update_movement()
-	physics_observe_world(delta)
-	physics_action(delta)
-
 func setType(type : int) -> void:
 	match type:
 		B_Types.IDLE, B_Types.WAITER, B_Types.CHEF, B_Types.CUSTOMER:
@@ -70,7 +66,7 @@ func setOrientation(orientation : int) -> void:
 			setOrientation(B_Orientations.DEFAULT)
 		else:
 			return
-	setRotationDegrees(map_orientation_rotation_degrees(Orientation()))
+	setRotationRelative(map_orientation_rotation_relative(Orientation()))
 func Orientation() -> int:
 	return _orientation
 
@@ -79,26 +75,26 @@ func setMovementDirection(movementDirection : int) -> void:
 func MovementDirection() -> int:
 	return _movement_direction
 
-func map_orientation_rotation_degrees(orientation : int) -> float:
+func map_orientation_rotation_relative(orientation : int) -> float:
 	match orientation:
-		B_Orientations.NONE, B_Orientations.UP:
-			return 360 * .0
+		B_Orientations.NONE, B_Orientations.UP, B_Orientations._up_left_right:
+			return .0
 		B_Orientations.UPRIGHT:
-			return 360 * .125
-		B_Orientations.RIGHT:
-			return 360 * .25
+			return .125
+		B_Orientations.RIGHT, B_Orientations._up_down_right:
+			return .25
 		B_Orientations.DOWNRIGHT:
-			return 360 * .375
-		B_Orientations.DOWN:
-			return 360 * .5
+			return .375
+		B_Orientations.DOWN, B_Orientations._down_left_right:
+			return .5
 		B_Orientations.DOWNLEFT:
-			return 360 * .625
-		B_Orientations.LEFT:
-			return 360 * .75
+			return .625
+		B_Orientations.LEFT, B_Orientations._up_down_left:
+			return .75
 		B_Orientations.UPLEFT:
-			return 360 * .875
+			return .875
 		B_Orientations.DEFAULT, _:
-			return 360 * .5
+			return .5
 
 func update_movement() -> void:
 	var movementDirection = B_MovementDirections.NONE
@@ -134,7 +130,18 @@ func observe_world(_delta : float) -> void:
 	pass
 func action(_delta: float) -> void:
 	pass
+
+func _process(delta : float) -> void:
+	update_flags()
+	observe_world(delta)
+	action(delta)
+
 func physics_observe_world(_delta : float) -> void:
 	pass
 func physics_action(_delta: float) -> void:
 	pass
+
+func _physics_process(delta : float) -> void:
+	update_movement()
+	physics_observe_world(delta)
+	physics_action(delta)
