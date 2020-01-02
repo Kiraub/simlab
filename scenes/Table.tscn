@@ -1,10 +1,9 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://Assets/shader_materials/table_maybe.tres" type="Material" id=1]
-[ext_resource path="res://Assets/sprites/waiter.png" type="Texture" id=2]
+[ext_resource path="res://Assets/sprites/table.png" type="Texture" id=1]
 
 [sub_resource type="CircleShape2D" id=1]
-radius = 12.8493
+radius = 14.3065
 
 [node name="Table" type="StaticBody2D"]
 
@@ -12,5 +11,4 @@ radius = 12.8493
 shape = SubResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="."]
-material = ExtResource( 1 )
-texture = ExtResource( 2 )
+texture = ExtResource( 1 )
