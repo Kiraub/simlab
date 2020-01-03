@@ -1,6 +1,6 @@
 extends Actor2D
 
-class_name Waiter, "res://Assets/sprites/waiter.png"
+class_name Waiter#, "res://Assets/sprites/waiter.png"
 
 # percent of a tile in a tick
 const WALKING_SPEED : float = 100.0

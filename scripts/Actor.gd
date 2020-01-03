@@ -1,6 +1,6 @@
-extends Entity2D
+extends Entity
 
-class_name Actor2D
+class_name Actor
 
 enum B_Types {
 	IDLE

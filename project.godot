@@ -9,20 +9,15 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "Entity2D",
-"class": "Actor2D",
+"base": "Entity",
+"class": "Actor",
 "language": "GDScript",
-"path": "res://scripts/Actor2D.gd"
+"path": "res://scripts/Actor.gd"
 }, {
-"base": "Node",
+"base": "Position2D",
 "class": "Entity",
 "language": "GDScript",
 "path": "res://scripts/Entity.gd"
-}, {
-"base": "Entity",
-"class": "Entity2D",
-"language": "GDScript",
-"path": "res://scripts/Entity2D.gd"
 }, {
 "base": "Actor2D",
 "class": "Waiter",
@@ -30,10 +25,9 @@ _global_script_classes=[ {
 "path": "res://scripts/Waiter.gd"
 } ]
 _global_script_class_icons={
-"Actor2D": "",
+"Actor": "",
 "Entity": "",
-"Entity2D": "",
-"Waiter": "res://Assets/sprites/waiter.png"
+"Waiter": ""
 }
 
 [application]
