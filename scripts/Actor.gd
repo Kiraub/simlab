@@ -8,32 +8,32 @@ enum B_Types {
 	CUSTOMER
 	CHEF
 }
-enum B_MovementDirections {
+enum B_DistinctDirections {
 	NONE	= 0
 	UP		= 1
-	DOWN	= 2
-	LEFT	= 4
-	RIGHT	= 8
+	RIGHT	= 2
+	DOWN	= 4
+	LEFT	= 8
 }
 enum B_Behaviours {
 	MANUAL_CONTROL	= 1
-	RESET_ROTATION	= 2
+	RESET_DIRECTION	= 2
 }
-export(B_Behaviours, FLAGS) var Behaviour
+export(B_Behaviours, FLAGS) var behaviour
 
 var type : int setget set_type, get_type
 var movement_direction : int setget set_movement_direction, get_movement_direction
 
 func _init() -> void:
-	Behaviour |= B_Behaviours.MANUAL_CONTROL
+	behaviour |= B_Behaviours.MANUAL_CONTROL
 
 func _ready() -> void:
 	pass
 
-func set_type(type : int) -> void:
-	match type:
+func set_type(new_type : int) -> void:
+	match new_type:
 		B_Types.IDLE, B_Types.WAITER, B_Types.CHEF, B_Types.CUSTOMER:
-			type = type
+			type = new_type
 		_:
 			type = B_Types.IDLE
 func get_type() -> int:
@@ -44,22 +44,22 @@ func set_movement_direction(new_movement_direction : int) -> void:
 func get_movement_direction() -> int:
 	return movement_direction
 
-func update_manual_movement() -> void:
-	var movementDirection = B_MovementDirections.NONE
-	if Behaviour & B_Behaviours.MANUAL_CONTROL == 0:
-		set_movement_direction(movementDirection)
+func detect_manual_movement() -> void:
+	var new_movement_direction = B_DistinctDirections.NONE
+	if behaviour & B_Behaviours.MANUAL_CONTROL == 0:
+		set_movement_direction(new_movement_direction)
 		return
-	if Input.is_action_pressed('ui_down'):
-		movementDirection |= B_MovementDirections.DOWN
 	if Input.is_action_pressed('ui_up'):
-		movementDirection |= B_MovementDirections.UP
-	if Input.is_action_pressed('ui_left'):
-		movementDirection |= B_MovementDirections.LEFT
+		new_movement_direction |= B_DistinctDirections.UP
 	if Input.is_action_pressed('ui_right'):
-		movementDirection |= B_MovementDirections.RIGHT
-	set_movement_direction(movementDirection)
+		new_movement_direction |= B_DistinctDirections.RIGHT
+	if Input.is_action_pressed('ui_down'):
+		new_movement_direction |= B_DistinctDirections.DOWN
+	if Input.is_action_pressed('ui_left'):
+		new_movement_direction |= B_DistinctDirections.LEFT
+	set_movement_direction(new_movement_direction)
 
-func update_movement() -> void:
+func detect_movement() -> void:
 	pass
 
 func update_flags() -> void:
@@ -67,7 +67,7 @@ func update_flags() -> void:
 	var flag = 0
 	while flag <= 9:
 		if Input.is_action_just_pressed('flag_' + str(flag)):
-			Behaviour ^= bit
+			behaviour ^= bit # xor/ swap
 		flag += 1
 		bit *= 2
 
@@ -87,9 +87,9 @@ func physics_action(_delta: float) -> void:
 	pass
 
 func _physics_process(delta : float) -> void:
-	if B_Behaviours.MANUAL_CONTROL & Behaviour:
-		update_manual_movement()
+	if behaviour & B_Behaviours.MANUAL_CONTROL :
+		detect_manual_movement()
 	else:
-		update_movement()
+		detect_movement()
 	physics_observe_world(delta)
 	physics_action(delta)

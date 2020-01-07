@@ -16,10 +16,10 @@ var _movement : Vector2
 
 func _init():
 	#setDisplayName("Waiter")
-	setType(B_Types.WAITER)
+	set_type(B_Types.WAITER)
 
 func _ready():
-	setAnchor($KinematicBody2D)
+	#setAnchor($KinematicBody2D)
 	travel = false
 
 # added from tutorial
@@ -37,24 +37,25 @@ func action(_delta : float) -> void:
 
 func physics_observe_world(_delta : float) -> void:
 	pass
-	var movement_direction = MovementDirection()
-	if movement_direction & B_MovementDirections.UP:
+	var movement_direction = get_movement_direction()
+	if movement_direction & B_DistinctDirections.UP:
 		_movement += Vector2(0, -1)
-	if movement_direction & B_MovementDirections.DOWN:
+	if movement_direction & B_DistinctDirections.DOWN:
 		_movement += Vector2(0, 1)
-	if movement_direction & B_MovementDirections.LEFT:
+	if movement_direction & B_DistinctDirections.LEFT:
 		_movement += Vector2(-1, 0)
-	if movement_direction & B_MovementDirections.RIGHT:
+	if movement_direction & B_DistinctDirections.RIGHT:
 		_movement += Vector2(1, 0)
 
 func physics_action(_delta : float) -> void:
 	pass
 	if _movement.length() != 0:
-		setOrientation(MovementDirection())
+		#setOrientation(MovementDirection())
 		$KinematicBody2D.move_and_slide(_movement * WALKING_SPEED)
 		reset_movement()
 	else:
-		setOrientation(B_MovementDirections.NONE)
+		pass
+		#setOrientation(B_DistinctDirections.NONE)
 
 func reset_movement() -> void:
 	_movement = Vector2(0,0)
@@ -67,14 +68,14 @@ func set_path(value : PoolVector2Array) -> void:
 	travel = true
 
 func move_along_path(distance : float) -> void:
-	var start_point : = Anchor().global_position
-	for i in range(path.size()):
+	var start_point : = global_position
+	for _i in range(path.size()):
 		var distance_to_next : = start_point.distance_to(path[0])
 		if distance <= distance_to_next and distance >= 0.0:
-			Anchor().global_position = start_point.linear_interpolate(path[0], distance / distance_to_next)
+			global_position = start_point.linear_interpolate(path[0], distance / distance_to_next)
 			break
 		elif distance < 0.0:
-			Anchor().global_position = path[0]
+			global_position = path[0]
 			travel = false
 			break
 		distance -= distance_to_next
