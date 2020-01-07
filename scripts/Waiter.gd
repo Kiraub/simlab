@@ -1,4 +1,4 @@
-extends Actor2D
+extends Actor
 
 class_name Waiter#, "res://Assets/sprites/waiter.png"
 
@@ -15,7 +15,7 @@ var travel : bool
 var _movement : Vector2
 
 func _init():
-	setDisplayName("Waiter")
+	#setDisplayName("Waiter")
 	setType(B_Types.WAITER)
 
 func _ready():
