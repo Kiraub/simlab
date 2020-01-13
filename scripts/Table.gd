@@ -1,4 +1,4 @@
-extends Entity
+extends Static
 
 class_name Table
 
@@ -8,6 +8,5 @@ class_name Table
 
 """ Initialization """
 
-func _init():
-	set_name('Table')
-	z_index = GLOBALS.Z_INDICIES.STATIC
+func _init(i_name : String = 'Table').(i_name):
+	pass

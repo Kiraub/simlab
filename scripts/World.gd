@@ -9,7 +9,7 @@ extends Node
 # added from tutorial
 onready var nav_2d : Navigation2D = $Navigation2D
 onready var line_2d : Line2D = $Line2D
-onready var character : Waiter = $Navigation2D/EntityMap/Waiters/Waiter
+onready var character : Waiter = $Navigation2D/EntityMap/Actors/Waiter
 onready var map : EntityMap = $Navigation2D/EntityMap
 
 func _ready():
@@ -24,6 +24,3 @@ func _unhandled_input(event : InputEvent) -> void:
 	var target_position = map.center_to_cell(event.global_position)
 	#print(target_position)
 	character.position = target_position
-	#var new_path : = nav_2d.get_simple_path(character.position, target_position, false)
-	#line_2d.points = new_path
-	#character.path = new_path

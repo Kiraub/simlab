@@ -8,9 +8,8 @@ class_name Waiter
 
 """ Initialization """
 
-func _init():
-	set_name('Waiter')
-	set_type(B_Types.WAITER)
+func _init(i_name : String = 'Waiter').(i_name):
+	pass
 
 
 
