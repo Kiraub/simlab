@@ -7,6 +7,7 @@ class_name Entity
 """ Variables """
 
 export var blocking : bool = true setget set_blocking, is_blocking
+export var highlighted : bool = false setget set_highlighted, get_highlighted
 
 """ Initialization """
 
@@ -26,7 +27,11 @@ func set_blocking(new_blocking : bool) -> void:
 func is_blocking() -> bool:
 	return blocking == true
 
+func set_highlighted(new_highlighted : bool) -> void:
+	highlighted = new_highlighted
 
+func get_highlighted() -> bool:
+	return highlighted
 
 
 

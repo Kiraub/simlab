@@ -1,0 +1,33 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+
+uniform vec4 highlight_color : hint_color;
+
+float invert(float color_value) {
+	return 1.0 - color_value;
+}
+
+void fragment() {
+	COLOR = highlight_color;
+	return;
+	vec2 pixel_size = SCREEN_PIXEL_SIZE;
+	vec2 pixel_count = 1.0 / pixel_size;
+	vec4 color;// = texture(SCREEN_TEXTURE, SCREEN_UV);
+	vec2 centered = abs(UV - vec2(0.5, 0.5));
+	if (//color.a > 0.0 &&
+		centered.x <= pixel_size.x*(pixel_count.x*0.1) &&
+		centered.y <= pixel_size.y*(pixel_count.y*0.1)
+		) {
+		color = highlight_color;
+	} else {
+		color = texture(TEXTURE, UV);
+	}
+	COLOR = color;
+}
+"
+
+[resource]
+shader = SubResource( 1 )
+shader_param/highlight_color = Color( 1, 0.913725, 0, 1 )

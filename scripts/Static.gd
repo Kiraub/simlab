@@ -8,5 +8,5 @@ class_name Static
 
 """ Initialization """
 
-func _init(i_name : String = 'Static').(GLOBALS.Z_INDICIES.STATIC, i_name):
-	pass
+func _init(i_name : String = 'Static', i_position := Vector2(0,0)).(GLOBALS.Z_INDICIES.STATIC, i_name):
+	set_position(i_position)
