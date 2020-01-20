@@ -3,15 +3,25 @@
 [sub_resource type="Shader" id=1]
 code = "shader_type canvas_item;
 
-uniform vec4 highlight_color : hint_color;
+uniform vec4	highlight_color : hint_color;
+uniform float	width : hint_range(0.1, 2.0) = 1.0;
 
 float invert(float color_value) {
 	return 1.0 - color_value;
 }
 
 void fragment() {
-	COLOR = highlight_color;
-	return;
+	float size = width * 1.0 / float(textureSize(TEXTURE, 0).x);
+	vec4 sprite_color = texture(TEXTURE, UV);
+	float alpha = -4.0 * sprite_color.a;
+	alpha += texture(TEXTURE, UV + vec2(size, 0.0)).a;
+	alpha += texture(TEXTURE, UV + vec2(-size, 0.0)).a;
+	alpha += texture(TEXTURE, UV + vec2(0.0, size)).a;
+	alpha += texture(TEXTURE, UV + vec2(0.0, -size)).a;
+	
+	vec4 final_color = mix(sprite_color, highlight_color, clamp(alpha, 0.0, 1.0));
+	COLOR = vec4(final_color.rgb, clamp(abs(alpha) + sprite_color.a, 0.0, 1.0));
+	/*
 	vec2 pixel_size = SCREEN_PIXEL_SIZE;
 	vec2 pixel_count = 1.0 / pixel_size;
 	vec4 color;// = texture(SCREEN_TEXTURE, SCREEN_UV);
@@ -25,9 +35,11 @@ void fragment() {
 		color = texture(TEXTURE, UV);
 	}
 	COLOR = color;
+	*/
 }
 "
 
 [resource]
 shader = SubResource( 1 )
-shader_param/highlight_color = Color( 1, 0.913725, 0, 1 )
+shader_param/highlight_color = Color( 0.823529, 0.654902, 0, 1 )
+shader_param/width = 1.0

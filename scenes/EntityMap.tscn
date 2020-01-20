@@ -17,3 +17,8 @@ position = Vector2( 143.735, 176.589 )
 
 [node name="Waiter" parent="." instance=ExtResource( 4 )]
 position = Vector2( 46.714, 46.714 )
+speed = 1.0
+
+[node name="Waiter2" parent="." instance=ExtResource( 4 )]
+position = Vector2( 275.319, 46.4393 )
+speed = 32.0

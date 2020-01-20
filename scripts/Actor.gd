@@ -5,6 +5,7 @@ class_name Actor
 """ Constants """
 
 const DEFAULT_SPEED	: float	= 32.0
+const WAIT_TIME		: float = 0.1
 
 """ Variables """
 
@@ -17,10 +18,13 @@ onready var path : Line2D = Line2D.new()
 
 """ Initialization """
 
+#[override]
 func _init(i_name : String = 'Actor').(GLOBALS.Z_INDICIES.ACTIVE, i_name) -> void:
 	set_speed(DEFAULT_SPEED)
 	targets = []
+	add_to_group(GLOBALS.GROUP_NAMES.get(GLOBALS.GROUP_FLAGS.Acting))
 
+#[override]
 func _ready():
 	set_path_visible(true)
 	path.width = 5
@@ -50,6 +54,11 @@ func set_path_visible(new_path_visible : bool) -> void:
 
 """ Methods """
 
+func get_final_target() -> Vector2:
+	if len(targets) > 0:
+		return targets.back()
+	return position
+
 func push_target_front(additional_target : Vector2) -> void:
 	targets.push_front(additional_target)
 
@@ -74,7 +83,24 @@ func remove_target(index : int) -> void:
 	if len(targets) > index:
 		targets.remove(index)
 
+func step_time(delta : float) -> void:
+	var travel_distance := get_speed()# * delta
+	move_towards_target(travel_distance)
 
+func move_towards_target(travel_distance : float) -> void:
+	if len(targets) == 0:
+		return
+	var next_target = targets.front()
+	var direction_to_next : Vector2 = (next_target - position).normalized()
+	var distance_to_next : float = (next_target - position).length()
+	if travel_distance < distance_to_next:
+		position += direction_to_next * travel_distance
+		travel_distance = 0
+	else:
+		travel_distance -= distance_to_next
+		position = next_target
+		remove_target(0)
+		move_towards_target(travel_distance)
 
 
 
