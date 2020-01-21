@@ -13,7 +13,7 @@ tile_data = PoolIntArray( -1, 1, 0, -65536, 1, 1, -65535, 1, 1, -65534, 1, 1, -6
 script = ExtResource( 2 )
 
 [node name="Table" parent="." instance=ExtResource( 3 )]
-position = Vector2( 143.735, 176.589 )
+position = Vector2( 176.075, 178.642 )
 
 [node name="Waiter" parent="." instance=ExtResource( 4 )]
 position = Vector2( 46.714, 46.714 )
@@ -22,3 +22,9 @@ speed = 1.0
 [node name="Waiter2" parent="." instance=ExtResource( 4 )]
 position = Vector2( 275.319, 46.4393 )
 speed = 32.0
+
+[node name="Table2" parent="." instance=ExtResource( 3 )]
+position = Vector2( 147.328, 238.703 )
+
+[node name="Table3" parent="." instance=ExtResource( 3 )]
+position = Vector2( 142.195, 111.908 )
