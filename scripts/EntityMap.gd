@@ -11,7 +11,9 @@ enum E_Tiles {
 
 """ Variables """
 
-var entities : Array = [] setget set_entities, get_entities
+var entities : Array = [] setget , get_entities
+var actors : Array = []
+var statics : Array = []
 var highlighted_entites : Array = []
 var static_blocked_tiles : Array = []
 
@@ -30,15 +32,18 @@ func _ready():
 """ Simulation step """
 
 func step_entities(delta : float) -> void:
-	get_tree().call_group(GLOBALS.GROUP_NAMES.get(GLOBALS.GROUP_FLAGS.Acting), "step_time", delta)
+	for actor in actors:
+		actor.step_time(delta)
+	#get_tree().call_group(GLOBALS.GROUP_NAMES.get(GLOBALS.GROUP_FLAGS.Acting), "step_time", delta)
 
 """ Setters / Getters """
-
+"""
 func set_entities(new_entities : Array) -> void:
 	for entity in new_entities:
 		if not entity is Entity:
 			return
 	entities = new_entities
+"""
 func get_entities() -> Array:
 	return entities
 
@@ -69,14 +74,25 @@ static func collect_wall_entities(entitymap : EntityMap) -> Array:
 			array.push_back(wall_entity)
 	return array
 
+static func collect_entities_flags(entitymap : EntityMap, flags : int) -> Array:
+	var collection = []
+	for entity in entitymap.entities:
+		if (entity as Entity).EntityFlags & flags == flags:
+			collection.append(entity)
+	return collection
+
 """ Methods """
 
 func add_entity(entity : Entity) -> void:
 	if not entities.has(entity):
 		entities.append(entity)
-		if entity is Static and entity.is_blocking():
-			var tile = world_to_map(entity.position)
-			static_blocked_tiles.append(tile)
+		if entity is Static:
+			statics.append(entity)
+			if entity.is_blocking():
+				var tile = world_to_map(entity.position)
+				static_blocked_tiles.append(tile)
+		elif entity is Actor:
+			actors.append(entity)
 func add_entities(new_entities : Array) -> void:
 	for entity in new_entities:
 		if entity is Entity:
@@ -89,7 +105,8 @@ func center_entities() -> void:
 		(entity as Entity).position = center_to_cell((entity as Entity).position)
 
 func handle_position_selection(map : Vector2) -> void:
-	var selectable_entities = get_tree().get_nodes_in_group(GLOBALS.GROUP_NAMES.get(GLOBALS.GROUP_FLAGS.Selectable))
+	var selectable_entities = collect_entities_flags(self, Entity.E_EntityFlags.Selectable)
+	print_debug(selectable_entities)
 	var clicked_entities = get_entities_at(map)
 	if len(clicked_entities) == 0:
 		print_debug("Empty space clicked")
@@ -127,14 +144,10 @@ func center_to_cell(world : Vector2) -> Vector2:
 	return center
 
 func tile_is_blocked(world : Vector2) -> bool:
-	#var centered_world = center_to_cell(world)
-	#for blocking_entity in get_tree().get_nodes_in_group(GLOBALS.GROUP_NAMES.get(GLOBALS.GROUP_FLAGS.Blocking)):
-	#	if center_to_cell(blocking_entity.position) == centered_world:
-	#		return true
 	var map = world_to_map(world)
 	if map in static_blocked_tiles:
 		return true
-	for actor in get_tree().get_nodes_in_group(GLOBALS.GROUP_NAMES.get(GLOBALS.GROUP_FLAGS.Acting)):
+	for actor in actors:
 		if actor is Actor and actor.is_blocking() and world_to_map(actor.position) == map:
 			return true
 	return false
@@ -184,6 +197,7 @@ func breadth_first_search(map_start : Vector2, map_end : Vector2) -> Array:
 			if (path as Array).front() == map_start and (path as Array).back() == map_end:
 				return path
 	return []
+
 func deep_has(array_of_arrays : Array, elem) -> bool:
 	if array_of_arrays.has(elem):
 		return true

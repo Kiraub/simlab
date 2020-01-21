@@ -5,7 +5,7 @@
 
 [node name="Waiter" type="Position2D"]
 script = ExtResource( 1 )
-groups = 5
+EntityFlags = 3
 
 [node name="Sprite" type="Sprite" parent="."]
 use_parent_material = true

@@ -5,7 +5,7 @@
 
 [node name="Table" type="Position2D"]
 script = ExtResource( 1 )
-groups = 2
+EntityFlags = 1
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 2 )

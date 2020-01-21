@@ -1,0 +1,67 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scenes/Simulation.tscn" type="PackedScene" id=1]
+
+[node name="SimLab" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
+current = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+margin_right = 652.0
+margin_bottom = 1080.0
+scroll_horizontal_enabled = false
+
+[node name="GridContainer" type="GridContainer" parent="ScrollContainer"]
+margin_right = 640.0
+margin_bottom = 1600.0
+grow_horizontal = 2
+grow_vertical = 2
+custom_constants/vseparation = 0
+custom_constants/hseparation = 0
+columns = 2
+
+[node name="Simulation" parent="ScrollContainer/GridContainer" instance=ExtResource( 1 )]
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Simulation2" parent="ScrollContainer/GridContainer" instance=ExtResource( 1 )]
+margin_left = 320.0
+margin_right = 640.0
+
+[node name="Simulation3" parent="ScrollContainer/GridContainer" instance=ExtResource( 1 )]
+margin_top = 320.0
+margin_bottom = 640.0
+
+[node name="Simulation4" parent="ScrollContainer/GridContainer" instance=ExtResource( 1 )]
+margin_left = 320.0
+margin_top = 320.0
+margin_right = 640.0
+margin_bottom = 640.0
+
+[node name="Simulation5" parent="ScrollContainer/GridContainer" instance=ExtResource( 1 )]
+margin_top = 640.0
+margin_bottom = 960.0
+
+[node name="Simulation6" parent="ScrollContainer/GridContainer" instance=ExtResource( 1 )]
+margin_left = 320.0
+margin_top = 640.0
+margin_right = 640.0
+margin_bottom = 960.0
+
+[node name="Simulation7" parent="ScrollContainer/GridContainer" instance=ExtResource( 1 )]
+margin_top = 960.0
+margin_bottom = 1280.0
+
+[node name="Simulation8" parent="ScrollContainer/GridContainer" instance=ExtResource( 1 )]
+margin_left = 320.0
+margin_top = 960.0
+margin_right = 640.0
+margin_bottom = 1280.0
+
+[node name="Simulation9" parent="ScrollContainer/GridContainer" instance=ExtResource( 1 )]
+margin_top = 1280.0
+margin_bottom = 1600.0

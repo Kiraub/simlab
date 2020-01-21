@@ -5,16 +5,12 @@ class_name Actor
 """ Constants """
 
 const DEFAULT_SPEED	: float	= 32.0
-const WAIT_TIME		: float = 0.1
 
 """ Variables """
 
 export var speed : float setget set_speed, get_speed
-export var path_visible : bool setget set_path_visible
 
 var targets : Array setget set_targets, get_targets
-
-onready var path : Line2D = Line2D.new()
 
 """ Initialization """
 
@@ -22,16 +18,6 @@ onready var path : Line2D = Line2D.new()
 func _init(i_name : String = 'Actor').(GLOBALS.Z_INDICIES.ACTIVE, i_name) -> void:
 	set_speed(DEFAULT_SPEED)
 	targets = []
-	add_to_group(GLOBALS.GROUP_NAMES.get(GLOBALS.GROUP_FLAGS.Acting))
-
-#[override]
-func _ready():
-	set_path_visible(true)
-	path.width = 5
-	path.name = "Path-Visual"
-	path.z_index = GLOBALS.Z_INDICIES.ACTIVE
-	add_child(path)
-	path.set_as_toplevel(true)
 
 """ Setters / Getters """
 
@@ -48,11 +34,12 @@ func set_targets(new_targets : Array) -> void:
 func get_targets() -> Array:
 	return targets.duplicate(true)
 
-func set_path_visible(new_path_visible : bool) -> void:
-	path_visible = new_path_visible
-	path.visible = path_visible
-
 """ Methods """
+
+func get_next_target() -> Vector2:
+	if len(targets) > 0:
+		return targets.front()
+	return position
 
 func get_final_target() -> Vector2:
 	if len(targets) > 0:
@@ -83,8 +70,8 @@ func remove_target(index : int) -> void:
 	if len(targets) > index:
 		targets.remove(index)
 
-func step_time(delta : float) -> void:
-	var travel_distance := get_speed()# * delta
+func step_time(_delta : float) -> void:
+	var travel_distance := get_speed()
 	move_towards_target(travel_distance)
 
 func move_towards_target(travel_distance : float) -> void:

@@ -1,4 +1,4 @@
-extends Node
+extends ViewportContainer
 
 class_name Simulation
 
@@ -8,16 +8,34 @@ class_name Simulation
 
 export var simulation_speed : float = 1.0
 var step_count : float = 0.0
+var entity_map : EntityMap
 
 """ Initialization """
 
-onready var entity_map : EntityMap = $EntityMap
+func _ready() -> void:
+	if bind_entity_map(self):
+		print_debug("EntityMap bound to simulation.")
+	else:
+		print_debug("EntityMap not found underneath simulation.")
+
+""" Godot process """
 
 func _physics_process(delta):
 	step_count += simulation_speed
 	while step_count >= 1.0:
 		step_count -= 1.0
 		entity_map.step_entities(delta)
+
+""" Methods """
+
+func bind_entity_map(from : Node) -> bool:
+	for child in from.get_children():
+		if child is EntityMap:
+			entity_map = child
+			return true
+		elif bind_entity_map(child):
+			return true
+	return false
 
 func _unhandled_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton:
@@ -28,6 +46,12 @@ func _unhandled_input(event : InputEvent) -> void:
 	if Input.is_action_just_pressed("ui_down"):
 		simulation_speed /= 2
 
+func _gui_input(event):
+	if event is InputEventMouseButton:
+		if event.button_index == BUTTON_LEFT and event.pressed:
+			print_debug(self, " has received a gui lmb click")
+			handle_lmb_click(event)
+
 func handle_lmb_click(event : InputEventMouseButton) -> void:
-	var map_position = entity_map.center_to_cell(event.global_position)
+	var map_position = entity_map.center_to_cell(event.position)
 	entity_map.handle_position_selection(map_position)
