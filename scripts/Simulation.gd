@@ -1,4 +1,4 @@
-extends ViewportContainer
+extends Control
 
 class_name Simulation
 

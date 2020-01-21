@@ -24,7 +24,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/EntityMap.gd"
 }, {
-"base": "ViewportContainer",
+"base": "Control",
 "class": "Simulation",
 "language": "GDScript",
 "path": "res://scripts/Simulation.gd"
