@@ -1,0 +1,67 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://components/simulation/Simulation.tscn" type="PackedScene" id=1]
+
+
+[node name="SimulationList" type="ScrollContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridContainer" type="GridContainer" parent="."]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 668.0
+margin_bottom = 1002.0
+columns = 2
+
+[node name="Simulation" parent="GridContainer" instance=ExtResource( 1 )]
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 0.0
+margin_top = 0.0
+margin_right = 330.0
+margin_bottom = 330.0
+
+[node name="Simulation2" parent="GridContainer" instance=ExtResource( 1 )]
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 334.0
+margin_top = 0.0
+margin_right = 664.0
+margin_bottom = 330.0
+
+[node name="Simulation3" parent="GridContainer" instance=ExtResource( 1 )]
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 0.0
+margin_top = 334.0
+margin_right = 330.0
+margin_bottom = 664.0
+
+[node name="Simulation4" parent="GridContainer" instance=ExtResource( 1 )]
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 334.0
+margin_top = 334.0
+margin_right = 664.0
+margin_bottom = 664.0
+
+[node name="Simulation5" parent="GridContainer" instance=ExtResource( 1 )]
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 0.0
+margin_top = 668.0
+margin_right = 330.0
+margin_bottom = 998.0
