@@ -24,7 +24,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/EntityMap.gd"
 }, {
-"base": "Control",
+"base": "PanelContainer",
 "class": "Simulation",
 "language": "GDScript",
 "path": "res://scripts/Simulation.gd"
@@ -57,7 +57,7 @@ _global_script_class_icons={
 [application]
 
 config/name="SimLab"
-run/main_scene="res://scenes/SimLab.tscn"
+run/main_scene="res://SimLab.tscn"
 config/icon="res://icon.png"
 
 [autoload]
@@ -77,7 +77,8 @@ window/stretch/aspect="keep"
 [gui]
 
 theme/use_hidpi=true
-theme/custom_font="res://Assets/fonts/FiraCode-Retina.ttf"
+theme/custom="res://themes/default_theme.tres"
+theme/custom_font="res://themes/firacode-retina.tres"
 
 [importer_defaults]
 

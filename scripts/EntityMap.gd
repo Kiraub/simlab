@@ -37,13 +37,7 @@ func step_entities(delta : float) -> void:
 	#get_tree().call_group(GLOBALS.GROUP_NAMES.get(GLOBALS.GROUP_FLAGS.Acting), "step_time", delta)
 
 """ Setters / Getters """
-"""
-func set_entities(new_entities : Array) -> void:
-	for entity in new_entities:
-		if not entity is Entity:
-			return
-	entities = new_entities
-"""
+
 func get_entities() -> Array:
 	return entities
 

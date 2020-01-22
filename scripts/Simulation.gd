@@ -1,4 +1,4 @@
-extends Control
+extends PanelContainer
 
 class_name Simulation
 
@@ -7,6 +7,7 @@ class_name Simulation
 """ Variables """
 
 export var simulation_speed : float = 1.0
+export var highlighted : bool = false setget set_highlighted, is_highlighted
 var step_count : float = 0.0
 var entity_map : EntityMap
 
@@ -25,6 +26,12 @@ func _physics_process(delta):
 	while step_count >= 1.0:
 		step_count -= 1.0
 		entity_map.step_entities(delta)
+
+""" Setters / Getters """
+
+func set_highlighted(new_highlighted : bool) -> void:
+	if new_highlighted:
+		
 
 """ Methods """
 
