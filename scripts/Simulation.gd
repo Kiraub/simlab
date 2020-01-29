@@ -9,7 +9,7 @@ class_name Simulation
 export var simulation_speed : float = 1.0
 export var highlighted : bool = false setget set_highlighted, is_highlighted
 
-export var use_physics_process : bool = true
+export var use_physics_process : bool = false
 
 var step_count : float = 0.0
 var viewport_container : ViewportContainer
@@ -19,13 +19,14 @@ var entity_map : EntityMap
 
 func _ready() -> void:
 	if bind_viewport_container(self):
-		viewport_container.connect("gui_input", self, "_gui_input", [])
-		print_debug("ViewportContainer bound to simulation.")
+		var _r = viewport_container.connect("gui_input", self, "_gui_input", [])
+		#print_debug("ViewportContainer bound to simulation.")
 	else:
 		print_debug("ViewportContainer not found underneath simulation.")
 		get_tree().quit()
 	if bind_entity_map(self):
-		print_debug("EntityMap bound to simulation.")
+		pass
+		#print_debug("EntityMap bound to simulation.")
 	else:
 		print_debug("EntityMap not found underneath simulation.")
 		get_tree().quit()
@@ -33,17 +34,17 @@ func _ready() -> void:
 
 """ Godot process """
 
-func _process(delta):
+func _process(_delta : float) -> void:
 	step_count += simulation_speed
-	while step_count >= 1.0:
-		step_count -= 1.0
-		entity_map.step_entities(delta)
+	if step_count >= 1.0:
+		entity_map.step_entities(int(floor(step_count)))
+		step_count -= floor(step_count)
 
-func _physics_process(delta):
+func _physics_process(_delta : float) -> void:
 	step_count += simulation_speed
-	while step_count >= 1.0:
-		step_count -= 1.0
-		entity_map.step_entities(delta)
+	if step_count >= 1.0:
+		entity_map.step_entities(int(floor(step_count)))
+		step_count -= floor(step_count)
 
 """ Setters / Getters """
 

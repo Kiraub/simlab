@@ -13,7 +13,7 @@ enum E_Tiles {
 
 var rng = RandomNumberGenerator.new()
 export var provide_random_targets : bool = false
-export var deep_has_over_traversal : bool = true
+export var deep_has_over_traversal : bool = false
 
 var entities : Array = [] setget , get_entities
 var actors : Array = []
@@ -42,15 +42,17 @@ func _ready():
 
 """ Simulation step """
 
-func step_entities(delta : float) -> void:
+func step_entities(step_count : int) -> void:
 	for actor in actors:
-		actor.step_time(delta)
+		actor.step_by(step_count)
 	if provide_random_targets:
 		for actor in actors:
 			if actor.position == actor.get_final_target():
 				highlighted_entities = [actor]
 				var random_target = get_random_free_tile()
 				handle_position_selection(random_target)
+				for actor in highlighted_entities:
+					actor.set_highlighted(false)
 				highlighted_entities.clear()
 
 """ Setters / Getters """

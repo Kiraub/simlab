@@ -70,9 +70,10 @@ func remove_target(index : int) -> void:
 	if len(targets) > index:
 		targets.remove(index)
 
-func step_time(_delta : float) -> void:
-	var travel_distance := get_speed()
-	move_towards_target(travel_distance)
+func step_by(count : int) -> void:
+	if len(targets) > 0:
+		var travel_distance := get_speed() * count
+		move_towards_target(travel_distance)
 
 func move_towards_target(travel_distance : float) -> void:
 	if len(targets) == 0:
