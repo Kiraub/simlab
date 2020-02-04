@@ -1,13 +1,17 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://themes/new_theme.tres" type="Theme" id=1]
-[ext_resource path="res://components/interface/tabContainer/TabContainer.tscn" type="PackedScene" id=2]
+[ext_resource path="res://components/interface/containers/TabContainer.tscn" type="PackedScene" id=2]
 [ext_resource path="res://components/interface/tabs/SimulationsTab.tscn" type="PackedScene" id=3]
+[ext_resource path="res://components/interface/tabs/ConfigurationsTab.tscn" type="PackedScene" id=4]
 
 [node name="GUI" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 theme = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="HSplitContainer" type="HSplitContainer" parent="."]
 anchor_right = 1.0
@@ -21,8 +25,24 @@ margin_bottom = 1080.0
 [node name="TabContainer" parent="HSplitContainer/LeftPanel" instance=ExtResource( 2 )]
 
 [node name="Simulations" parent="HSplitContainer/LeftPanel/TabContainer" instance=ExtResource( 3 )]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 5.0
+margin_top = 46.0
+margin_right = -5.0
+margin_bottom = -5.0
 
 [node name="RightPanel" type="Panel" parent="HSplitContainer"]
 margin_left = 962.0
 margin_right = 1920.0
 margin_bottom = 1080.0
+
+[node name="TabContainer" parent="HSplitContainer/RightPanel" instance=ExtResource( 2 )]
+
+[node name="Configurations" parent="HSplitContainer/RightPanel/TabContainer" instance=ExtResource( 4 )]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 5.0
+margin_top = 46.0
+margin_right = -5.0
+margin_bottom = -5.0

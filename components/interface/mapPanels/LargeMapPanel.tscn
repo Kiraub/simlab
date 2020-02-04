@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://components/simulation/entityMaps/LargeMap.tscn" type="PackedScene" id=1]
+[ext_resource path="res://components/interface/containers/SimulationPanel.tscn" type="PackedScene" id=2]
+
+[node name="LargeMapPanel" instance=ExtResource( 2 )]
+margin_left = -374.0
+margin_top = -228.0
+margin_right = 374.0
+margin_bottom = 228.0
+
+[node name="ViewportContainer" parent="." index="0"]
+margin_right = 742.0
+margin_bottom = 452.0
+
+[node name="Viewport" parent="ViewportContainer" index="0"]
+size = Vector2( 736, 448 )
+
+[node name="LargeMap" parent="ViewportContainer/Viewport" index="0" instance=ExtResource( 1 )]
