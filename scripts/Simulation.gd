@@ -6,83 +6,78 @@ class_name Simulation
 
 """ Variables """
 
+# In-Editor visible
 export var simulation_speed : float = 1.0
-export var highlighted : bool = false setget set_highlighted, is_highlighted
+export var paused : bool = false
+export var highlighted : bool = false
 
-export var use_physics_process : bool = false
+var config : ConfigWrapper = ConfigWrapper.new("Simulation") setget, get_config_wrapper
+var step_acc : float = 0.0
 
-var step_count : float = 0.0
-var viewport_container : ViewportContainer
 var entity_map : EntityMap
+
+# When child-nodes are ready
+onready var viewport_container	: ViewportContainer	= $ViewportContainer
+onready var viewport			: Viewport			= $ViewportContainer/Viewport
 
 """ Initialization """
 
 func _ready() -> void:
-	if bind_viewport_container(self):
-		var _r = viewport_container.connect("gui_input", self, "_gui_input", [])
-		#print_debug("ViewportContainer bound to simulation.")
-	else:
-		print_debug("ViewportContainer not found underneath simulation.")
-		get_tree().quit()
-	if bind_entity_map(self):
-		pass
-		#print_debug("EntityMap bound to simulation.")
-	else:
-		print_debug("EntityMap not found underneath simulation.")
-		get_tree().quit()
-	toggle_processing()
+	config.add_config_entry("simulation_speed", {
+		ConfigWrapper.CONFIG_FIELDS[0]: "Speed",
+		ConfigWrapper.CONFIG_FIELDS[1]: simulation_speed,
+		ConfigWrapper.CONFIG_FIELDS[2]: "signal_name"
+	})
+	config.add_config_entry("paused", {
+		ConfigWrapper.CONFIG_FIELDS[0]: "Paused",
+		ConfigWrapper.CONFIG_FIELDS[1]: paused,
+		ConfigWrapper.CONFIG_FIELDS[2]: "signal_name"
+	})
+	
+	var bound = false
+	for child in viewport.get_children():
+		if child is EntityMap:
+			entity_map = child
+			bound = true
+			break
+	if not bound:
+		print_debug("No EntityMap found under Viewport::", viewport)
 
 """ Godot process """
 
 func _process(_delta : float) -> void:
-	step_count += simulation_speed
-	if step_count >= 1.0:
-		entity_map.step_entities(int(floor(step_count)))
-		step_count -= floor(step_count)
-
-func _physics_process(_delta : float) -> void:
-	step_count += simulation_speed
-	if step_count >= 1.0:
-		entity_map.step_entities(int(floor(step_count)))
-		step_count -= floor(step_count)
+	var _r = step_simulation()
 
 """ Setters / Getters """
 
-func set_highlighted(new_highlighted : bool) -> void:
-	if new_highlighted:
-		pass
-func is_highlighted()-> bool:
-	return highlighted
+func get_config_wrapper() -> ConfigWrapper:
+	return config
 
 """ Methods """
 
-func toggle_processing() -> void:
-	if use_physics_process:
-		set_process(false)
-		set_physics_process(true)
-	else:
-		set_process(true)
-		set_physics_process(false)
+func step_simulation() -> float:
+	var steps_taken = 0.0
+	if paused:
+		return steps_taken
+	step_acc += simulation_speed
+	if step_acc >= 1.0:
+		steps_taken = floor(step_acc)
+		step_acc -= steps_taken
+		entity_map.step_entities(steps_taken)
+	return steps_taken
 
-func bind_entity_map(from : Node) -> bool:
-	for child in from.get_children():
-		if child is EntityMap:
-			entity_map = child
-			return true
-		elif bind_entity_map(child):
-			return true
-	return false
+func handle_lmb_click(event : InputEventMouseButton) -> void:
+	if not entity_map is EntityMap:
+		return
+	var map_position = entity_map.world_to_map(event.position)
+	entity_map.handle_position_selection(map_position)
 
-func bind_viewport_container(from : Node) -> bool:
-	for child in from.get_children():
-		if child is ViewportContainer:
-			viewport_container = child
-			return true
-		elif bind_entity_map(child):
-			return true
-	return false
+
+""" Events """
 
 func _unhandled_input(event : InputEvent) -> void:
+	if not entity_map is EntityMap:
+		return
 	if event is InputEventMouseButton:
 		if event.button_index == BUTTON_LEFT and event.pressed:
 			handle_lmb_click(event)
@@ -90,9 +85,6 @@ func _unhandled_input(event : InputEvent) -> void:
 		simulation_speed *= 2
 	if Input.is_action_just_pressed("ui_down"):
 		simulation_speed /= 2
-	if Input.is_action_just_pressed("ui_accept"):
-		use_physics_process = not use_physics_process
-		toggle_processing()
 	if Input.is_action_just_pressed("ui_select"):
 		entity_map.provide_random_targets = not entity_map.provide_random_targets
 	if Input.is_action_just_pressed("ui_focus_next"):
@@ -102,7 +94,3 @@ func _gui_input(event):
 	if event is InputEventMouseButton:
 		if event.button_index == BUTTON_LEFT and event.pressed:
 			handle_lmb_click(event)
-
-func handle_lmb_click(event : InputEventMouseButton) -> void:
-	var map_position = entity_map.world_to_map(event.position)
-	entity_map.handle_position_selection(map_position)

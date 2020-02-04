@@ -29,6 +29,7 @@ var cached_by_flag : Dictionary = {}
 
 #[override]
 func _init():
+	self.name = "EntityMap"
 	z_index = GLOBALS.Z_INDICIES.BACKGROUND
 	rng.randomize()
 	var h = hash(rng.get_seed())
@@ -42,7 +43,7 @@ func _ready():
 
 """ Simulation step """
 
-func step_entities(step_count : int) -> void:
+func step_entities(step_count : float) -> void:
 	for actor in actors:
 		actor.step_by(step_count)
 	if provide_random_targets:
