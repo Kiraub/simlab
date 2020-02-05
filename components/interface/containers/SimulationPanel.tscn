@@ -48,44 +48,44 @@ margin_bottom = 39.0
 text = "Untitled Simulation"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VSplitContainer/HSplitContainer"]
-margin_left = 282.0
+margin_left = 290.0
 margin_right = 1588.0
 margin_bottom = 39.0
 theme = ExtResource( 1 )
 alignment = 2
 
 [node name="ConfigBtn" type="Button" parent="VSplitContainer/HSplitContainer/HBoxContainer"]
-margin_left = 780.0
-margin_right = 896.0
+margin_left = 772.0
+margin_right = 888.0
 margin_bottom = 39.0
 theme = ExtResource( 1 )
 text = "Config"
 icon = ExtResource( 4 )
 
 [node name="PlayBtn" type="Button" parent="VSplitContainer/HSplitContainer/HBoxContainer"]
-margin_left = 900.0
-margin_right = 988.0
+margin_left = 892.0
+margin_right = 980.0
 margin_bottom = 39.0
 text = "Play"
 icon = ExtResource( 7 )
 
 [node name="PauseBtn" type="Button" parent="VSplitContainer/HSplitContainer/HBoxContainer"]
-margin_left = 992.0
-margin_right = 1094.0
+margin_left = 984.0
+margin_right = 1086.0
 margin_bottom = 39.0
 text = "Pause"
 icon = ExtResource( 8 )
 
 [node name="StepBtn" type="Button" parent="VSplitContainer/HSplitContainer/HBoxContainer"]
-margin_left = 1098.0
-margin_right = 1186.0
+margin_left = 1090.0
+margin_right = 1178.0
 margin_bottom = 39.0
 text = "Step"
 icon = ExtResource( 6 )
 
 [node name="DeleteBtn" type="Button" parent="VSplitContainer/HSplitContainer/HBoxContainer"]
-margin_left = 1190.0
-margin_right = 1306.0
+margin_left = 1182.0
+margin_right = 1298.0
 margin_bottom = 39.0
 text = "Delete"
 icon = ExtResource( 9 )

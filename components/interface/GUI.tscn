@@ -16,21 +16,55 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HSplitContainer" type="HSplitContainer" parent="."]
+[node name="VSplitContainer" type="VSplitContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+dragger_visibility = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSplitContainer2" type="HSplitContainer" parent="VSplitContainer"]
+margin_right = 1600.0
+margin_bottom = 39.0
+dragger_visibility = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VSplitContainer/HSplitContainer2"]
+margin_right = 228.0
+margin_bottom = 39.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AddSimulationBtn" type="Button" parent="VSplitContainer/HSplitContainer2/HBoxContainer"]
+margin_right = 228.0
+margin_bottom = 39.0
+text = "Add Simulation"
+icon = ExtResource( 5 )
+
+[node name="Panel" type="Panel" parent="VSplitContainer/HSplitContainer2"]
+margin_left = 228.0
+margin_right = 1600.0
+margin_bottom = 39.0
+
+[node name="HSplitContainer" type="HSplitContainer" parent="VSplitContainer"]
+margin_top = 39.0
+margin_right = 1600.0
+margin_bottom = 900.0
 split_offset = 950
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="LeftPanel" type="Panel" parent="HSplitContainer"]
+[node name="LeftPanel" type="Panel" parent="VSplitContainer/HSplitContainer"]
 margin_right = 950.0
-margin_bottom = 900.0
+margin_bottom = 861.0
 
-[node name="TabContainer" parent="HSplitContainer/LeftPanel" instance=ExtResource( 2 )]
+[node name="TabContainer" parent="VSplitContainer/HSplitContainer/LeftPanel" instance=ExtResource( 2 )]
+margin_left = -0.814514
+margin_right = -0.814514
 
-[node name="Simulations" type="Tabs" parent="HSplitContainer/LeftPanel/TabContainer"]
+[node name="Simulations" type="Tabs" parent="VSplitContainer/HSplitContainer/LeftPanel/TabContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 5.0
@@ -43,31 +77,9 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VSplitContainer" type="VSplitContainer" parent="HSplitContainer/LeftPanel/TabContainer/Simulations"]
+[node name="ScrollContainer" type="ScrollContainer" parent="VSplitContainer/HSplitContainer/LeftPanel/TabContainer/Simulations"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-dragger_visibility = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="HBoxContainer" type="HBoxContainer" parent="HSplitContainer/LeftPanel/TabContainer/Simulations/VSplitContainer"]
-margin_right = 940.0
-margin_bottom = 39.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="AddSimulationBtn" type="Button" parent="HSplitContainer/LeftPanel/TabContainer/Simulations/VSplitContainer/HBoxContainer"]
-margin_right = 228.0
-margin_bottom = 39.0
-text = "Add Simulation"
-icon = ExtResource( 5 )
-
-[node name="ScrollContainer" type="ScrollContainer" parent="HSplitContainer/LeftPanel/TabContainer/Simulations/VSplitContainer"]
-margin_top = 47.0
-margin_right = 940.0
-margin_bottom = 849.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource( 1 )
@@ -75,7 +87,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="SimulationList" type="VBoxContainer" parent="HSplitContainer/LeftPanel/TabContainer/Simulations/VSplitContainer/ScrollContainer"]
+[node name="SimulationList" type="VBoxContainer" parent="VSplitContainer/HSplitContainer/LeftPanel/TabContainer/Simulations/ScrollContainer"]
 margin_right = 820.0
 margin_bottom = 882.0
 alignment = 2
@@ -83,27 +95,27 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="LargeMapPanel" parent="HSplitContainer/LeftPanel/TabContainer/Simulations/VSplitContainer/ScrollContainer/SimulationList" instance=ExtResource( 4 )]
+[node name="LargeMapPanel" parent="VSplitContainer/HSplitContainer/LeftPanel/TabContainer/Simulations/ScrollContainer/SimulationList" instance=ExtResource( 4 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_right = 820.0
 margin_bottom = 503.0
 
-[node name="SmallMapPanel" parent="HSplitContainer/LeftPanel/TabContainer/Simulations/VSplitContainer/ScrollContainer/SimulationList" instance=ExtResource( 3 )]
+[node name="SmallMapPanel" parent="VSplitContainer/HSplitContainer/LeftPanel/TabContainer/Simulations/ScrollContainer/SimulationList" instance=ExtResource( 3 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_top = 507.0
 margin_right = 820.0
 margin_bottom = 882.0
 
-[node name="RightPanel" type="Panel" parent="HSplitContainer"]
+[node name="RightPanel" type="Panel" parent="VSplitContainer/HSplitContainer"]
 margin_left = 958.0
 margin_right = 1600.0
-margin_bottom = 900.0
+margin_bottom = 861.0
 
-[node name="TabContainer" parent="HSplitContainer/RightPanel" instance=ExtResource( 2 )]
+[node name="TabContainer" parent="VSplitContainer/HSplitContainer/RightPanel" instance=ExtResource( 2 )]
 
-[node name="Inspector" type="Tabs" parent="HSplitContainer/RightPanel/TabContainer"]
+[node name="Inspector" type="Tabs" parent="VSplitContainer/HSplitContainer/RightPanel/TabContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 5.0
@@ -114,4 +126,4 @@ theme = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-[connection signal="pressed" from="HSplitContainer/LeftPanel/TabContainer/Simulations/VSplitContainer/HBoxContainer/AddSimulationBtn" to="." method="_on_AddSimulationBtn_pressed"]
+[connection signal="pressed" from="VSplitContainer/HSplitContainer2/HBoxContainer/AddSimulationBtn" to="." method="_on_AddSimulationBtn_pressed"]

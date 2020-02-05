@@ -3,8 +3,8 @@ extends Control
 
 """ Variables """
 
-onready var simulation_list : VBoxContainer = $HSplitContainer/LeftPanel/TabContainer/Simulations/VSplitContainer/ScrollContainer/SimulationList
-onready var inspector : Tabs = $HSplitContainer/RightPanel/TabContainer/Inspector
+onready var simulation_list : VBoxContainer = $VSplitContainer/HSplitContainer/LeftPanel/TabContainer/Simulations/ScrollContainer/SimulationList
+onready var inspector : Tabs = $VSplitContainer/HSplitContainer/RightPanel/TabContainer/Inspector
 
 """ Initialization """
 
