@@ -2,6 +2,8 @@ tool
 
 extends ViewportContainer
 
+export(int, 0, 5) var margin_tile_count : int = 0
+
 func _draw() -> void:
 	if Engine.is_editor_hint():
 		refresh()
@@ -13,6 +15,8 @@ func refresh() -> void:
 		for lower_child in child.get_children():
 			if lower_child is TileMap:
 				var used_size = (lower_child as TileMap).get_used_rect().size
+				used_size.x -= margin_tile_count * 2
+				used_size.y -= margin_tile_count * 2
 				used_size.x *= (lower_child as TileMap).cell_size.x
 				used_size.y *= (lower_child as TileMap).cell_size.y
 				#print_debug("Refreshed size: ", child.size, ";;", used_size)

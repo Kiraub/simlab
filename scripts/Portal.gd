@@ -16,5 +16,5 @@ func _init(i_name : String = 'Portal').(i_name):
 	pass
 
 func _on_Timer_timeout():
-	print_debug("Timer timeout")
+	#print_debug("Timer timeout")
 	emit_signal("entity_spawned", spawn, position)

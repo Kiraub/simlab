@@ -113,6 +113,7 @@ script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+margin_tile_count = 1
 
 [node name="Viewport" type="Viewport" parent="VSplitContainer/ViewportContainer"]
 handle_input_locally = false
