@@ -1,6 +1,7 @@
 
 # Godot-specific ignores
 .import/
+*.import
 export.cfg
 export_presets.cfg
 
@@ -9,3 +10,4 @@ export_presets.cfg
 
 # Windows specific ignores
 */desktop.ini
+Assets/icons/icon_add.svg.import
