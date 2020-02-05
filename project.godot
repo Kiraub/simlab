@@ -14,7 +14,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/Actor.gd"
 }, {
-"base": "Object",
+"base": "Reference",
 "class": "ConfigWrapper",
 "language": "GDScript",
 "path": "res://scripts/ConfigWrapper.gd"
@@ -29,7 +29,12 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/EntityMap.gd"
 }, {
-"base": "PanelContainer",
+"base": "Static",
+"class": "Portal",
+"language": "GDScript",
+"path": "res://scripts/Portal.gd"
+}, {
+"base": "Control",
 "class": "Simulation",
 "language": "GDScript",
 "path": "res://scripts/Simulation.gd"
@@ -54,6 +59,7 @@ _global_script_class_icons={
 "ConfigWrapper": "",
 "Entity": "",
 "EntityMap": "",
+"Portal": "",
 "Simulation": "",
 "Static": "",
 "Table": "",
@@ -70,12 +76,16 @@ config/icon="res://icon.png"
 
 GLOBALS="*res://scripts/GLOBALS.gd"
 
+[debug]
+
+gdscript/warnings/return_value_discarded=false
+
 [display]
 
-window/size/width=1920
-window/size/height=1080
-window/size/test_width=800
-window/size/test_height=405
+window/size/width=1600
+window/size/height=900
+window/size/test_width=1024
+window/size/test_height=600
 window/dpi/allow_hidpi=true
 window/stretch/mode="2d"
 window/stretch/aspect="expand"

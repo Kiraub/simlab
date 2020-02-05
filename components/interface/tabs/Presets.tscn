@@ -1,0 +1,79 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://scripts/Simulation.gd" type="Script" id=1]
+[ext_resource path="res://themes/new_theme.tres" type="Theme" id=2]
+[ext_resource path="res://components/interface/mapPanels/SmallMapPanel.tscn" type="PackedScene" id=3]
+[ext_resource path="res://components/interface/mapPanels/LargeMapPanel.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Assets/icons/icon_add.svg" type="Texture" id=5]
+
+[node name="Presets" type="Tabs"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 5.0
+margin_top = 46.0
+margin_right = -5.0
+margin_bottom = -5.0
+
+[node name="VSplitContainer" type="VSplitContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 5.0
+margin_bottom = 5.0
+dragger_visibility = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VSplitContainer"]
+margin_right = 940.0
+margin_bottom = 39.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AddSimulationBtn" type="Button" parent="VSplitContainer/HBoxContainer"]
+margin_right = 228.0
+margin_bottom = 39.0
+text = "Add Simulation"
+icon = ExtResource( 5 )
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VSplitContainer"]
+margin_top = 47.0
+margin_right = 940.0
+margin_bottom = 854.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PresetList" type="VBoxContainer" parent="VSplitContainer/ScrollContainer"]
+margin_right = 320.0
+margin_bottom = 644.0
+alignment = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LargeMapPanel" type="PanelContainer" parent="VSplitContainer/ScrollContainer/PresetList" instance=ExtResource( 4 )]
+margin_right = 820.0
+margin_bottom = 503.0
+rect_min_size = Vector2( 320, 320 )
+theme = ExtResource( 2 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SmallMapPanel" type="PanelContainer" parent="VSplitContainer/ScrollContainer/PresetList" instance=ExtResource( 3 )]
+margin_top = 507.0
+margin_right = 820.0
+margin_bottom = 882.0
+rect_min_size = Vector2( 320, 320 )
+theme = ExtResource( 2 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

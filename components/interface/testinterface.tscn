@@ -4,7 +4,7 @@
 script/source = "extends VBoxContainer
 
 var wrapped : ConfigWrapper
-var gui_config : GridContainer
+var gui_config : Control
 
 var number : int
 
@@ -17,7 +17,7 @@ func _init():
 	}
 	wrapped.add_config_entry(\"hellow\", entry)
 	wrapped.connect(\"hellow_changed\", self, \"_on_hellow_changed\")
-	print_debug(wrapped, \":::\", wrapped.title)
+	print_debug(wrapped, \":::\", wrapped.wrapped_class_name)
 
 func _ready():
 	gui_config = wrapped.create_gui_configuration()
@@ -42,3 +42,24 @@ script = SubResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="SpinBox" type="SpinBox" parent="."]
+margin_right = 1600.0
+margin_bottom = 45.0
+
+[node name="HSlider" type="HSlider" parent="."]
+margin_top = 53.0
+margin_right = 1600.0
+margin_bottom = 85.0
+value = 5.0
+
+[node name="HScrollBar" type="HScrollBar" parent="."]
+margin_top = 93.0
+margin_right = 1600.0
+margin_bottom = 117.0
+
+[node name="SpinBox2" type="SpinBox" parent="."]
+margin_top = 125.0
+margin_right = 1600.0
+margin_bottom = 170.0
+step = 0.001

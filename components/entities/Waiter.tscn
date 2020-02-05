@@ -3,9 +3,7 @@
 [ext_resource path="res://scripts/Waiter.gd" type="Script" id=1]
 [ext_resource path="res://Assets/sprites/waiter.png" type="Texture" id=2]
 
-[node name="Waiter" type="Position2D" groups=[
-"Configurable",
-]]
+[node name="Waiter" type="Position2D"]
 script = ExtResource( 1 )
 EntityFlags = 3
 

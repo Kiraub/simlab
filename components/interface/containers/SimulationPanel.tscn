@@ -1,35 +1,129 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://themes/new_theme.tres" type="Theme" id=1]
 [ext_resource path="res://scripts/Simulation.gd" type="Script" id=2]
-[ext_resource path="res://scripts/Viewport.gd" type="Script" id=3]
+[ext_resource path="res://scripts/ViewportContainer.gd" type="Script" id=3]
+[ext_resource path="res://Assets/icons/icon_tools.svg" type="Texture" id=4]
+[ext_resource path="res://themes/SimulationPanelStyle.tres" type="StyleBox" id=5]
+[ext_resource path="res://Assets/icons/icon_play_start.svg" type="Texture" id=6]
+[ext_resource path="res://Assets/icons/icon_play.svg" type="Texture" id=7]
+[ext_resource path="res://Assets/icons/icon_pause.svg" type="Texture" id=8]
+[ext_resource path="res://Assets/icons/icon_gui_close_customizable.svg" type="Texture" id=9]
 
-[node name="SimulationPanel" type="PanelContainer" groups=[
-"Configurable",
-]]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -80.0
-margin_top = -80.0
-margin_right = 80.0
-margin_bottom = 80.0
-rect_min_size = Vector2( 160, 160 )
+[node name="SimulationPanel" type="PanelContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 320, 320 )
 theme = ExtResource( 1 )
 script = ExtResource( 2 )
 __meta__ = {
-"_edit_group_": true,
 "_edit_use_anchors_": false
 }
 
-[node name="ViewportContainer" type="ViewportContainer" parent="."]
+[node name="Panel" type="Panel" parent="."]
 margin_left = 6.0
 margin_top = 4.0
-margin_right = 154.0
-margin_bottom = 156.0
+margin_right = 1594.0
+margin_bottom = 896.0
+custom_styles/panel = ExtResource( 5 )
 
-[node name="Viewport" type="Viewport" parent="ViewportContainer"]
+[node name="VSplitContainer" type="VSplitContainer" parent="."]
+margin_left = 6.0
+margin_top = 4.0
+margin_right = 1594.0
+margin_bottom = 896.0
+dragger_visibility = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSplitContainer" type="HSplitContainer" parent="VSplitContainer"]
+margin_right = 1588.0
+margin_bottom = 39.0
+dragger_visibility = 1
+
+[node name="Title" type="Label" parent="VSplitContainer/HSplitContainer"]
+margin_right = 274.0
+margin_bottom = 39.0
+text = "Untitled Simulation"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VSplitContainer/HSplitContainer"]
+margin_left = 282.0
+margin_right = 1588.0
+margin_bottom = 39.0
+theme = ExtResource( 1 )
+alignment = 2
+
+[node name="ConfigBtn" type="Button" parent="VSplitContainer/HSplitContainer/HBoxContainer"]
+margin_left = 780.0
+margin_right = 896.0
+margin_bottom = 39.0
+theme = ExtResource( 1 )
+text = "Config"
+icon = ExtResource( 4 )
+
+[node name="PlayBtn" type="Button" parent="VSplitContainer/HSplitContainer/HBoxContainer"]
+margin_left = 900.0
+margin_right = 988.0
+margin_bottom = 39.0
+text = "Play"
+icon = ExtResource( 7 )
+
+[node name="PauseBtn" type="Button" parent="VSplitContainer/HSplitContainer/HBoxContainer"]
+margin_left = 992.0
+margin_right = 1094.0
+margin_bottom = 39.0
+text = "Pause"
+icon = ExtResource( 8 )
+
+[node name="StepBtn" type="Button" parent="VSplitContainer/HSplitContainer/HBoxContainer"]
+margin_left = 1098.0
+margin_right = 1186.0
+margin_bottom = 39.0
+text = "Step"
+icon = ExtResource( 6 )
+
+[node name="DeleteBtn" type="Button" parent="VSplitContainer/HSplitContainer/HBoxContainer"]
+margin_left = 1190.0
+margin_right = 1306.0
+margin_bottom = 39.0
+text = "Delete"
+icon = ExtResource( 9 )
+
+[node name="Button5" type="Button" parent="VSplitContainer/HSplitContainer/HBoxContainer"]
+visible = false
+margin_left = 1318.0
+margin_right = 1470.0
+margin_bottom = 39.0
+text = "HelloWorld"
+
+[node name="Button6" type="Button" parent="VSplitContainer/HSplitContainer/HBoxContainer"]
+visible = false
+margin_left = 1474.0
+margin_right = 1626.0
+margin_bottom = 39.0
+text = "HelloWorld"
+
+[node name="ViewportContainer" type="ViewportContainer" parent="VSplitContainer"]
+margin_top = 47.0
+margin_right = 1588.0
+margin_bottom = 892.0
+theme = ExtResource( 1 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Viewport" type="Viewport" parent="VSplitContainer/ViewportContainer"]
 handle_input_locally = false
 render_target_update_mode = 3
-script = ExtResource( 3 )
+
+[node name="Timer" type="Timer" parent="VSplitContainer/ViewportContainer"]
+wait_time = 5.0
+autostart = true
+[connection signal="pressed" from="VSplitContainer/HSplitContainer/HBoxContainer/ConfigBtn" to="." method="_on_ConfigBtn_pressed"]
+[connection signal="pressed" from="VSplitContainer/HSplitContainer/HBoxContainer/PlayBtn" to="." method="_on_PlayPauseBtn_pressed" binds= [ true ]]
+[connection signal="pressed" from="VSplitContainer/HSplitContainer/HBoxContainer/PauseBtn" to="." method="_on_PlayPauseBtn_pressed" binds= [ false ]]
+[connection signal="pressed" from="VSplitContainer/HSplitContainer/HBoxContainer/StepBtn" to="." method="_on_StepBtn_pressed"]
+[connection signal="pressed" from="VSplitContainer/HSplitContainer/HBoxContainer/DeleteBtn" to="." method="_on_DeleteBtn_pressed"]
+[connection signal="timeout" from="VSplitContainer/ViewportContainer/Timer" to="VSplitContainer/ViewportContainer" method="_on_Timer_timeout"]

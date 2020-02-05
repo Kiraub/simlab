@@ -238,4 +238,15 @@ func deep_has(array_of_arrays : Array, elem) -> bool:
 			return true
 	return false
 
+""" Events """
 
+func _on_entity_spawned(spawn_scene : PackedScene, initial_position : Vector2) -> void:
+	if not spawn_scene is PackedScene:
+		return
+	var entity = spawn_scene.instance()
+	if not entity is Entity:
+		entity.queue_free()
+	(entity as Entity).position = initial_position
+	add_child(entity)
+	entity.owner = self
+	add_entity(entity)

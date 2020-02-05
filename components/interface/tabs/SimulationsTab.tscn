@@ -24,7 +24,7 @@ __meta__ = {
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
 margin_right = 748.0
-margin_bottom = 788.0
+margin_bottom = 667.0
 
 [node name="LargeMapPanel" parent="ScrollContainer/VBoxContainer" instance=ExtResource( 3 )]
 anchor_left = 0.0
@@ -34,7 +34,7 @@ anchor_bottom = 0.0
 margin_left = 0.0
 margin_top = 0.0
 margin_right = 748.0
-margin_bottom = 456.0
+margin_bottom = 503.0
 
 [node name="SmallMapPanel" parent="ScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
 anchor_left = 0.0
@@ -42,6 +42,6 @@ anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 0.0
-margin_top = 460.0
+margin_top = 507.0
 margin_right = 748.0
-margin_bottom = 788.0
+margin_bottom = 667.0
