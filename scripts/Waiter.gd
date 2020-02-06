@@ -1,6 +1,6 @@
 extends Actor
 
-class_name Waiter
+class_name Waiter, "res://Assets/sprites/waiter.png"
 
 """ Constants """
 

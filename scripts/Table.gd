@@ -1,6 +1,6 @@
 extends Static
 
-class_name Table
+class_name Table, "res://Assets/sprites/table.png"
 
 """ Constants """
 

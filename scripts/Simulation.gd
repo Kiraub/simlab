@@ -17,7 +17,7 @@ var highlighted		: bool		= false			#setget set_highlighted
 var process_speed	: float		= 1.0			setget set_process_speed
 var _step_acc		: float		= 0.0
 
-var config			: ConfigWrapper
+var config			: ConfigWrapper				setget , get_config_wrapper
 var entity_map		: EntityMap
 
 # When child-nodes are ready
@@ -79,6 +79,7 @@ func set_title(new_title : String) -> void:
 func set_paused(new_value : bool) -> void:
 	paused = new_value
 	config.set_entry_value("paused", paused)
+	entity_map.clear_caches()
 
 func set_partial_steps(new_value : bool) -> void:
 	partial_steps = new_value
@@ -93,6 +94,8 @@ func set_process_speed(new_value : float) -> void:
 	process_speed = new_value
 	config.set_entry_value("process_speed", process_speed)
 
+func get_config_wrapper() -> ConfigWrapper:
+	return config
 
 """ Methods """
 

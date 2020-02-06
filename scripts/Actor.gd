@@ -4,11 +4,12 @@ class_name Actor
 
 """ Constants """
 
-const DEFAULT_SPEED	: float	= 32.0
+const DEFAULT_SPEED	: float	= 1.0
 
 """ Variables """
 
 export var speed : float setget set_speed, get_speed
+export(GLOBALS.SEARCH_STRATEGIES) var search_strategy
 
 var targets : Array setget set_targets, get_targets
 
@@ -18,6 +19,13 @@ var targets : Array setget set_targets, get_targets
 func _init(i_name : String = 'Actor').(GLOBALS.Z_INDICIES.ACTIVE, i_name) -> void:
 	set_speed(DEFAULT_SPEED)
 	targets = []
+
+""" Simulation step """
+
+func step_by(amount : float) -> void:
+	if len(targets) > 0:
+		var travel_distance := get_speed() * amount
+		move_towards_target(travel_distance)
 
 """ Setters / Getters """
 
@@ -69,11 +77,6 @@ func push_targets_back(additional_targets : Array) -> void:
 func remove_target(index : int) -> void:
 	if len(targets) > index:
 		targets.remove(index)
-
-func step_by(amount : float) -> void:
-	if len(targets) > 0:
-		var travel_distance := get_speed() * amount
-		move_towards_target(travel_distance)
 
 func move_towards_target(travel_distance : float) -> void:
 	if len(targets) == 0:

@@ -52,12 +52,16 @@ func create_gui_configuration() -> Control:
 				input = SpinBox.new()
 				input.name = config_key
 				input.value = default_value
+				(input as SpinBox).max_value = 1_000_000
+				(input as SpinBox).allow_greater = true
 				input.connect("value_changed", self, "_config_changed", [config_key])
 			TYPE_REAL:
 				input = SpinBox.new()
 				input.name = config_key
 				input.step = 0.001
 				input.value = default_value
+				(input as SpinBox).max_value = 1_000_000
+				(input as SpinBox).allow_greater = true
 				input.connect("value_changed", self, "_config_changed", [config_key])
 			TYPE_STRING:
 				input = LineEdit.new()
@@ -74,6 +78,11 @@ func create_gui_configuration() -> Control:
 				input.name = config_key
 				input.pressed = default_value
 				input.connect("toggled", self, "_config_changed", [config_key])
+			TYPE_OBJECT:
+				if not (default_value as Object).has_method("get_config_wrapper"):
+					printerr("Trying to make gui_element of object without config_wrapper: ", default_value, ":", (default_value as Object).get_class())
+					break
+				
 			_:
 				printerr("Trying to make gui_element of unhandled type: ", default_value, ":", typeof(default_value))
 		if input == null:

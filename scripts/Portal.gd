@@ -1,6 +1,6 @@
 extends Static
 
-class_name Portal
+class_name Portal, "res://Assets/sprites/portal.png"
 
 signal entity_spawned
 
