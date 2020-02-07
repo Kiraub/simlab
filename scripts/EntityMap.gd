@@ -56,13 +56,14 @@ static func collect_child_entities(node : Node) -> Array:
 
 """ Simulation step """
 
-func step_entities(step_count : float) -> void:
+func step_by(step_count : float) -> void:
 	clear_caches()
+	var actors = []
 	for entity in entities:
 		if not entity is Actor:
 			continue
 		var actor : Actor = (entity as Actor)
-		actor.step_by(step_count)
+		actors.append(actor)
 		if provide_random_targets:
 			if actor.position == actor.get_final_target():
 				highlighted_entities = [actor]
@@ -71,6 +72,8 @@ func step_entities(step_count : float) -> void:
 				for actor in highlighted_entities:
 					actor.set_highlighted(false)
 				highlighted_entities.clear()
+	for actor in actors:
+		actor.step_by(step_count)
 
 """ Setters / Getters """
 

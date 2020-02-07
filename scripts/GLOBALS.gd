@@ -24,7 +24,7 @@ static func expand(path : Array, expansion_factor : float = 1.0) -> Array:
 		Vector2.RIGHT * expansion_factor
 	]
 	if not path is Array or len(path) == 0:
-		continue
+		return new_paths
 	var new_path_base : Array = path.duplicate()
 	var last : Vector2 = new_path_base.back()
 	for expansion in expansions:

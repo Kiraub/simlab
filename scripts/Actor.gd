@@ -22,9 +22,9 @@ func _init(i_name : String = 'Actor').(GLOBALS.Z_INDICIES.ACTIVE, i_name) -> voi
 
 """ Simulation step """
 
-func step_by(amount : float) -> void:
+func step_by(step_count : float) -> void:
 	if len(targets) > 0:
-		var travel_distance := get_speed() * amount
+		var travel_distance := get_speed() * step_count
 		move_towards_target(travel_distance)
 
 """ Setters / Getters """

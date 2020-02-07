@@ -49,6 +49,11 @@ func _ready() -> void:
 		ConfigWrapper.CONFIG_FIELDS[1]: process_speed,
 		ConfigWrapper.CONFIG_FIELDS[2]: "process_speed_changed"
 	})
+	config.add_config_entry("entity_map",  {
+		ConfigWrapper.CONFIG_FIELDS[0]: "Entity Map",
+		ConfigWrapper.CONFIG_FIELDS[1]: entity_map,
+		ConfigWrapper.CONFIG_FIELDS[2]: "process_speed_changed"
+	})
 	config.connect("title_changed", self, "_on_title_changed")
 	config.connect("partial_steps_changed", self, "_on_partial_steps_changed")
 	config.connect("random_targets_changed", self, "_on_random_targets_changed")
@@ -68,7 +73,7 @@ func _ready() -> void:
 func _process(_delta : float) -> void:
 	if paused:
 		return
-	step(process_speed)
+	step_by(process_speed)
 
 """ Setters / Getters """
 
@@ -99,7 +104,7 @@ func get_config_wrapper() -> ConfigWrapper:
 
 """ Methods """
 
-func step(amount : float = 1.0) -> void:
+func step_by(amount : float = 1.0) -> void:
 	var steps_taken = 0.0
 	_step_acc += amount
 	if partial_steps:
@@ -109,7 +114,7 @@ func step(amount : float = 1.0) -> void:
 		steps_taken = floor(_step_acc)
 		_step_acc -= steps_taken
 	if steps_taken > 0.0:
-		entity_map.step_entities(steps_taken)
+		entity_map.step_by(steps_taken)
 		emit_signal("simulation_stepped", steps_taken)
 
 func handle_lmb_click(event : InputEventMouseButton) -> void:
@@ -166,7 +171,7 @@ func _on_PlayPauseBtn_pressed(play : bool) -> void:
 
 func _on_StepBtn_pressed():
 	if paused:
-		step()
+		step_by()
 
 func _on_DeleteBtn_pressed():
 	self.queue_free()
