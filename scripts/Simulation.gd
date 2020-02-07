@@ -28,6 +28,15 @@ onready var titleLabel	: Label		= $VSplitContainer/HSplitContainer/Title
 
 func _ready() -> void:
 	titleLabel.text = title
+	
+	var bound = false
+	for child in viewport.get_children():
+		if child is EntityMap:
+			entity_map = child
+			bound = true
+			break
+	assert(bound, "No EntityMap found under Viewport::%s" % viewport)
+	
 	config = ConfigWrapper.new("Simulation")
 	config.add_config_entry("title", {
 		ConfigWrapper.CONFIG_FIELDS[0]: "Title",
@@ -52,21 +61,14 @@ func _ready() -> void:
 	config.add_config_entry("entity_map",  {
 		ConfigWrapper.CONFIG_FIELDS[0]: "Entity Map",
 		ConfigWrapper.CONFIG_FIELDS[1]: entity_map,
-		ConfigWrapper.CONFIG_FIELDS[2]: "process_speed_changed"
+		ConfigWrapper.CONFIG_FIELDS[2]: "entity_map_changed"
 	})
 	config.connect("title_changed", self, "_on_title_changed")
 	config.connect("partial_steps_changed", self, "_on_partial_steps_changed")
 	config.connect("random_targets_changed", self, "_on_random_targets_changed")
 	config.connect("process_speed_changed", self, "_on_process_speed_changed")
+	config.connect("entity_map_changed", self, "_on_entity_map_changed")
 	
-	var bound = false
-	for child in viewport.get_children():
-		if child is EntityMap:
-			entity_map = child
-			bound = true
-			break
-	if not bound:
-		print_debug("No EntityMap found under Viewport::", viewport)
 
 """ Godot process """
 
@@ -162,6 +164,9 @@ func _on_random_targets_changed(_old_value : bool, new_value : bool) -> void:
 
 func _on_process_speed_changed(_old_value : float, new_value : float) -> void:
 	set_process_speed(new_value)
+
+func _on_entity_map_changed() -> void:
+	pass
 
 func _on_ConfigBtn_pressed() -> void:
 	emit_signal("configuration_opened", config)

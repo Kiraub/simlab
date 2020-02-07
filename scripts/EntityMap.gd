@@ -12,16 +12,16 @@ enum E_Tiles {
 
 """ Variables """
 
-var rng = RandomNumberGenerator.new()
 export var provide_random_targets	: bool = false
 export var deep_has_over_traversal	: bool = false
 
-var entities				: Array
-var highlighted_entities	: Array
-
-var cache_cells_by_id		: Dictionary = {}
-var cache_entities_by_flags	: Dictionary = {}
-var cache_entities_by_map	: Dictionary = {}
+var config					: ConfigWrapper			setget , get_config_wrapper
+var rng 					: RandomNumberGenerator
+var entities				: = []
+var highlighted_entities	: = []
+var cache_cells_by_id		: = {}
+var cache_entities_by_flags	: = {}
+var cache_entities_by_map	: = {}
 
 """ Initialization """
 
@@ -29,6 +29,16 @@ var cache_entities_by_map	: Dictionary = {}
 func _init():
 	self.name = "EntityMap"
 	z_index = GLOBALS.Z_INDICIES.BACKGROUND
+	
+	config = ConfigWrapper.new("EntityMap")
+	config.add_config_entry("deep_has_over_traversal", {
+		ConfigWrapper.CONFIG_FIELDS[0]: "Deep has over traversal",
+		ConfigWrapper.CONFIG_FIELDS[1]: deep_has_over_traversal,
+		ConfigWrapper.CONFIG_FIELDS[2]: "deep_has_over_traversal_changed"
+	})
+	config.connect("deep_has_over_traversal_changed", self, "_on_deep_has_over_traversal_changed")
+	
+	rng = RandomNumberGenerator.new()
 	rng.randomize()
 	var h = hash(rng.get_seed())
 	rng.set_seed(h)
@@ -36,7 +46,6 @@ func _init():
 #[override]
 func _ready():
 	add_entities(collect_child_entities(self))
-	#add_entities(collect_static_entities(self))
 	center_entities()
 
 """ Static methods """
@@ -76,6 +85,9 @@ func step_by(step_count : float) -> void:
 		actor.step_by(step_count)
 
 """ Setters / Getters """
+
+func get_config_wrapper() -> ConfigWrapper:
+	return config
 
 """ Methods """
 
@@ -234,6 +246,10 @@ func deep_has(array_of_arrays : Array, elem) -> bool:
 	return false
 
 """ Events """
+
+func _on_deep_has_over_traversal_changed(_old_value : bool, new_value : bool) -> void:
+	deep_has_over_traversal = new_value
+	config.set_entry_value("deep_has_over_traversal", new_value)
 
 func _on_path_exhausted(path : Array, search_strategy : int = 0) -> void:
 	pass

@@ -25,7 +25,7 @@ func _init(i_wrapped_class_name : String) -> void:
 
 func set_entry_value(key : String, new_value):
 	if configurable.has(key):
-		assert(typeof(configurable[key].value) == typeof(new_value), "Trying to assign value of different type than configuration entry.")
+		assert(typeof(configurable[key].value) == typeof(new_value), "Trying to assign value of different type %s than configuration entry %s." % [new_value, configurable[key].value])
 		configurable[key].value = new_value
 func get_entry_value_or_default(key : String, default = null):
 	if configurable.has(key):
@@ -44,12 +44,25 @@ func add_config_entry(key : String, entry : Dictionary) -> void:
 
 func create_gui_configuration() -> Control:
 	var gui_element			: = VSplitContainer.new()
-	var wrapped_class_label	: = Label.new()
-	var scroll				: = ScrollContainer.new()
-	var config_container	: = GridContainer.new()
+	#var wrapped_class_label	: = Label.new()
+	#var scroll				: = ScrollContainer.new()
+	var all_container		: = VBoxContainer.new()
+	var self_container		: = GridContainer.new()
 	
-	wrapped_class_label.text = wrapped_class_name
-	config_container.columns = 2
+	gui_element.dragger_visibility = SplitContainer.DRAGGER_HIDDEN
+	gui_element.name = "GUI of %s's configuration" % wrapped_class_name
+	#wrapped_class_label.text = wrapped_class_name
+	#wrapped_class_label.name = "Label for wrapped config of %s" % wrapped_class_name
+	#all_container.columns = 1
+	all_container.name = "All configurations"
+	self_container.columns = 2
+	self_container.name = "Own configurations"
+	
+	all_container.add_child(self_container)
+	#scroll.add_child(all_container)
+	#gui_element.add_child(wrapped_class_label)
+	#gui_element.add_child(scroll)
+	gui_element.add_child(all_container)##
 	
 	for config_key in configurable:
 		var label	:			= Label.new()
@@ -57,16 +70,19 @@ func create_gui_configuration() -> Control:
 		var input	: Control	= create_gui_input_by_value(config_key, config_value)
 		
 		label.text = String(configurable[config_key].label_text)
+		label.name = "Label for input of %s" % String(config_key)
 		if input == null:
 			input = Label.new()
 			input.text = "Handled type %s not yet implemented." % typeof(config_value)
 		input.name = String(config_key)
-		config_container.add_child(label)
-		config_container.add_child(input)
-	scroll.add_child(config_container)
-	gui_element.add_child(wrapped_class_label)
-	gui_element.add_child(scroll)
-	gui_element.dragger_visibility = SplitContainer.DRAGGER_HIDDEN
+		if not input is Container:
+			self_container.add_child(label)
+			self_container.add_child(input)
+		else:
+			label.text += " (nested)"
+			input.name += " (nested)"
+			all_container.add_child(label)
+			all_container.add_child(input)
 	return gui_element
 
 func create_gui_input_by_value(key : String, value) -> Control:
@@ -99,24 +115,30 @@ func create_gui_input_by_value(key : String, value) -> Control:
 			(input as CheckButton).pressed = bool(value)
 			input.connect("toggled", self, "_on_config_changed", [key])
 		TYPE_OBJECT:
-			assert("get_config_wrapper" in value, "Config entry K:V %s:%s has no get_config_wrapper method!" % [key, value])
-			input = (value.get_config_wrapper() as ConfigWrapper).create_gui_configuration()
-			# TODO connect nested_config_changed signal
+			assert((value as Object).has_method("get_config_wrapper"), "Config entry K:V %s:%s has no get_config_wrapper method!" % [key, value])
+			var nested_config : ConfigWrapper = value.get_config_wrapper()
+			input = nested_config.create_gui_configuration()
+			nested_config.connect("nested_config_changed", self, "_on_nested_config_changed", [key])
 	return input
 
 
 """ Event Listeners """
 
-func _on_config_changed(event_value, key : String):
+func _on_config_changed(event_value, key : String) -> void:
 	var old_value	= configurable[key].value
 	var signal_name	= configurable[key].signal_name
 	
 	set_entry_value(key, event_value)
 	assert(has_user_signal(signal_name), "%s is trying to emit nonexistent signal: %s" % [self, signal_name])
 	emit_signal(configurable[key].signal_name, old_value, event_value)
+	emit_signal("nested_config_changed")
 
-
-
+func _on_nested_config_changed(key : String) -> void:
+	var signal_name	= configurable[key].signal_name
+	
+	assert(has_user_signal(signal_name), "%s is trying to emit nonexistent signal: %s" % [self, signal_name])
+	emit_signal(configurable[key].signal_name)
+	emit_signal("nested_config_changed")
 
 
 
