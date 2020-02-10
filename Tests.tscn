@@ -15,6 +15,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 theme = ExtResource( 1 )
 script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="TabContainer" type="TabContainer" parent="."]
 anchor_right = 1.0
@@ -32,110 +35,409 @@ margin_top = 46.0
 margin_right = -5.0
 margin_bottom = -5.0
 
-[node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/Tabs"]
+[node name="all container" type="VBoxContainer" parent="TabContainer/Tabs"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-scroll_horizontal_enabled = false
-scroll_vertical_enabled = false
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HSplitContainer" type="HSplitContainer" parent="TabContainer/Tabs/ScrollContainer"]
-margin_right = 676.0
-margin_bottom = 263.0
-
-[node name="Label" type="Label" parent="TabContainer/Tabs/ScrollContainer/HSplitContainer"]
-margin_top = 112.0
-margin_right = 148.0
-margin_bottom = 151.0
+[node name="wrapped class label" type="Label" parent="TabContainer/Tabs/all container"]
+margin_right = 1590.0
+margin_bottom = 39.0
 text = "helloWorld"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Tabs/ScrollContainer/HSplitContainer"]
-margin_left = 156.0
-margin_right = 676.0
-margin_bottom = 263.0
+[node name="HSeparator" type="HSeparator" parent="TabContainer/Tabs/all container"]
+margin_top = 43.0
+margin_right = 1590.0
+margin_bottom = 51.0
 
-[node name="HSplitContainer" type="HSplitContainer" parent="TabContainer/Tabs/ScrollContainer/HSplitContainer/VBoxContainer"]
-margin_right = 520.0
-margin_bottom = 39.0
+[node name="HSplitContainer" type="HSplitContainer" parent="TabContainer/Tabs/all container"]
+margin_top = 55.0
+margin_right = 1590.0
+margin_bottom = 94.0
 
-[node name="Label" type="Label" parent="TabContainer/Tabs/ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer"]
+[node name="Label" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer"]
 margin_right = 148.0
 margin_bottom = 39.0
 text = "asdafafadf"
 
-[node name="SpinBox" type="SpinBox" parent="TabContainer/Tabs/ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer"]
+[node name="SpinBox" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer"]
 margin_left = 156.0
-margin_right = 520.0
+margin_right = 1590.0
 margin_bottom = 39.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HSplitContainer2" type="HSplitContainer" parent="TabContainer/Tabs/ScrollContainer/HSplitContainer/VBoxContainer"]
-margin_top = 43.0
-margin_right = 520.0
-margin_bottom = 82.0
+[node name="HSplitContainer2" type="HSplitContainer" parent="TabContainer/Tabs/all container"]
+margin_top = 98.0
+margin_right = 1590.0
+margin_bottom = 137.0
 
-[node name="Label2" type="Label" parent="TabContainer/Tabs/ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer2"]
+[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer2"]
 margin_right = 148.0
 margin_bottom = 39.0
 text = "asdafafadf"
 
-[node name="HSlider" type="HSlider" parent="TabContainer/Tabs/ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer2"]
+[node name="HSlider" type="HSlider" parent="TabContainer/Tabs/all container/HSplitContainer2"]
 margin_left = 156.0
-margin_right = 520.0
+margin_right = 1590.0
 margin_bottom = 16.0
 value = 5.0
 
-[node name="HScrollBar" type="HScrollBar" parent="TabContainer/Tabs/ScrollContainer/HSplitContainer/VBoxContainer"]
-margin_top = 86.0
-margin_right = 520.0
-margin_bottom = 98.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="HSplitContainer3" type="HSplitContainer" parent="TabContainer/Tabs/all container"]
+margin_top = 141.0
+margin_right = 1590.0
+margin_bottom = 180.0
 
-[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/ScrollContainer/HSplitContainer/VBoxContainer"]
-margin_top = 102.0
-margin_right = 520.0
-margin_bottom = 141.0
+[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer3"]
+margin_right = 148.0
+margin_bottom = 39.0
+text = "asdafafadf"
+
+[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer3"]
+margin_left = 156.0
+margin_right = 1590.0
+margin_bottom = 39.0
 step = 0.001
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Tabs/ScrollContainer/HSplitContainer/VBoxContainer"]
-margin_top = 145.0
-margin_right = 520.0
-margin_bottom = 263.0
+[node name="HSplitContainer4" type="HSplitContainer" parent="TabContainer/Tabs/all container"]
+margin_top = 184.0
+margin_right = 1590.0
+margin_bottom = 364.0
+dragger_visibility = 1
 
-[node name="SpinBox4" type="SpinBox" parent="TabContainer/Tabs/ScrollContainer/HSplitContainer/VBoxContainer/VBoxContainer"]
-margin_right = 520.0
+[node name="VSeparator" type="VSeparator" parent="TabContainer/Tabs/all container/HSplitContainer4"]
+margin_right = 8.0
+margin_bottom = 180.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Tabs/all container/HSplitContainer4"]
+margin_left = 16.0
+margin_right = 1590.0
+margin_bottom = 180.0
+
+[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer"]
+margin_right = 1574.0
 margin_bottom = 39.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
+text = "title of thing"
 
-[node name="HSlider2" type="HSlider" parent="TabContainer/Tabs/ScrollContainer/HSplitContainer/VBoxContainer/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer"]
 margin_top = 43.0
-margin_right = 520.0
-margin_bottom = 59.0
-value = 5.0
+margin_right = 1574.0
+margin_bottom = 51.0
 
-[node name="HScrollBar2" type="HScrollBar" parent="TabContainer/Tabs/ScrollContainer/HSplitContainer/VBoxContainer/VBoxContainer"]
-margin_top = 63.0
-margin_right = 520.0
-margin_bottom = 75.0
+[node name="HSplitContainer5" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer"]
+margin_top = 55.0
+margin_right = 1574.0
+margin_bottom = 94.0
+
+[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer/HSplitContainer5"]
+margin_right = 148.0
+margin_bottom = 39.0
+text = "asdafafadf"
+
+[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer/HSplitContainer5"]
+margin_left = 156.0
+margin_right = 1574.0
+margin_bottom = 39.0
+step = 0.001
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="SpinBox3" type="SpinBox" parent="TabContainer/Tabs/ScrollContainer/HSplitContainer/VBoxContainer/VBoxContainer"]
-margin_top = 79.0
-margin_right = 520.0
-margin_bottom = 118.0
+[node name="HSplitContainer6" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer"]
+margin_top = 98.0
+margin_right = 1574.0
+margin_bottom = 137.0
+
+[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer/HSplitContainer6"]
+margin_right = 148.0
+margin_bottom = 39.0
+text = "asdafafadf"
+
+[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer/HSplitContainer6"]
+margin_left = 156.0
+margin_right = 1574.0
+margin_bottom = 39.0
+step = 0.001
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSplitContainer7" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer"]
+margin_left = 928.0
+margin_top = 141.0
+margin_right = 1574.0
+margin_bottom = 180.0
+size_flags_horizontal = 8
+size_flags_vertical = 0
+
+[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer/HSplitContainer7"]
+margin_right = 274.0
+margin_bottom = 39.0
+text = "asdafafadfgnfhngmgm"
+
+[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer/HSplitContainer7"]
+margin_left = 282.0
+margin_right = 646.0
+margin_bottom = 39.0
+step = 0.001
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSplitContainer5" type="HSplitContainer" parent="TabContainer/Tabs/all container"]
+margin_top = 368.0
+margin_right = 1590.0
+margin_bottom = 548.0
+dragger_visibility = 1
+
+[node name="VSeparator" type="VSeparator" parent="TabContainer/Tabs/all container/HSplitContainer5"]
+margin_right = 8.0
+margin_bottom = 180.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Tabs/all container/HSplitContainer5"]
+margin_left = 16.0
+margin_right = 1590.0
+margin_bottom = 180.0
+
+[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer"]
+margin_right = 1574.0
+margin_bottom = 39.0
+text = "title of thing"
+
+[node name="HSeparator" type="HSeparator" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer"]
+margin_top = 43.0
+margin_right = 1574.0
+margin_bottom = 51.0
+
+[node name="HSplitContainer5" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer"]
+margin_top = 55.0
+margin_right = 1574.0
+margin_bottom = 94.0
+
+[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer/HSplitContainer5"]
+margin_right = 148.0
+margin_bottom = 39.0
+text = "asdafafadf"
+
+[node name="HSplitContainer" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer/HSplitContainer5"]
+margin_left = 156.0
+margin_right = 1574.0
+margin_bottom = 39.0
+dragger_visibility = 1
+
+[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer/HSplitContainer5/HSplitContainer"]
+margin_left = 1054.0
+margin_right = 1418.0
+margin_bottom = 39.0
+size_flags_horizontal = 12
+step = 0.001
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSplitContainer6" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer"]
+margin_top = 98.0
+margin_right = 1574.0
+margin_bottom = 137.0
+
+[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer/HSplitContainer6"]
+margin_right = 148.0
+margin_bottom = 39.0
+text = "asdafafadf"
+
+[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer/HSplitContainer6"]
+margin_left = 156.0
+margin_right = 1574.0
+margin_bottom = 39.0
+step = 0.001
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSplitContainer7" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer"]
+margin_top = 141.0
+margin_right = 1574.0
+margin_bottom = 180.0
+
+[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer/HSplitContainer7"]
+margin_right = 148.0
+margin_bottom = 39.0
+text = "asdafafadf"
+
+[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer/HSplitContainer7"]
+margin_left = 156.0
+margin_right = 1574.0
+margin_bottom = 39.0
+step = 0.001
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSplitContainer6" type="HSplitContainer" parent="TabContainer/Tabs/all container"]
+margin_top = 552.0
+margin_right = 1590.0
+margin_bottom = 732.0
+dragger_visibility = 1
+
+[node name="VSeparator" type="VSeparator" parent="TabContainer/Tabs/all container/HSplitContainer6"]
+margin_right = 8.0
+margin_bottom = 180.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Tabs/all container/HSplitContainer6"]
+margin_left = 16.0
+margin_right = 1590.0
+margin_bottom = 180.0
+
+[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer"]
+margin_right = 1574.0
+margin_bottom = 39.0
+text = "title of thing"
+
+[node name="HSeparator" type="HSeparator" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer"]
+margin_top = 43.0
+margin_right = 1574.0
+margin_bottom = 51.0
+
+[node name="HSplitContainer5" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer"]
+margin_top = 55.0
+margin_right = 1574.0
+margin_bottom = 94.0
+
+[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer/HSplitContainer5"]
+margin_right = 148.0
+margin_bottom = 39.0
+text = "asdafafadf"
+
+[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer/HSplitContainer5"]
+margin_left = 156.0
+margin_right = 1574.0
+margin_bottom = 39.0
+step = 0.001
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSplitContainer6" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer"]
+margin_top = 98.0
+margin_right = 1574.0
+margin_bottom = 137.0
+
+[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer/HSplitContainer6"]
+margin_right = 148.0
+margin_bottom = 39.0
+text = "asdafafadf"
+
+[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer/HSplitContainer6"]
+margin_left = 156.0
+margin_right = 1574.0
+margin_bottom = 39.0
+step = 0.001
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSplitContainer7" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer"]
+margin_top = 141.0
+margin_right = 1574.0
+margin_bottom = 180.0
+
+[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer/HSplitContainer7"]
+margin_right = 148.0
+margin_bottom = 39.0
+text = "asdafafadf"
+
+[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer/HSplitContainer7"]
+margin_left = 156.0
+margin_right = 1574.0
+margin_bottom = 39.0
+step = 0.001
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSplitContainer7" type="HSplitContainer" parent="TabContainer/Tabs/all container"]
+margin_top = 736.0
+margin_right = 1590.0
+margin_bottom = 916.0
+dragger_visibility = 1
+
+[node name="VSeparator" type="VSeparator" parent="TabContainer/Tabs/all container/HSplitContainer7"]
+margin_right = 8.0
+margin_bottom = 180.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Tabs/all container/HSplitContainer7"]
+margin_left = 16.0
+margin_right = 1590.0
+margin_bottom = 180.0
+
+[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer"]
+margin_right = 1574.0
+margin_bottom = 39.0
+text = "title of thing"
+
+[node name="HSeparator" type="HSeparator" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer"]
+margin_top = 43.0
+margin_right = 1574.0
+margin_bottom = 51.0
+
+[node name="HSplitContainer5" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer"]
+margin_top = 55.0
+margin_right = 1574.0
+margin_bottom = 94.0
+
+[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer/HSplitContainer5"]
+margin_right = 148.0
+margin_bottom = 39.0
+text = "asdafafadf"
+
+[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer/HSplitContainer5"]
+margin_left = 156.0
+margin_right = 1574.0
+margin_bottom = 39.0
+step = 0.001
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSplitContainer6" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer"]
+margin_top = 98.0
+margin_right = 1574.0
+margin_bottom = 137.0
+
+[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer/HSplitContainer6"]
+margin_right = 148.0
+margin_bottom = 39.0
+text = "asdafafadf"
+
+[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer/HSplitContainer6"]
+margin_left = 156.0
+margin_right = 1574.0
+margin_bottom = 39.0
+step = 0.001
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSplitContainer7" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer"]
+margin_top = 141.0
+margin_right = 1574.0
+margin_bottom = 180.0
+
+[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer/HSplitContainer7"]
+margin_right = 148.0
+margin_bottom = 39.0
+text = "asdafafadf"
+
+[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer/HSplitContainer7"]
+margin_left = 156.0
+margin_right = 1574.0
+margin_bottom = 39.0
 step = 0.001
 __meta__ = {
 "_edit_use_anchors_": false
