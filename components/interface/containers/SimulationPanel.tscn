@@ -55,26 +55,33 @@ theme = ExtResource( 1 )
 alignment = 2
 
 [node name="ConfigBtn" type="Button" parent="VSplitContainer/HSplitContainer/HBoxContainer"]
-margin_left = 780.0
-margin_right = 896.0
+margin_left = 632.0
+margin_right = 748.0
 margin_bottom = 39.0
 theme = ExtResource( 1 )
 text = "Config"
 icon = ExtResource( 4 )
 
 [node name="PlayBtn" type="Button" parent="VSplitContainer/HSplitContainer/HBoxContainer"]
-margin_left = 900.0
-margin_right = 988.0
+margin_left = 752.0
+margin_right = 840.0
 margin_bottom = 39.0
 text = "Play"
 icon = ExtResource( 7 )
 
 [node name="PauseBtn" type="Button" parent="VSplitContainer/HSplitContainer/HBoxContainer"]
-margin_left = 992.0
-margin_right = 1094.0
+margin_left = 844.0
+margin_right = 946.0
 margin_bottom = 39.0
 text = "Pause"
 icon = ExtResource( 8 )
+
+[node name="StepOneBtn" type="Button" parent="VSplitContainer/HSplitContainer/HBoxContainer"]
+margin_left = 950.0
+margin_right = 1094.0
+margin_bottom = 39.0
+text = "Step one"
+icon = ExtResource( 6 )
 
 [node name="StepBtn" type="Button" parent="VSplitContainer/HSplitContainer/HBoxContainer"]
 margin_left = 1098.0
@@ -125,6 +132,7 @@ autostart = true
 [connection signal="pressed" from="VSplitContainer/HSplitContainer/HBoxContainer/ConfigBtn" to="." method="_on_ConfigBtn_pressed"]
 [connection signal="pressed" from="VSplitContainer/HSplitContainer/HBoxContainer/PlayBtn" to="." method="_on_PlayPauseBtn_pressed" binds= [ true ]]
 [connection signal="pressed" from="VSplitContainer/HSplitContainer/HBoxContainer/PauseBtn" to="." method="_on_PlayPauseBtn_pressed" binds= [ false ]]
+[connection signal="pressed" from="VSplitContainer/HSplitContainer/HBoxContainer/StepOneBtn" to="." method="_on_StepBtn_pressed" binds= [ 1.0 ]]
 [connection signal="pressed" from="VSplitContainer/HSplitContainer/HBoxContainer/StepBtn" to="." method="_on_StepBtn_pressed"]
 [connection signal="pressed" from="VSplitContainer/HSplitContainer/HBoxContainer/DeleteBtn" to="." method="_on_DeleteBtn_pressed"]
 [connection signal="timeout" from="VSplitContainer/ViewportContainer/Timer" to="VSplitContainer/ViewportContainer" method="_on_Timer_timeout"]
