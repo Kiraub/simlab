@@ -13,22 +13,23 @@ enum SEARCH_STRATEGIES {
 	DFS			= 1
 }
 
+""" Initialization """
+
+""" Simulation step """
+
+""" Godot process """
+
 """ Static Methods """
 
-static func expand(path : Array, expansion_factor : float = 1.0) -> Array:
-	var new_paths = []
-	var expansions = [
-		Vector2.UP * expansion_factor,
-		Vector2.LEFT * expansion_factor,
-		Vector2.DOWN * expansion_factor,
-		Vector2.RIGHT * expansion_factor
-	]
-	if not path is Array or len(path) == 0:
-		return new_paths
-	var new_path_base : Array = path.duplicate()
-	var last : Vector2 = new_path_base.back()
-	for expansion in expansions:
-		var new_path : Array = new_path_base.duplicate()
-		new_path.append(last + expansion)
-		new_paths.append(new_path)
-	return new_paths
+""" Setters / Getters """
+
+""" Methods """
+
+""" Event Listeners """
+
+
+
+
+
+
+
