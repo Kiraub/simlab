@@ -2,6 +2,8 @@ extends Entity
 
 class_name Actor
 
+signal request_neighbours
+
 """ Constants """
 
 const DEFAULT_SPEED	: float	= 1.0
@@ -11,7 +13,8 @@ const DEFAULT_SPEED	: float	= 1.0
 export var speed : float setget set_speed, get_speed
 export(GLOBALS.SEARCH_STRATEGIES) var search_strategy
 
-var targets : Array setget set_targets, get_targets
+var targets		: Array setget set_targets, get_targets
+var neighbours	: Array setget set_neighbours, get_neighbours
 
 """ Initialization """
 
@@ -22,9 +25,9 @@ func _init(i_name : String = 'Actor').(GLOBALS.Z_INDICIES.ACTIVE, i_name) -> voi
 
 """ Simulation step """
 
-func step_by(step_count : float) -> void:
-	if len(targets) > 0:
-		var travel_distance := get_speed() * step_count
+func step_by(amount : float) -> void:
+	if len(targets) > 0 and amount > 0:
+		var travel_distance := get_speed() * amount
 		move_towards_target(travel_distance)
 
 """ Setters / Getters """
@@ -41,6 +44,15 @@ func set_targets(new_targets : Array) -> void:
 	targets = new_targets.duplicate(true)
 func get_targets() -> Array:
 	return targets.duplicate(true)
+
+func set_neighbours(new_value : Array) -> void:
+	for neighbour in new_value:
+		assert(neighbour is Entity, "Trying to set non Entity neighbour %s" % neighbour)
+	neighbours = new_value
+func get_neighbours() -> Array:
+	var volatile = neighbours.duplicate()
+	neighbours = []
+	return volatile
 
 """ Methods """
 
@@ -93,8 +105,10 @@ func move_towards_target(travel_distance : float) -> void:
 		remove_target(0)
 		move_towards_target(travel_distance)
 
+func request_neighbour_entities() -> void:
+	emit_signal("request_neighbours", self)
 
-
+""" Events """
 
 
 
