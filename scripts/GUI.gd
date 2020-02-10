@@ -20,10 +20,12 @@ func _ready() -> void:
 func clear_inspector() -> void:
 	for child in inspector.get_children():
 		inspector.remove_child(child)
+		child.queue_free()
 
 func update_inspector(gui_element : Control) -> void:
 	clear_inspector()
 	inspector.add_child(gui_element)
+	gui_element.owner = inspector
 	gui_element.set_anchors_and_margins_preset(Control.PRESET_WIDE, Control.PRESET_MODE_KEEP_HEIGHT)
 
 """ Events """

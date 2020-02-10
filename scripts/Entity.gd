@@ -16,19 +16,24 @@ enum E_EntityFlags {
 
 export (E_EntityFlags, FLAGS) var EntityFlags
 
+var config : ConfigWrapper
+
 """ Initialization """
 
 #[override]
-func _init(entity_zindex : int, entity_name : String = 'Entity') -> void:
+func _init(entity_z_index : int, entity_name : String = 'Entity') -> void:
 	set_name(entity_name)
-	z_index = entity_zindex
+	z_index = entity_z_index
 
 #[override]
 func _ready() -> void:
+	emit_signal("renamed", name)
 	# make child nodes use the entities shader
 	for child in get_children():
 		if child is CanvasItem:
 			child.use_parent_material = true
+	
+	config = ConfigWrapper.new("Entity")
 
 """ Setters / Getters """
 

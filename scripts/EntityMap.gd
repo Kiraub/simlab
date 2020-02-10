@@ -32,9 +32,9 @@ func _init():
 	
 	config = ConfigWrapper.new("EntityMap")
 	config.add_config_entry("deep_has_over_traversal", {
-		ConfigWrapper.CONFIG_FIELDS[0]: "Deep has over traversal",
-		ConfigWrapper.CONFIG_FIELDS[1]: deep_has_over_traversal,
-		ConfigWrapper.CONFIG_FIELDS[2]: "deep_has_over_traversal_changed"
+		ConfigWrapper.FIELDS.LABEL_TEXT: "Deep has over traversal",
+		ConfigWrapper.FIELDS.DEFAULT_VALUE: deep_has_over_traversal,
+		ConfigWrapper.FIELDS.SIGNAL_NAME: "deep_has_over_traversal_changed"
 	})
 	config.connect("deep_has_over_traversal_changed", self, "_on_deep_has_over_traversal_changed")
 	
@@ -65,7 +65,7 @@ static func collect_child_entities(node : Node) -> Array:
 
 """ Simulation step """
 
-func step_by(step_count : float) -> void:
+func step_by(amount : float) -> void:
 	clear_caches()
 	var actors = []
 	for entity in entities:
@@ -82,7 +82,7 @@ func step_by(step_count : float) -> void:
 					actor.set_highlighted(false)
 				highlighted_entities.clear()
 	for actor in actors:
-		actor.step_by(step_count)
+		actor.step_by(amount)
 
 """ Setters / Getters """
 
@@ -105,6 +105,16 @@ func clear_caches() -> void:
 func add_entity(entity : Entity) -> void:
 	if not entities.has(entity):
 		entities.append(entity)
+		entity.connect("tree_exiting", self, "_on_entity_exiting_tree", [entity])
+		if entity.has_method(ConfigWrapper.GETTER_METHOD):
+			config.add_config_entry(entity.name, {
+				ConfigWrapper.FIELDS.LABEL_TEXT: entity.name,
+				ConfigWrapper.FIELDS.DEFAULT_VALUE: entity,
+				ConfigWrapper.FIELDS.SIGNAL_NAME: "entity_name_changed"
+			})
+			#config.connect("entity_name_changed", self, "_on_entity_name_changed")
+		if entity is Actor:
+			(entity as Actor).connect("request_neighbours", self, "_on_request_neighbours")
 func add_entities(new_entities : Array) -> void:
 	for entity in new_entities:
 		if entity is Entity:
@@ -251,9 +261,6 @@ func _on_deep_has_over_traversal_changed(_old_value : bool, new_value : bool) ->
 	deep_has_over_traversal = new_value
 	config.set_entry_value("deep_has_over_traversal", new_value)
 
-func _on_path_exhausted(path : Array, search_strategy : int = 0) -> void:
-	pass
-
 func _on_entity_spawned(spawn_scene : PackedScene, initial_position : Vector2) -> void:
 	if not spawn_scene is PackedScene:
 		return
@@ -264,3 +271,12 @@ func _on_entity_spawned(spawn_scene : PackedScene, initial_position : Vector2) -
 	add_child(entity)
 	entity.owner = self
 	add_entity(entity)
+
+func _on_entity_exiting_tree(entity : Entity) -> void:
+	assert(entity in entities, "Received 'tree_exiting' signal from unknown entity: %s" % entity)
+	entities.erase(entity)
+
+func _on_request_neighbours(actor : Actor) -> void:
+	actor.set_neighbours([])
+
+
