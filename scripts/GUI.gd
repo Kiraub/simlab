@@ -3,8 +3,8 @@ extends Control
 
 """ Variables """
 
-onready var simulation_list : VBoxContainer = $VSplitContainer/HSplitContainer/LeftPanel/TabContainer/Simulations/ScrollContainer/SimulationList
-onready var inspector : Tabs = $VSplitContainer/HSplitContainer/RightPanel/TabContainer/Inspector
+onready var simulation_list		: VBoxContainer	= $VSplitContainer/HSplitContainer/LeftPanel/ScrollContainer/SimulationList
+onready var inspector_container	: Control		= $VSplitContainer/HSplitContainer/RightPanel/Background/InspectorContainer
 
 """ Initialization """
 
@@ -18,15 +18,16 @@ func _ready() -> void:
 """ Methods """
 
 func clear_inspector() -> void:
-	for child in inspector.get_children():
-		inspector.remove_child(child)
+	for child in inspector_container.get_children():
+		if not child is Container:
+			continue
+		inspector_container.remove_child(child)
 		child.queue_free()
 
 func update_inspector(gui_element : Control) -> void:
 	clear_inspector()
-	inspector.add_child(gui_element)
-	gui_element.owner = inspector
-	gui_element.set_anchors_and_margins_preset(Control.PRESET_WIDE, Control.PRESET_MODE_KEEP_HEIGHT)
+	inspector_container.add_child(gui_element)
+	gui_element.owner = inspector_container
 
 """ Events """
 

@@ -53,37 +53,32 @@ func add_config_entry(key : String, entry : Dictionary) -> void:
 func create_gui_configuration() -> Control:
 	var gui_element			: = VBoxContainer.new()
 	var wrapped_class_label	: = Label.new()
-	var wrapped_class_pad	: = HSeparator.new()
-	#var scroll				: = ScrollContainer.new()
+	var wrapped_class_hpad	: = HSeparator.new()
 	var all_container		: = VBoxContainer.new()
 	var all_pad				: = HSeparator.new()
-	#var self_container		: = GridContainer.new()
+	var self_container		: = GridContainer.new()
 	
-	#gui_element.dragger_visibility = SplitContainer.DRAGGER_HIDDEN
-	gui_element.name = "GUI of %s's configuration" % wrapped_class_name
+	gui_element.name = "%s's configuration" % wrapped_class_name
 	wrapped_class_label.text = wrapped_class_name
 	wrapped_class_label.name = "Label for wrapped config of %s" % wrapped_class_name
-	#all_container.columns = 1
+	wrapped_class_label.align = Label.ALIGN_CENTER
 	all_container.name = "All configurations"
-	#self_container.columns = 2
-	#self_container.name = "Own configurations"
+	self_container.columns = 2
+	self_container.name = "Own configurations"
 	
-	#all_container.add_child(self_container)
-	#scroll.add_child(all_container)
+	all_container.add_child(self_container)
 	gui_element.add_child(wrapped_class_label)
-	gui_element.add_child(wrapped_class_pad)
-	#gui_element.add_child(scroll)
+	gui_element.add_child(wrapped_class_hpad)
 	gui_element.add_child(all_container)
 	
 	for config_key in configurable:
 		#[dynamic type]
-		var config_value			= configurable[config_key].value
-		var input		: 			= create_gui_input_by_value(config_key, config_value)
-		var element		: 			= HSplitContainer.new()
-		var label		: Label
-		var left_pad	: VSeparator
+		var config_value		  = configurable[config_key].value
+		var input				: = create_gui_input_by_value(config_key, config_value)
+		var nested_element		: HSplitContainer
+		var label				: Label
+		var left_pad			: VSeparator
 		
-		element.dragger_visibility = SplitContainer.DRAGGER_HIDDEN
 		if input == null:
 			input = Label.new()
 			(input as Label).text = "Handled type %d not yet implemented." % typeof(config_value)
@@ -92,19 +87,21 @@ func create_gui_configuration() -> Control:
 			label 		= Label.new()
 			label.text	= String(configurable[config_key].label_text)
 			label.name	= "Label for input of %s" % String(config_key)
-			element.add_child(label)
-			#self_container.add_child(label)
-			#self_container.add_child(input)
+			label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			
+			self_container.add_child(label)
+			self_container.add_child(input)
 		else:
-			left_pad		= VSeparator.new()
-			left_pad.name	= "Nest padding"
-			#label.text += " (nested)"
-			input.name		+= " (nested)"
-			#all_container.add_child(label)
-			#all_container.add_child(input)
-			element.add_child(left_pad)
-		element.add_child(input)
-		all_container.add_child(element)
+			nested_element = HSplitContainer.new()
+			nested_element.dragger_visibility = SplitContainer.DRAGGER_HIDDEN
+			left_pad = VSeparator.new()
+			left_pad.name = "Nest padding"
+			input.name += " (nested)"
+			
+			nested_element.add_child(left_pad)
+			nested_element.add_child(input)
+			all_container.add_child(nested_element)
+	
 	all_container.add_child(all_pad)
 	return gui_element
 

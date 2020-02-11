@@ -33,7 +33,7 @@ func _ready() -> void:
 		if child is CanvasItem:
 			child.use_parent_material = true
 	
-	config = ConfigWrapper.new("Entity")
+	config = ConfigWrapper.new(name)
 
 """ Setters / Getters """
 

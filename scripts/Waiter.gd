@@ -12,7 +12,6 @@ func _init(i_name : String = 'Waiter').(i_name) -> void:
 	pass
 
 func _ready() -> void:
-	config.set_wrapped_class_name(name)
 	config.add_config_entry("speed", {
 		ConfigWrapper.FIELDS.LABEL_TEXT: "Walk speed",
 		ConfigWrapper.FIELDS.DEFAULT_VALUE: speed,

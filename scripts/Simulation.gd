@@ -99,7 +99,7 @@ func _process(delta_in_seconds : float) -> void:
 		return
 	_delay_acc += delta_in_seconds * 1_000
 	if _delay_acc > step_delay:
-		_delay_acc -= step_delay
+		_delay_acc = 0
 		step_by(step_size)
 
 """ Setters / Getters """

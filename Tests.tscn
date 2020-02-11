@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://themes/new_theme.tres" type="Theme" id=1]
+[ext_resource path="res://Assets/icons/types/icon_bool.svg" type="Texture" id=2]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Control
@@ -19,169 +20,193 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TabContainer" type="TabContainer" parent="."]
+[node name="TabContainer2" type="TabContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-tab_align = 0
+margin_left = 1.0
+margin_top = 1.0
+margin_right = -883.0
+margin_bottom = 1.0
+drag_to_rearrange_enabled = true
+use_hidden_tabs_for_min_size = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Tabs" type="Tabs" parent="TabContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="TabContainer2"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 5.0
 margin_top = 46.0
 margin_right = -5.0
 margin_bottom = -5.0
-
-[node name="all container" type="VBoxContainer" parent="TabContainer/Tabs"]
-anchor_right = 1.0
-anchor_bottom = 1.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="wrapped class label" type="Label" parent="TabContainer/Tabs/all container"]
-margin_right = 1590.0
-margin_bottom = 39.0
-text = "helloWorld"
+[node name="all container" type="VBoxContainer" parent="TabContainer2/ScrollContainer"]
+margin_right = 662.0
+margin_bottom = 861.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="HSeparator" type="HSeparator" parent="TabContainer/Tabs/all container"]
+[node name="HSplitContainer" type="GridContainer" parent="TabContainer2/ScrollContainer/all container"]
+margin_right = 662.0
+margin_bottom = 82.0
+columns = 3
+
+[node name="TextureRect" type="TextureRect" parent="TabContainer2/ScrollContainer/all container/HSplitContainer"]
+margin_right = 142.0
+margin_bottom = 39.0
+size_flags_horizontal = 3
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="TabContainer2/ScrollContainer/all container/HSplitContainer"]
+margin_left = 146.0
+margin_right = 294.0
+margin_bottom = 39.0
+size_flags_vertical = 1
+text = "asdafafadf"
+
+[node name="SpinBox" type="SpinBox" parent="TabContainer2/ScrollContainer/all container/HSplitContainer"]
+margin_left = 298.0
+margin_right = 662.0
+margin_bottom = 39.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect2" type="TextureRect" parent="TabContainer2/ScrollContainer/all container/HSplitContainer"]
 margin_top = 43.0
-margin_right = 1590.0
-margin_bottom = 51.0
+margin_right = 142.0
+margin_bottom = 82.0
+size_flags_horizontal = 3
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 5
 
-[node name="HSplitContainer" type="HSplitContainer" parent="TabContainer/Tabs/all container"]
-margin_top = 55.0
-margin_right = 1590.0
-margin_bottom = 94.0
-
-[node name="Label" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer"]
-margin_right = 148.0
-margin_bottom = 39.0
+[node name="Label2" type="Label" parent="TabContainer2/ScrollContainer/all container/HSplitContainer"]
+margin_left = 146.0
+margin_top = 43.0
+margin_right = 294.0
+margin_bottom = 82.0
+size_flags_horizontal = 3
 text = "asdafafadf"
 
-[node name="SpinBox" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer"]
-margin_left = 156.0
-margin_right = 1590.0
-margin_bottom = 39.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="HSplitContainer2" type="HSplitContainer" parent="TabContainer/Tabs/all container"]
-margin_top = 98.0
-margin_right = 1590.0
-margin_bottom = 137.0
-
-[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer2"]
-margin_right = 148.0
-margin_bottom = 39.0
-text = "asdafafadf"
-
-[node name="HSlider" type="HSlider" parent="TabContainer/Tabs/all container/HSplitContainer2"]
-margin_left = 156.0
-margin_right = 1590.0
-margin_bottom = 16.0
+[node name="HSlider" type="HSlider" parent="TabContainer2/ScrollContainer/all container/HSplitContainer"]
+margin_left = 298.0
+margin_top = 43.0
+margin_right = 662.0
+margin_bottom = 59.0
 value = 5.0
 
-[node name="HSplitContainer3" type="HSplitContainer" parent="TabContainer/Tabs/all container"]
-margin_top = 141.0
-margin_right = 1590.0
-margin_bottom = 180.0
+[node name="HSplitContainer3" type="HSplitContainer" parent="TabContainer2/ScrollContainer/all container"]
+margin_top = 86.0
+margin_right = 662.0
+margin_bottom = 125.0
 
-[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer3"]
+[node name="Label2" type="Label" parent="TabContainer2/ScrollContainer/all container/HSplitContainer3"]
 margin_right = 148.0
 margin_bottom = 39.0
 text = "asdafafadf"
 
-[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer3"]
+[node name="SpinBox2" type="SpinBox" parent="TabContainer2/ScrollContainer/all container/HSplitContainer3"]
 margin_left = 156.0
-margin_right = 1590.0
+margin_right = 662.0
 margin_bottom = 39.0
 step = 0.001
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HSplitContainer4" type="HSplitContainer" parent="TabContainer/Tabs/all container"]
-margin_top = 184.0
-margin_right = 1590.0
-margin_bottom = 364.0
+[node name="HSplitContainer4" type="HSplitContainer" parent="TabContainer2/ScrollContainer/all container"]
+margin_top = 129.0
+margin_right = 662.0
+margin_bottom = 309.0
 dragger_visibility = 1
 
-[node name="VSeparator" type="VSeparator" parent="TabContainer/Tabs/all container/HSplitContainer4"]
+[node name="VSeparator" type="VSeparator" parent="TabContainer2/ScrollContainer/all container/HSplitContainer4"]
 margin_right = 8.0
 margin_bottom = 180.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Tabs/all container/HSplitContainer4"]
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer2/ScrollContainer/all container/HSplitContainer4"]
 margin_left = 16.0
-margin_right = 1590.0
+margin_right = 662.0
 margin_bottom = 180.0
 
-[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer"]
-margin_right = 1574.0
+[node name="Label2" type="Label" parent="TabContainer2/ScrollContainer/all container/HSplitContainer4/VBoxContainer"]
+margin_right = 646.0
 margin_bottom = 39.0
 text = "title of thing"
 
-[node name="HSeparator" type="HSeparator" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="TabContainer2/ScrollContainer/all container/HSplitContainer4/VBoxContainer"]
 margin_top = 43.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 51.0
 
-[node name="HSplitContainer5" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer"]
+[node name="HSplitContainer5" type="HSplitContainer" parent="TabContainer2/ScrollContainer/all container/HSplitContainer4/VBoxContainer"]
 margin_top = 55.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 94.0
 
-[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer/HSplitContainer5"]
-margin_right = 148.0
+[node name="TextureRect3" type="TextureRect" parent="TabContainer2/ScrollContainer/all container/HSplitContainer4/VBoxContainer/HSplitContainer5"]
+margin_right = 490.0
+margin_bottom = 39.0
+size_flags_horizontal = 3
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 5
+
+[node name="Label2" type="Label" parent="TabContainer2/ScrollContainer/all container/HSplitContainer4/VBoxContainer/HSplitContainer5"]
+margin_left = 498.0
+margin_right = 646.0
 margin_bottom = 39.0
 text = "asdafafadf"
 
-[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer/HSplitContainer5"]
+[node name="SpinBox2" type="SpinBox" parent="TabContainer2/ScrollContainer/all container/HSplitContainer4/VBoxContainer/HSplitContainer5"]
 margin_left = 156.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 39.0
 step = 0.001
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HSplitContainer6" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer"]
+[node name="HSplitContainer6" type="HSplitContainer" parent="TabContainer2/ScrollContainer/all container/HSplitContainer4/VBoxContainer"]
 margin_top = 98.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 137.0
 
-[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer/HSplitContainer6"]
+[node name="Label2" type="Label" parent="TabContainer2/ScrollContainer/all container/HSplitContainer4/VBoxContainer/HSplitContainer6"]
 margin_right = 148.0
 margin_bottom = 39.0
 text = "asdafafadf"
 
-[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer/HSplitContainer6"]
+[node name="SpinBox2" type="SpinBox" parent="TabContainer2/ScrollContainer/all container/HSplitContainer4/VBoxContainer/HSplitContainer6"]
 margin_left = 156.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 39.0
 step = 0.001
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HSplitContainer7" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer"]
-margin_left = 928.0
+[node name="HSplitContainer7" type="HSplitContainer" parent="TabContainer2/ScrollContainer/all container/HSplitContainer4/VBoxContainer"]
 margin_top = 141.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 180.0
 size_flags_horizontal = 8
 size_flags_vertical = 0
 
-[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer/HSplitContainer7"]
+[node name="Label2" type="Label" parent="TabContainer2/ScrollContainer/all container/HSplitContainer4/VBoxContainer/HSplitContainer7"]
 margin_right = 274.0
 margin_bottom = 39.0
 text = "asdafafadfgnfhngmgm"
 
-[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer4/VBoxContainer/HSplitContainer7"]
+[node name="SpinBox2" type="SpinBox" parent="TabContainer2/ScrollContainer/all container/HSplitContainer4/VBoxContainer/HSplitContainer7"]
 margin_left = 282.0
 margin_right = 646.0
 margin_bottom = 39.0
@@ -190,50 +215,50 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HSplitContainer5" type="HSplitContainer" parent="TabContainer/Tabs/all container"]
-margin_top = 368.0
-margin_right = 1590.0
-margin_bottom = 548.0
+[node name="HSplitContainer5" type="HSplitContainer" parent="TabContainer2/ScrollContainer/all container"]
+margin_top = 313.0
+margin_right = 662.0
+margin_bottom = 493.0
 dragger_visibility = 1
 
-[node name="VSeparator" type="VSeparator" parent="TabContainer/Tabs/all container/HSplitContainer5"]
+[node name="VSeparator" type="VSeparator" parent="TabContainer2/ScrollContainer/all container/HSplitContainer5"]
 margin_right = 8.0
 margin_bottom = 180.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Tabs/all container/HSplitContainer5"]
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer2/ScrollContainer/all container/HSplitContainer5"]
 margin_left = 16.0
-margin_right = 1590.0
+margin_right = 662.0
 margin_bottom = 180.0
 
-[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer"]
-margin_right = 1574.0
+[node name="Label2" type="Label" parent="TabContainer2/ScrollContainer/all container/HSplitContainer5/VBoxContainer"]
+margin_right = 646.0
 margin_bottom = 39.0
 text = "title of thing"
 
-[node name="HSeparator" type="HSeparator" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="TabContainer2/ScrollContainer/all container/HSplitContainer5/VBoxContainer"]
 margin_top = 43.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 51.0
 
-[node name="HSplitContainer5" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer"]
+[node name="HSplitContainer5" type="HSplitContainer" parent="TabContainer2/ScrollContainer/all container/HSplitContainer5/VBoxContainer"]
 margin_top = 55.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 94.0
 
-[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer/HSplitContainer5"]
+[node name="Label2" type="Label" parent="TabContainer2/ScrollContainer/all container/HSplitContainer5/VBoxContainer/HSplitContainer5"]
 margin_right = 148.0
 margin_bottom = 39.0
 text = "asdafafadf"
 
-[node name="HSplitContainer" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer/HSplitContainer5"]
+[node name="HSplitContainer" type="HSplitContainer" parent="TabContainer2/ScrollContainer/all container/HSplitContainer5/VBoxContainer/HSplitContainer5"]
 margin_left = 156.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 39.0
 dragger_visibility = 1
 
-[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer/HSplitContainer5/HSplitContainer"]
-margin_left = 1054.0
-margin_right = 1418.0
+[node name="SpinBox2" type="SpinBox" parent="TabContainer2/ScrollContainer/all container/HSplitContainer5/VBoxContainer/HSplitContainer5/HSplitContainer"]
+margin_left = 126.0
+margin_right = 490.0
 margin_bottom = 39.0
 size_flags_horizontal = 12
 step = 0.001
@@ -241,202 +266,202 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HSplitContainer6" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer"]
+[node name="HSplitContainer6" type="HSplitContainer" parent="TabContainer2/ScrollContainer/all container/HSplitContainer5/VBoxContainer"]
 margin_top = 98.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 137.0
 
-[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer/HSplitContainer6"]
+[node name="Label2" type="Label" parent="TabContainer2/ScrollContainer/all container/HSplitContainer5/VBoxContainer/HSplitContainer6"]
 margin_right = 148.0
 margin_bottom = 39.0
 text = "asdafafadf"
 
-[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer/HSplitContainer6"]
+[node name="SpinBox2" type="SpinBox" parent="TabContainer2/ScrollContainer/all container/HSplitContainer5/VBoxContainer/HSplitContainer6"]
 margin_left = 156.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 39.0
 step = 0.001
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HSplitContainer7" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer"]
+[node name="HSplitContainer7" type="HSplitContainer" parent="TabContainer2/ScrollContainer/all container/HSplitContainer5/VBoxContainer"]
 margin_top = 141.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 180.0
 
-[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer/HSplitContainer7"]
+[node name="Label2" type="Label" parent="TabContainer2/ScrollContainer/all container/HSplitContainer5/VBoxContainer/HSplitContainer7"]
 margin_right = 148.0
 margin_bottom = 39.0
 text = "asdafafadf"
 
-[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer5/VBoxContainer/HSplitContainer7"]
+[node name="SpinBox2" type="SpinBox" parent="TabContainer2/ScrollContainer/all container/HSplitContainer5/VBoxContainer/HSplitContainer7"]
 margin_left = 156.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 39.0
 step = 0.001
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HSplitContainer6" type="HSplitContainer" parent="TabContainer/Tabs/all container"]
-margin_top = 552.0
-margin_right = 1590.0
-margin_bottom = 732.0
+[node name="HSplitContainer6" type="HSplitContainer" parent="TabContainer2/ScrollContainer/all container"]
+margin_top = 497.0
+margin_right = 662.0
+margin_bottom = 677.0
 dragger_visibility = 1
 
-[node name="VSeparator" type="VSeparator" parent="TabContainer/Tabs/all container/HSplitContainer6"]
+[node name="VSeparator" type="VSeparator" parent="TabContainer2/ScrollContainer/all container/HSplitContainer6"]
 margin_right = 8.0
 margin_bottom = 180.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Tabs/all container/HSplitContainer6"]
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer2/ScrollContainer/all container/HSplitContainer6"]
 margin_left = 16.0
-margin_right = 1590.0
+margin_right = 662.0
 margin_bottom = 180.0
 
-[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer"]
-margin_right = 1574.0
+[node name="Label2" type="Label" parent="TabContainer2/ScrollContainer/all container/HSplitContainer6/VBoxContainer"]
+margin_right = 646.0
 margin_bottom = 39.0
 text = "title of thing"
 
-[node name="HSeparator" type="HSeparator" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="TabContainer2/ScrollContainer/all container/HSplitContainer6/VBoxContainer"]
 margin_top = 43.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 51.0
 
-[node name="HSplitContainer5" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer"]
+[node name="HSplitContainer5" type="HSplitContainer" parent="TabContainer2/ScrollContainer/all container/HSplitContainer6/VBoxContainer"]
 margin_top = 55.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 94.0
 
-[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer/HSplitContainer5"]
+[node name="Label2" type="Label" parent="TabContainer2/ScrollContainer/all container/HSplitContainer6/VBoxContainer/HSplitContainer5"]
 margin_right = 148.0
 margin_bottom = 39.0
 text = "asdafafadf"
 
-[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer/HSplitContainer5"]
+[node name="SpinBox2" type="SpinBox" parent="TabContainer2/ScrollContainer/all container/HSplitContainer6/VBoxContainer/HSplitContainer5"]
 margin_left = 156.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 39.0
 step = 0.001
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HSplitContainer6" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer"]
+[node name="HSplitContainer6" type="HSplitContainer" parent="TabContainer2/ScrollContainer/all container/HSplitContainer6/VBoxContainer"]
 margin_top = 98.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 137.0
 
-[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer/HSplitContainer6"]
+[node name="Label2" type="Label" parent="TabContainer2/ScrollContainer/all container/HSplitContainer6/VBoxContainer/HSplitContainer6"]
 margin_right = 148.0
 margin_bottom = 39.0
 text = "asdafafadf"
 
-[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer/HSplitContainer6"]
+[node name="SpinBox2" type="SpinBox" parent="TabContainer2/ScrollContainer/all container/HSplitContainer6/VBoxContainer/HSplitContainer6"]
 margin_left = 156.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 39.0
 step = 0.001
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HSplitContainer7" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer"]
+[node name="HSplitContainer7" type="HSplitContainer" parent="TabContainer2/ScrollContainer/all container/HSplitContainer6/VBoxContainer"]
 margin_top = 141.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 180.0
 
-[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer/HSplitContainer7"]
+[node name="Label2" type="Label" parent="TabContainer2/ScrollContainer/all container/HSplitContainer6/VBoxContainer/HSplitContainer7"]
 margin_right = 148.0
 margin_bottom = 39.0
 text = "asdafafadf"
 
-[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer6/VBoxContainer/HSplitContainer7"]
+[node name="SpinBox2" type="SpinBox" parent="TabContainer2/ScrollContainer/all container/HSplitContainer6/VBoxContainer/HSplitContainer7"]
 margin_left = 156.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 39.0
 step = 0.001
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HSplitContainer7" type="HSplitContainer" parent="TabContainer/Tabs/all container"]
-margin_top = 736.0
-margin_right = 1590.0
-margin_bottom = 916.0
+[node name="HSplitContainer7" type="HSplitContainer" parent="TabContainer2/ScrollContainer/all container"]
+margin_top = 681.0
+margin_right = 662.0
+margin_bottom = 861.0
 dragger_visibility = 1
 
-[node name="VSeparator" type="VSeparator" parent="TabContainer/Tabs/all container/HSplitContainer7"]
+[node name="VSeparator" type="VSeparator" parent="TabContainer2/ScrollContainer/all container/HSplitContainer7"]
 margin_right = 8.0
 margin_bottom = 180.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Tabs/all container/HSplitContainer7"]
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer2/ScrollContainer/all container/HSplitContainer7"]
 margin_left = 16.0
-margin_right = 1590.0
+margin_right = 662.0
 margin_bottom = 180.0
 
-[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer"]
-margin_right = 1574.0
+[node name="Label2" type="Label" parent="TabContainer2/ScrollContainer/all container/HSplitContainer7/VBoxContainer"]
+margin_right = 646.0
 margin_bottom = 39.0
 text = "title of thing"
 
-[node name="HSeparator" type="HSeparator" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="TabContainer2/ScrollContainer/all container/HSplitContainer7/VBoxContainer"]
 margin_top = 43.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 51.0
 
-[node name="HSplitContainer5" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer"]
+[node name="HSplitContainer5" type="HSplitContainer" parent="TabContainer2/ScrollContainer/all container/HSplitContainer7/VBoxContainer"]
 margin_top = 55.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 94.0
 
-[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer/HSplitContainer5"]
+[node name="Label2" type="Label" parent="TabContainer2/ScrollContainer/all container/HSplitContainer7/VBoxContainer/HSplitContainer5"]
 margin_right = 148.0
 margin_bottom = 39.0
 text = "asdafafadf"
 
-[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer/HSplitContainer5"]
+[node name="SpinBox2" type="SpinBox" parent="TabContainer2/ScrollContainer/all container/HSplitContainer7/VBoxContainer/HSplitContainer5"]
 margin_left = 156.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 39.0
 step = 0.001
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HSplitContainer6" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer"]
+[node name="HSplitContainer6" type="HSplitContainer" parent="TabContainer2/ScrollContainer/all container/HSplitContainer7/VBoxContainer"]
 margin_top = 98.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 137.0
 
-[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer/HSplitContainer6"]
+[node name="Label2" type="Label" parent="TabContainer2/ScrollContainer/all container/HSplitContainer7/VBoxContainer/HSplitContainer6"]
 margin_right = 148.0
 margin_bottom = 39.0
 text = "asdafafadf"
 
-[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer/HSplitContainer6"]
+[node name="SpinBox2" type="SpinBox" parent="TabContainer2/ScrollContainer/all container/HSplitContainer7/VBoxContainer/HSplitContainer6"]
 margin_left = 156.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 39.0
 step = 0.001
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HSplitContainer7" type="HSplitContainer" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer"]
+[node name="HSplitContainer7" type="HSplitContainer" parent="TabContainer2/ScrollContainer/all container/HSplitContainer7/VBoxContainer"]
 margin_top = 141.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 180.0
 
-[node name="Label2" type="Label" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer/HSplitContainer7"]
+[node name="Label2" type="Label" parent="TabContainer2/ScrollContainer/all container/HSplitContainer7/VBoxContainer/HSplitContainer7"]
 margin_right = 148.0
 margin_bottom = 39.0
 text = "asdafafadf"
 
-[node name="SpinBox2" type="SpinBox" parent="TabContainer/Tabs/all container/HSplitContainer7/VBoxContainer/HSplitContainer7"]
+[node name="SpinBox2" type="SpinBox" parent="TabContainer2/ScrollContainer/all container/HSplitContainer7/VBoxContainer/HSplitContainer7"]
 margin_left = 156.0
-margin_right = 1574.0
+margin_right = 646.0
 margin_bottom = 39.0
 step = 0.001
 __meta__ = {
