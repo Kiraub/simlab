@@ -4,8 +4,8 @@ extends Node
 
 enum Z_INDICIES {
 	BACKGROUND	= -10
-	STATIC		= 0
-	ACTIVE		= 10
+	STATIC		= -8
+	ACTIVE		= -5
 }
 
 enum SEARCH_STRATEGIES {
@@ -13,6 +13,17 @@ enum SEARCH_STRATEGIES {
 	DFS			= 1
 }
 
+enum NEIGHBOURHOOD {
+	VON_NEUMANN	= 4 # without diagonal
+	MOORE		= 8 # with diagonal
+}
+
+enum TILES {
+	INVALID = -1
+	FLOOR	= 0
+	WALL	= 1
+}
+"""
 const TYPE_ICONS = {
 	-1				: preload("res://Assets/icons/types/icon_error_sign.svg"),
 	TYPE_BOOL		: preload("res://Assets/icons/types/icon_bool.svg"),
@@ -23,6 +34,7 @@ const TYPE_ICONS = {
 	TYPE_STRING		: preload("res://Assets/icons/types/icon_string.svg"),
 	TYPE_VECTOR2	: preload("res://Assets/icons/types/icon_vector2.svg")
 }
+"""
 
 """ Variables """
 

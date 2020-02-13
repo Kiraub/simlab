@@ -10,8 +10,8 @@ const DEFAULT_SPEED	: float	= 1.0
 
 """ Variables """
 
-export var speed : float setget set_speed, get_speed
-export(GLOBALS.SEARCH_STRATEGIES) var search_strategy
+export var vision_range	: int	= 1
+export var speed		: float setget set_speed, get_speed
 
 var targets		: Array setget set_targets, get_targets
 var neighbours	: Array setget set_neighbours, get_neighbours
@@ -47,7 +47,7 @@ func get_targets() -> Array:
 
 func set_neighbours(new_value : Array) -> void:
 	for neighbour in new_value:
-		assert(neighbour is Entity, "Trying to set non Entity neighbour %s" % neighbour)
+		assert(neighbour is Entity, "Trying to set non Entity neighbour: %s" % neighbour)
 	neighbours = new_value
 func get_neighbours() -> Array:
 	var volatile = neighbours.duplicate()
@@ -105,8 +105,8 @@ func move_towards_target(travel_distance : float) -> void:
 		remove_target(0)
 		move_towards_target(travel_distance)
 
-func request_neighbour_entities() -> void:
-	emit_signal("request_neighbours", self)
+func request_neighbours(neighbourhood_type : int) -> void:
+	emit_signal("request_neighbours", self, neighbourhood_type)
 
 """ Events """
 

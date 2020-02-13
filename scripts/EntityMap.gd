@@ -4,11 +4,6 @@ class_name EntityMap
 
 """ Constants """
 
-enum E_Tiles {
-	INVALID = -1
-	FLOOR	= 0
-	WALL	= 1
-}
 
 """ Variables """
 
@@ -76,7 +71,7 @@ func step_by(amount : float) -> void:
 		if provide_random_targets:
 			if actor.position == actor.get_final_target():
 				highlighted_entities = [actor]
-				var random_target = get_random_floor_tile()
+				var random_target = get_random_tile_by_id(GLOBALS.TILES.FLOOR)
 				handle_position_selection(random_target)
 				for actor in highlighted_entities:
 					actor.set_highlighted(false)
@@ -96,6 +91,91 @@ func get_used_cells_by_id(id : int) -> Array:
 	if not cache_cells_by_id.has(id):
 		cache_cells_by_id[id] = .get_used_cells_by_id(id)
 	return cache_cells_by_id[id].duplicate()
+
+func get_random_tile_by_id(id : int) -> Vector2:
+	var random_tile = Vector2.ZERO
+	var tiles = get_used_cells_by_id(id)
+	if len(tiles) > 0:
+		var random_index = rng.randi_range(0, len(tiles)-1)
+		random_tile = tiles[random_index]
+	return random_tile
+
+func get_center_of_cell_by_world(world : Vector2) -> Vector2:
+	var map		:= world_to_map(world)
+	var origin	:= map_to_world(map)
+	var center	:= origin + (cell_size / 2)
+	return center
+
+func tile_is_blocked(map : Vector2) -> bool:
+	var tile_index = get_cellv(map)
+	if tile_index == GLOBALS.TILES.WALL || tile_index == GLOBALS.TILES.INVALID:
+		return true
+	for entity in get_entities_at_map(map):
+		if entity.is_blocking():
+			return true
+	return false
+
+func get_entities_with_flags(flags : int) -> Array:
+	if not cache_entities_by_flags.has(flags):
+		cache_entities_by_flags[flags] = filter_entities_with_flags(entities, flags)
+	return cache_entities_by_flags[flags].duplicate()
+func filter_entities_with_flags(original : Array, flags : int) -> Array:
+	var filtered = []
+	for entity in original:
+		if (entity as Entity).EntityFlags & flags == flags:
+			filtered.push_back(entity)
+	return filtered
+
+func get_entities_at_map(map : Vector2) -> Array:
+	if not cache_entities_by_map.has(map):
+		cache_entities_by_map[map] = filter_entities_at_map(entities, map)
+	return cache_entities_by_map[map].duplicate()
+func filter_entities_at_map(original : Array, map : Vector2) -> Array:
+	var filtered = []
+	for entity in original:
+		if world_to_map(entity.position) == map:
+			filtered.push_back(entity)
+	return filtered
+func filter_entities_in_map_range(original : Array, map_one : Vector2, map_two : Vector2) -> Array:
+	var filtered = []
+	var top_right = Vector2(min(map_one.x, map_two.x), min(map_one.y, map_two.y))
+	var bottom_left = Vector2(max(map_one.x, map_two.x), max(map_one.y, map_two.y))
+	for entity in original:
+		var map_entity = world_to_map(entity.position)
+		if (map_entity.x >= top_right.x and
+			map_entity.y >= top_right.y and
+			map_entity.x <= bottom_left.x and
+			map_entity.y <= bottom_left.y):
+			filtered.push_back(entity)
+	return filtered
+func filter_entities_in_tile_distance(original : Array, map : Vector2, distance : int) -> Array:
+	var filtered = []
+	for entity in original:
+		var map_entity = world_to_map(entity.position)
+		var distance_vector = map_entity - map
+		var tile_distance = abs(distance_vector.x) + abs(distance_vector.y)
+		if tile_distance <= distance:
+			filtered.push_back(entity)
+	return filtered
+
+func get_neighbour_entities_of_map(map : Vector2, distance : int, neighbourhood_type : int, include_center : bool = false) -> Array:
+	var neighbours = []
+	assert(neighbourhood_type in GLOBALS.NEIGHBOURHOOD.values(), "Unknown neighbourhood type given: %s" % neighbourhood_type)
+	match neighbourhood_type:
+		GLOBALS.NEIGHBOURHOOD.VON_NEUMANN:
+			neighbours = filter_entities_in_tile_distance(entities, map, distance)
+		GLOBALS.NEIGHBOURHOOD.MOORE:
+			neighbours = filter_entities_in_map_range(entities, map + (Vector2.ONE * distance), map - (Vector2.ONE * distance))
+	if not include_center:
+		for center_neighbour in filter_entities_at_map(neighbours, map):
+			neighbours.erase(center_neighbour)
+	return neighbours
+
+func center_entities() -> void:
+	for entity in entities:
+		if not entity is Entity:
+			continue
+		(entity as Entity).position = get_center_of_cell_by_world((entity as Entity).position)
 
 func clear_caches() -> void:
 	cache_cells_by_id.clear()
@@ -120,12 +200,6 @@ func add_entities(new_entities : Array) -> void:
 		if entity is Entity:
 			add_entity(entity)
 
-func center_entities() -> void:
-	for entity in entities:
-		if not entity is Entity:
-			continue
-		(entity as Entity).position = center_to_cell((entity as Entity).position)
-
 func handle_position_selection(map : Vector2) -> void:
 	var selectable_entities = get_entities_with_flags(Entity.E_EntityFlags.Selectable)
 	var clicked_entities = filter_entities_at_map(selectable_entities, map)
@@ -139,7 +213,7 @@ func handle_position_selection(map : Vector2) -> void:
 					#print_debug("Empty or impossible path")
 					continue
 				for point_map in path_map:
-					var point_world = center_to_cell(map_to_world(point_map))
+					var point_world = get_center_of_cell_by_world(map_to_world(point_map))
 					(entity as Actor).push_target_back(point_world)
 				#print_debug("Highlighted actor gets target")
 	else:
@@ -149,55 +223,10 @@ func handle_position_selection(map : Vector2) -> void:
 		#print_debug("Highlights cleared")
 	for entity in clicked_entities:
 		(entity as Entity).set_highlighted(true)
-		highlighted_entities.append(entity)
 		#print_debug("Entity highlighted")
+		highlighted_entities.append(entity)
 
-func get_entities_with_flags(flags : int) -> Array:
-	if not cache_entities_by_flags.has(flags):
-		cache_entities_by_flags[flags] = filter_entities_with_flags(entities, flags)
-	return cache_entities_by_flags[flags].duplicate()
-
-func filter_entities_with_flags(original : Array, flags : int) -> Array:
-	var filtered = []
-	for entity in original:
-		if (entity as Entity).EntityFlags & flags == flags:
-			filtered.push_back(entity)
-	return filtered
-
-func get_entities_at_map(map : Vector2) -> Array:
-	if not cache_entities_by_map.has(map):
-		cache_entities_by_map[map] = filter_entities_at_map(entities, map)
-	return cache_entities_by_map[map].duplicate()
-
-func filter_entities_at_map(original : Array, map : Vector2) -> Array:
-	var filtered = []
-	for entity in original:
-		if world_to_map(entity.position) == map:
-			filtered.push_back(entity)
-	return filtered
-
-func get_random_floor_tile() -> Vector2:
-	var random_tile = Vector2.ZERO
-	var floor_tiles = get_used_cells_by_id(E_Tiles.FLOOR)
-	if len(floor_tiles) > 0:
-		var random_index = rng.randi_range(0, len(floor_tiles)-1)
-		random_tile = floor_tiles[random_index]
-	return random_tile
-
-func center_to_cell(world : Vector2) -> Vector2:
-	var map		:= world_to_map(world)
-	var origin	:= map_to_world(map)
-	var center	:= origin + (cell_size / 2)
-	return center
-
-func tile_is_blocked(map : Vector2) -> bool:
-	var tile_index = get_cellv(map)
-	if tile_index == E_Tiles.WALL || tile_index == E_Tiles.INVALID:
-		return true
-	for entity in get_entities_at_map(map):
-		if entity.is_blocking():
-			return true
-	return false
+""" Pathfinding methods """
 
 func find_path(map_start : Vector2, map_end : Vector2) -> Array:
 	if map_start == map_end:
@@ -276,7 +305,9 @@ func _on_entity_exiting_tree(entity : Entity) -> void:
 	assert(entity in entities, "Received 'tree_exiting' signal from unknown entity: %s" % entity)
 	entities.erase(entity)
 
-func _on_request_neighbours(actor : Actor) -> void:
-	actor.set_neighbours([])
+func _on_request_neighbours(actor : Actor, neighbourhood_type : int) -> void:
+	var map_actor = world_to_map(actor.position)
+	var neighbours = get_neighbour_entities_of_map(map_actor, actor.vision_range, neighbourhood_type)
+	actor.set_neighbours(neighbours)
 
 

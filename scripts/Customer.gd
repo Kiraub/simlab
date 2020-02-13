@@ -17,7 +17,6 @@ enum E_LifeState {
 
 """ Variables """
 
-export var vision_range		: int	= 1
 export var decide_delay		: float	= 5.0
 export var process_delay	: float	= 2.5
 
@@ -32,17 +31,17 @@ func _init(i_name : String = 'Customer').(i_name) -> void:
 
 func _ready() -> void:
 	config.add_config_entry("vision_range",  {
-		ConfigWrapper.FIELDS.LABEL_TEXT: "Vision range",
+		ConfigWrapper.FIELDS.LABEL_TEXT: "Vision range (tile)",
 		ConfigWrapper.FIELDS.DEFAULT_VALUE: vision_range,
 		ConfigWrapper.FIELDS.SIGNAL_NAME: "vision_range_changed"
 	})
 	config.add_config_entry("decide_delay",  {
-		ConfigWrapper.FIELDS.LABEL_TEXT: "Decide delay",
+		ConfigWrapper.FIELDS.LABEL_TEXT: "Decide delay (step)",
 		ConfigWrapper.FIELDS.DEFAULT_VALUE: decide_delay,
 		ConfigWrapper.FIELDS.SIGNAL_NAME: "decide_delay_changed"
 	})
 	config.add_config_entry("process_delay",  {
-		ConfigWrapper.FIELDS.LABEL_TEXT: "Eating delay",
+		ConfigWrapper.FIELDS.LABEL_TEXT: "Eating delay (step)",
 		ConfigWrapper.FIELDS.DEFAULT_VALUE: process_delay,
 		ConfigWrapper.FIELDS.SIGNAL_NAME: "process_delay_changed"
 	})
@@ -106,11 +105,13 @@ func enter_scene() -> void:
 func search_table() -> void:
 	var volatile_neighbours = get_neighbours()
 	if len(volatile_neighbours) == 0:
-		request_neighbour_entities()
+		request_neighbours(GLOBALS.NEIGHBOURHOOD.VON_NEUMANN)
 		return
 	for neighbour in volatile_neighbours:
 		if neighbour is Table:
 			next_life_state()
+			return
+	# not next to table
 
 func decide_order(amount : float) -> void:
 	next_life_state()
