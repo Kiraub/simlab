@@ -2,11 +2,14 @@ extends Position2D
 
 class_name Entity
 
+signal flags_updated
+signal position_updated
+
 """ Constants """
 
 const HIGHLIGHT_MATERIAL : Material = preload("res://Assets/shader_materials/highlight.tres")
 
-enum E_EntityFlags {
+enum E_Flags {
 	Blocking	= 1
 	Selectable	= 2
 	Highlighted	= 4
@@ -14,7 +17,7 @@ enum E_EntityFlags {
 
 """ Variables """
 
-export (E_EntityFlags, FLAGS) var EntityFlags
+export (E_Flags, FLAGS) var flags
 
 var config : ConfigWrapper
 
@@ -37,23 +40,32 @@ func _ready() -> void:
 
 """ Setters / Getters """
 
+#[override]
+func set_position(new_value : Vector2) -> void:
+	emit_signal("position_updated", self, position, new_value)
+	.set_position(new_value)
+
+func set_flags(new_value : int) -> void:
+	emit_signal("flags_updated", self, flags, new_value)
+	flags = new_value
+
 func set_blocking(new_blocking : bool) -> void:
 	if new_blocking:
-		EntityFlags |= E_EntityFlags.Blocking
+		set_flags(flags | E_Flags.Blocking)
 	else:
-		EntityFlags &= ~E_EntityFlags.Blocking
+		set_flags(flags & ~E_Flags.Blocking)
 func is_blocking() -> bool:
-	return EntityFlags & E_EntityFlags.Blocking
+	return flags & E_Flags.Blocking
 
 func set_highlighted(new_highlighted : bool) -> void:
 	if new_highlighted:
-		EntityFlags |= E_EntityFlags.Highlighted
+		set_flags(flags | E_Flags.Highlighted)
 		material = HIGHLIGHT_MATERIAL
 	else:
-		EntityFlags &= ~E_EntityFlags.Highlighted
+		set_flags(flags & ~E_Flags.Highlighted)
 		material = null
 func get_highlighted() -> bool:
-	return EntityFlags & E_EntityFlags.Highlighted
+	return flags & E_Flags.Highlighted
 
 """ Methods """
 

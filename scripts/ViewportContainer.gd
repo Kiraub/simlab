@@ -1,3 +1,15 @@
+"""
+	This unnamed class is a simple extension of the Godot ViewportContainer class.
+	
+	It simply serves the purpose the update its own size when a child node of type TileMap is present.
+	As an added feature it has a margin to hide a specified amount of outer tiles.
+	
+	Since it is a Godot tool, it also changes its size when drawn in the Godot Editor.
+	To force such a draw update a simple visibility off-on toggle should be enough.
+	
+	During runtime a child node of type Timer is used to refresh the size every time a timeout event occurs.
+"""
+
 tool
 
 extends ViewportContainer

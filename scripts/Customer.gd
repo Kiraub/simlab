@@ -105,7 +105,7 @@ func enter_scene() -> void:
 func search_table() -> void:
 	var volatile_neighbours = get_neighbours()
 	if len(volatile_neighbours) == 0:
-		request_neighbours(GLOBALS.NEIGHBOURHOOD.VON_NEUMANN)
+		request_neighbours(GLOBALS.DISTANCES.MANHATTAN)
 		return
 	for neighbour in volatile_neighbours:
 		if neighbour is Table:

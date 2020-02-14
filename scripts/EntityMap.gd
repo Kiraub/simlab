@@ -14,9 +14,19 @@ var config					: ConfigWrapper			setget , get_config_wrapper
 var rng 					: RandomNumberGenerator
 var entities				: = []
 var highlighted_entities	: = []
-var cache_cells_by_id		: = {}
+
+"""
+	Runtime caches
+	These variables represent key-value dictionaries of time intensive getter functions' input-ouptut pairs.
+	Since many of the results don't change every query, the results are cached.
+"""
+
+# written inside: get_entities_with_flags
+# cleared inside: clear_caches
 var cache_entities_by_flags	: = {}
 var cache_entities_by_map	: = {}
+var cache_tiles_by_id		: = {}
+var cache_blocking_by_map	: = {}
 
 """ Initialization """
 
@@ -61,7 +71,6 @@ static func collect_child_entities(node : Node) -> Array:
 """ Simulation step """
 
 func step_by(amount : float) -> void:
-	clear_caches()
 	var actors = []
 	for entity in entities:
 		if not entity is Actor:
@@ -88,9 +97,9 @@ func get_config_wrapper() -> ConfigWrapper:
 
 #[override]
 func get_used_cells_by_id(id : int) -> Array:
-	if not cache_cells_by_id.has(id):
-		cache_cells_by_id[id] = .get_used_cells_by_id(id)
-	return cache_cells_by_id[id].duplicate()
+	if not cache_tiles_by_id.has(id):
+		cache_tiles_by_id[id] = .get_used_cells_by_id(id)
+	return cache_tiles_by_id[id].duplicate()
 
 func get_random_tile_by_id(id : int) -> Vector2:
 	var random_tile = Vector2.ZERO
@@ -100,16 +109,42 @@ func get_random_tile_by_id(id : int) -> Vector2:
 		random_tile = tiles[random_index]
 	return random_tile
 
-func get_center_of_cell_by_world(world : Vector2) -> Vector2:
-	var map		:= world_to_map(world)
-	var origin	:= map_to_world(map)
-	var center	:= origin + (cell_size / 2)
+func get_center_of_cell_by_map(map : Vector2) -> Vector2:
+	var origin	: = map_to_world(map)
+	var center	: = origin + (cell_size * 0.5)
 	return center
+func get_center_of_cell_by_world(world : Vector2) -> Vector2:
+	var map		: = world_to_map(world)
+	return get_center_of_cell_by_map(map)
 
 func tile_is_blocked(map : Vector2) -> bool:
-	var tile_index = get_cellv(map)
-	if tile_index == GLOBALS.TILES.WALL || tile_index == GLOBALS.TILES.INVALID:
+	var tile_id = get_cellv(map)
+	var use_cache = true
+	if use_cache:
+		if _tib_1(map, tile_id):
+			return true
+	else:
+		if _tib_2(tile_id):
+			return true
+	#if tile_id in [GLOBALS.TILES.WALL, GLOBALS.TILES.INVALID]:
+	#	return true
+	
+	#for entity in get_entities_at_map(map):
+	#	if entity.is_blocking():
+	#		return true
+	if _tib_3(map):
 		return true
+	return false
+
+func _tib_1(map, tile_id):
+	if not cache_blocking_by_map.has(map):
+		cache_blocking_by_map[map] = tile_id == GLOBALS.TILES.WALL || tile_id == GLOBALS.TILES.INVALID
+	return cache_blocking_by_map[map]
+
+func _tib_2(tile_id):
+	return tile_id == GLOBALS.TILES.WALL || tile_id == GLOBALS.TILES.INVALID
+
+func _tib_3(map):
 	for entity in get_entities_at_map(map):
 		if entity.is_blocking():
 			return true
@@ -136,6 +171,13 @@ func filter_entities_at_map(original : Array, map : Vector2) -> Array:
 		if world_to_map(entity.position) == map:
 			filtered.push_back(entity)
 	return filtered
+
+func get_mapcell_at_map(map : Vector2) -> MapCell:
+	var cell_entities	= get_entities_at_map(map)
+	var cell_tile_id	= get_cellv(map)
+	var cell_world_pos	= get_center_of_cell_by_map(map)
+	return MapCell.new(cell_entities, cell_tile_id, cell_world_pos, map)
+
 func filter_entities_in_map_range(original : Array, map_one : Vector2, map_two : Vector2) -> Array:
 	var filtered = []
 	var top_right = Vector2(min(map_one.x, map_two.x), min(map_one.y, map_two.y))
@@ -158,13 +200,13 @@ func filter_entities_in_tile_distance(original : Array, map : Vector2, distance 
 			filtered.push_back(entity)
 	return filtered
 
-func get_neighbour_entities_of_map(map : Vector2, distance : int, neighbourhood_type : int, include_center : bool = false) -> Array:
+func get_neighbour_entities_of_map(map : Vector2, distance : int, distance_type : int, include_center : bool = false) -> Array:
 	var neighbours = []
-	assert(neighbourhood_type in GLOBALS.NEIGHBOURHOOD.values(), "Unknown neighbourhood type given: %s" % neighbourhood_type)
-	match neighbourhood_type:
-		GLOBALS.NEIGHBOURHOOD.VON_NEUMANN:
+	assert(distance_type in GLOBALS.DISTANCES.values(), "Unknown neighbourhood type given: %s" % distance_type)
+	match distance_type:
+		GLOBALS.DISTANCES.MANHATTAN:
 			neighbours = filter_entities_in_tile_distance(entities, map, distance)
-		GLOBALS.NEIGHBOURHOOD.MOORE:
+		GLOBALS.DISTANCES.CHEBYSHEV:
 			neighbours = filter_entities_in_map_range(entities, map + (Vector2.ONE * distance), map - (Vector2.ONE * distance))
 	if not include_center:
 		for center_neighbour in filter_entities_at_map(neighbours, map):
@@ -177,22 +219,33 @@ func center_entities() -> void:
 			continue
 		(entity as Entity).position = get_center_of_cell_by_world((entity as Entity).position)
 
-func clear_caches() -> void:
-	cache_cells_by_id.clear()
+func clear_entities_by_flag() -> void:
+	# until map is editable at runtime this cache does not need clearing
+	#cache_tiles_by_id.clear()
 	cache_entities_by_flags.clear()
-	cache_entities_by_map.clear()
+func push_entity_in_cache_at_map(entity : Entity, map : Vector2) -> void:
+	if not cache_entities_by_map.has(map):
+		cache_entities_by_map[map] = []
+	if not (cache_entities_by_map[map] as Array).has(entity):
+		(cache_entities_by_map[map] as Array).push_back(entity)
+func erase_entity_in_cache_at_map(entity : Entity, map : Vector2) -> void:
+	if not cache_entities_by_map.has(map):
+		return
+	if (cache_entities_by_map[map] as Array).has(entity):
+		(cache_entities_by_map[map] as Array).erase(entity)
 
 func add_entity(entity : Entity) -> void:
 	if not entities.has(entity):
 		entities.append(entity)
+		entity.connect("flags_updated", self, "_on_entity_flags_updated")
+		entity.connect("position_updated", self, "_on_entity_position_updated")
 		entity.connect("tree_exiting", self, "_on_entity_exiting_tree", [entity])
 		if entity.has_method(ConfigWrapper.GETTER_METHOD):
 			config.add_config_entry(entity.name, {
 				ConfigWrapper.FIELDS.LABEL_TEXT: entity.name,
 				ConfigWrapper.FIELDS.DEFAULT_VALUE: entity,
-				ConfigWrapper.FIELDS.SIGNAL_NAME: "entity_name_changed"
+				ConfigWrapper.FIELDS.SIGNAL_NAME: "unused_entity_changed"
 			})
-			#config.connect("entity_name_changed", self, "_on_entity_name_changed")
 		if entity is Actor:
 			(entity as Actor).connect("request_neighbours", self, "_on_request_neighbours")
 func add_entities(new_entities : Array) -> void:
@@ -290,6 +343,16 @@ func _on_deep_has_over_traversal_changed(_old_value : bool, new_value : bool) ->
 	deep_has_over_traversal = new_value
 	config.set_entry_value("deep_has_over_traversal", new_value)
 
+func _on_entity_position_updated(entity : Entity, old_position : Vector2, new_position : Vector2) -> void:
+	var old_map_pos = world_to_map(old_position)
+	var new_map_pos = world_to_map(new_position)
+	if old_map_pos != new_map_pos:
+		erase_entity_in_cache_at_map(entity, old_map_pos)
+		push_entity_in_cache_at_map(entity, new_map_pos)
+
+func _on_entity_flags_updated(entity : Entity, old_flags : int, new_flags : int) -> void:
+	pass
+
 func _on_entity_spawned(spawn_scene : PackedScene, initial_position : Vector2) -> void:
 	if not spawn_scene is PackedScene:
 		return
@@ -303,11 +366,17 @@ func _on_entity_spawned(spawn_scene : PackedScene, initial_position : Vector2) -
 
 func _on_entity_exiting_tree(entity : Entity) -> void:
 	assert(entity in entities, "Received 'tree_exiting' signal from unknown entity: %s" % entity)
+	erase_entity_in_cache_at_map(entity, world_to_map(entity.position))
 	entities.erase(entity)
 
-func _on_request_neighbours(actor : Actor, neighbourhood_type : int) -> void:
+func _on_request_neighbours(actor : Actor, distance_type : int) -> void:
 	var map_actor = world_to_map(actor.position)
-	var neighbours = get_neighbour_entities_of_map(map_actor, actor.vision_range, neighbourhood_type)
+	var neighbours = get_neighbour_entities_of_map(map_actor, actor.vision_range, distance_type)
 	actor.set_neighbours(neighbours)
+
+
+
+
+
 
 

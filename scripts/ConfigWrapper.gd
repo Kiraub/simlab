@@ -1,4 +1,10 @@
-""" This class works with rare dynamic typing to allow dynamic config GUI creation """
+"""
+	A ConfigWrapper mirrors all configurable properties of a containing class.
+	Instances are to be used as properties of other classes.
+	
+	This class works with rare dynamic typing to allow dynamic config GUI creation.
+	These functions/ variables are marked with a '#[dynamic:<what>]' tag.
+"""
 
 extends Reference
 
@@ -31,10 +37,12 @@ func _init(i_wrapped_class_name : String) -> void:
 func set_wrapped_class_name(new_value : String) -> void:
 	wrapped_class_name = new_value
 
+#[dynamic:new_value]
 func set_entry_value(key : String, new_value):
 	if configurable.has(key):
 		assert(typeof(configurable[key].value) == typeof(new_value), "Trying to assign value of different type %s than configuration entry %s." % [new_value, configurable[key].value])
 		configurable[key].value = new_value
+#[dynamic:returned value]
 func get_entry_value_or_default(key : String, default = null):
 	if configurable.has(key):
 		return configurable[key].value
@@ -72,7 +80,7 @@ func create_gui_configuration() -> Control:
 	gui_element.add_child(all_container)
 	
 	for config_key in configurable:
-		#[dynamic type]
+		#[dynamic:config_value]
 		var config_value		  = configurable[config_key].value
 		var input				: = create_gui_input_by_value(config_key, config_value)
 		var nested_element		: HSplitContainer
@@ -105,6 +113,7 @@ func create_gui_configuration() -> Control:
 	all_container.add_child(all_pad)
 	return gui_element
 
+#[dynamic:value]
 func create_gui_input_by_value(key : String, value) -> Control:
 	var input : Control = null
 	match typeof(value):
@@ -144,6 +153,7 @@ func create_gui_input_by_value(key : String, value) -> Control:
 
 """ Event Listeners """
 
+#[dynamic:event_value]
 func _on_config_changed(event_value, key : String) -> void:
 	var old_value	= configurable[key].value
 	var signal_name	= configurable[key].signal_name

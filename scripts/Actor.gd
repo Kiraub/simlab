@@ -1,3 +1,7 @@
+"""
+	An Actor is an Entity that can perform certain actions during a simulation step.
+"""
+
 extends Entity
 
 class_name Actor
@@ -97,11 +101,11 @@ func move_towards_target(travel_distance : float) -> void:
 	var direction_to_next : Vector2 = (next_target - position).normalized()
 	var distance_to_next : float = (next_target - position).length()
 	if travel_distance < distance_to_next:
-		position += direction_to_next * travel_distance
+		set_position(position + direction_to_next * travel_distance)
 		travel_distance = 0
 	else:
 		travel_distance -= distance_to_next
-		position = next_target
+		set_position(next_target)
 		remove_target(0)
 		move_towards_target(travel_distance)
 

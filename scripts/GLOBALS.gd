@@ -1,3 +1,12 @@
+"""
+	The GLOBALS class is set as a singleton node object instanced automatically at the start of the program.
+	
+	Since it is instanced as a direct child of the root scene node, every other class has access to all its fields at runtime.
+	The constants defined in this class would be inserted in their respective classes in usual OOP.
+	However Godot has, as of writing this program at version 3.2, a bug with cyclic referencing which requires this external grouping of contants.
+	For more info on this bug refer to related GitHub issue at: https://github.com/godotengine/godot/issues/21461
+"""
+
 extends Node
 
 """ Constants """
@@ -13,9 +22,9 @@ enum SEARCH_STRATEGIES {
 	DFS			= 1
 }
 
-enum NEIGHBOURHOOD {
-	VON_NEUMANN	= 4 # without diagonal
-	MOORE		= 8 # with diagonal
+enum DISTANCES {
+	MANHATTAN	= 4 # without diagonal, Von Neumann neighbourhood
+	CHEBYSHEV	= 8 # with diagonal, Moore neighbourhood
 }
 
 enum TILES {
