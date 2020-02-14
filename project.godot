@@ -34,6 +34,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/EntityMap.gd"
 }, {
+"base": "Reference",
+"class": "MapCell",
+"language": "GDScript",
+"path": "res://scripts/MapCell.gd"
+}, {
 "base": "Static",
 "class": "Portal",
 "language": "GDScript",
@@ -65,6 +70,7 @@ _global_script_class_icons={
 "Customer": "res://Assets/sprites/customer.png",
 "Entity": "",
 "EntityMap": "",
+"MapCell": "",
 "Portal": "res://Assets/sprites/portal.png",
 "Simulation": "",
 "Static": "",
