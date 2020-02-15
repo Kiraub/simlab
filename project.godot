@@ -82,6 +82,7 @@ _global_script_class_icons={
 
 config/name="SimLab"
 run/main_scene="res://SimLab.tscn"
+run/low_processor_mode_sleep_usec=17716
 config/icon="res://icon.png"
 
 [autoload]

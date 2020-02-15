@@ -111,7 +111,6 @@ func set_title(new_title : String) -> void:
 func set_paused(new_value : bool) -> void:
 	paused = new_value
 	config.set_entry_value("paused", paused)
-	entity_map.clear_caches()
 
 func set_partial_steps(new_value : bool) -> void:
 	partial_steps = new_value
