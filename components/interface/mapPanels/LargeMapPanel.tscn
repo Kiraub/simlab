@@ -5,6 +5,44 @@
 
 [node name="LargeMapPanel" instance=ExtResource( 2 )]
 
+[node name="HSplitContainer" parent="VSplitContainer" index="0"]
+margin_bottom = 39.0
+
+[node name="HBoxContainer" parent="VSplitContainer/HSplitContainer" index="1"]
+margin_bottom = 39.0
+
+[node name="ConfigBtn" parent="VSplitContainer/HSplitContainer/HBoxContainer" index="0"]
+margin_left = 632.0
+margin_right = 748.0
+margin_bottom = 39.0
+
+[node name="PlayBtn" parent="VSplitContainer/HSplitContainer/HBoxContainer" index="1"]
+margin_left = 752.0
+margin_right = 840.0
+margin_bottom = 39.0
+
+[node name="PauseBtn" parent="VSplitContainer/HSplitContainer/HBoxContainer" index="2"]
+margin_left = 844.0
+margin_right = 946.0
+margin_bottom = 39.0
+
+[node name="StepOneBtn" parent="VSplitContainer/HSplitContainer/HBoxContainer" index="3"]
+margin_left = 950.0
+margin_right = 1094.0
+margin_bottom = 39.0
+
+[node name="StepBtn" parent="VSplitContainer/HSplitContainer/HBoxContainer" index="4"]
+margin_left = 1098.0
+margin_right = 1186.0
+margin_bottom = 39.0
+
+[node name="DeleteBtn" parent="VSplitContainer/HSplitContainer/HBoxContainer" index="5"]
+margin_left = 1190.0
+margin_bottom = 39.0
+
+[node name="ViewportContainer" parent="VSplitContainer" index="1"]
+margin_top = 47.0
+
 [node name="Viewport" parent="VSplitContainer/ViewportContainer" index="0"]
 size = Vector2( 736, 448 )
 
