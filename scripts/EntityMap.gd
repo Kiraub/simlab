@@ -8,10 +8,11 @@ class_name EntityMap
 """ Variables """
 
 export var provide_random_targets	: bool = false
+#[deprecated:TODO]
 export var deep_has_over_traversal	: bool = false
 
 var config					: ConfigWrapper			setget , get_config_wrapper
-var rng 					: RandomNumberGenerator
+var pseudo_rng 				: RandomNumberGenerator
 var entities				: = []
 var highlighted_entities	: = []
 
@@ -22,9 +23,13 @@ var highlighted_entities	: = []
 """
 
 # written inside: get_entities_with_flags
-# cleared inside: clear_caches
+# cleared inside: _on_entity_flags_updated
 var cache_entities_by_flags	: = {}
+# written inside: get_entities_at_map, push_entity_in_cache_at_map
+# cleared inside: erase_entity_in_cache_at_map
 var cache_entities_by_map	: = {}
+# written inside: get_used_cells_by_id
+# never cleared, tile ids dont change (yet)
 var cache_tiles_by_id		: = {}
 var cache_blocking_by_map	: = {}
 
@@ -32,21 +37,21 @@ var cache_blocking_by_map	: = {}
 
 #[override]
 func _init():
-	self.name = "EntityMap"
-	z_index = GLOBALS.Z_INDICIES.BACKGROUND
+	self.name	= "EntityMap"
+	z_index		= GLOBALS.Z_INDICIES.BACKGROUND
+	config		= ConfigWrapper.new("EntityMap")
+	pseudo_rng	= RandomNumberGenerator.new()
 	
-	config = ConfigWrapper.new("EntityMap")
+	#[deprecated:TODO]
 	config.add_config_entry("deep_has_over_traversal", {
-		ConfigWrapper.FIELDS.LABEL_TEXT: "Deep has over traversal",
-		ConfigWrapper.FIELDS.DEFAULT_VALUE: deep_has_over_traversal,
-		ConfigWrapper.FIELDS.SIGNAL_NAME: "deep_has_over_traversal_changed"
+		ConfigWrapper.FIELDS.LABEL_TEXT		: "Deep has over traversal",
+		ConfigWrapper.FIELDS.DEFAULT_VALUE	: deep_has_over_traversal,
+		ConfigWrapper.FIELDS.SIGNAL_NAME	: "deep_has_over_traversal_changed"
 	})
 	config.connect("deep_has_over_traversal_changed", self, "_on_deep_has_over_traversal_changed")
 	
-	rng = RandomNumberGenerator.new()
-	rng.randomize()
-	var h = hash(rng.get_seed())
-	rng.set_seed(h)
+	pseudo_rng.randomize()
+	pseudo_rng.set_seed(hash(pseudo_rng.get_seed()))
 
 #[override]
 func _ready():
@@ -56,35 +61,42 @@ func _ready():
 """ Static methods """
 
 static func collect_child_entities(node : Node) -> Array:
-	var array = []
-	var subtrees = []
+	var array		: = []
+	var subtrees	: = []
+	
 	for child in node.get_children():
 		if child is Entity:
 			array.append(child as Entity)
 		elif (child as Node).get_child_count() != 0:
 			subtrees.append(child as Node)
+	
 	for subtree in subtrees:
 		for subchild in collect_child_entities(subtree):
 			array.append(subchild)
+	
 	return array
 
 """ Simulation step """
 
 func step_by(amount : float) -> void:
-	var actors = []
+	var actors		: = []
+	var actor		: Actor
+	var rng_tile	: Vector2
+	
 	for entity in entities:
 		if not entity is Actor:
 			continue
-		var actor : Actor = (entity as Actor)
+		actor = (entity as Actor)
 		actors.append(actor)
 		if provide_random_targets:
 			if actor.position == actor.get_final_target():
 				highlighted_entities = [actor]
-				var random_target = get_random_tile_by_id(GLOBALS.TILES.FLOOR)
-				handle_position_selection(random_target)
+				rng_tile = get_random_tile_by_id(GLOBALS.TILES.FLOOR)
+				handle_position_selection(rng_tile)
 				for actor in highlighted_entities:
 					actor.set_highlighted(false)
 				highlighted_entities.clear()
+	
 	for actor in actors:
 		actor.step_by(amount)
 
@@ -102,52 +114,40 @@ func get_used_cells_by_id(id : int) -> Array:
 	return cache_tiles_by_id[id].duplicate()
 
 func get_random_tile_by_id(id : int) -> Vector2:
-	var random_tile = Vector2.ZERO
-	var tiles = get_used_cells_by_id(id)
+	var random_tile	: = Vector2.ZERO
+	var tiles		: = get_used_cells_by_id(id)
+	var random_int	: int
+	
 	if len(tiles) > 0:
-		var random_index = rng.randi_range(0, len(tiles)-1)
-		random_tile = tiles[random_index]
+		random_int = pseudo_rng.randi_range(0, len(tiles)-1)
+		random_tile = tiles[random_int]
 	return random_tile
 
 func get_center_of_cell_by_map(map : Vector2) -> Vector2:
 	var origin	: = map_to_world(map)
 	var center	: = origin + (cell_size * 0.5)
+	
 	return center
 func get_center_of_cell_by_world(world : Vector2) -> Vector2:
 	var map		: = world_to_map(world)
 	return get_center_of_cell_by_map(map)
 
 func tile_is_blocked(map : Vector2) -> bool:
-	var tile_id = get_cellv(map)
-	var use_cache = true
+	var tile_id		: = get_cellv(map)
+	var use_cache	: = true
+	
 	if use_cache:
-		if _tib_1(map, tile_id):
+		if not cache_blocking_by_map.has(map):
+			cache_blocking_by_map[map] = tile_id == GLOBALS.TILES.WALL || tile_id == GLOBALS.TILES.INVALID
+		if cache_blocking_by_map[map]:
 			return true
 	else:
-		if _tib_2(tile_id):
+		if tile_id == GLOBALS.TILES.WALL || tile_id == GLOBALS.TILES.INVALID:
 			return true
-	#if tile_id in [GLOBALS.TILES.WALL, GLOBALS.TILES.INVALID]:
-	#	return true
-	
-	#for entity in get_entities_at_map(map):
-	#	if entity.is_blocking():
-	#		return true
-	if _tib_3(map):
-		return true
-	return false
-
-func _tib_1(map, tile_id):
-	if not cache_blocking_by_map.has(map):
-		cache_blocking_by_map[map] = tile_id == GLOBALS.TILES.WALL || tile_id == GLOBALS.TILES.INVALID
-	return cache_blocking_by_map[map]
-
-func _tib_2(tile_id):
-	return tile_id == GLOBALS.TILES.WALL || tile_id == GLOBALS.TILES.INVALID
-
-func _tib_3(map):
 	for entity in get_entities_at_map(map):
 		if entity.is_blocking():
 			return true
+	
 	return false
 
 func get_entities_with_flags(flags : int) -> Array:
@@ -155,10 +155,12 @@ func get_entities_with_flags(flags : int) -> Array:
 		cache_entities_by_flags[flags] = filter_entities_with_flags(entities, flags)
 	return cache_entities_by_flags[flags].duplicate()
 func filter_entities_with_flags(original : Array, flags : int) -> Array:
-	var filtered = []
+	var filtered : = []
+	
 	for entity in original:
-		if (entity as Entity).EntityFlags & flags == flags:
+		if (entity as Entity).flags & flags == flags:
 			filtered.push_back(entity)
+	
 	return filtered
 
 func get_entities_at_map(map : Vector2) -> Array:
@@ -166,42 +168,55 @@ func get_entities_at_map(map : Vector2) -> Array:
 		cache_entities_by_map[map] = filter_entities_at_map(entities, map)
 	return cache_entities_by_map[map].duplicate()
 func filter_entities_at_map(original : Array, map : Vector2) -> Array:
-	var filtered = []
+	var filtered : = []
+	
 	for entity in original:
 		if world_to_map(entity.position) == map:
 			filtered.push_back(entity)
+	
 	return filtered
 
 func get_mapcell_at_map(map : Vector2) -> MapCell:
-	var cell_entities	= get_entities_at_map(map)
-	var cell_tile_id	= get_cellv(map)
-	var cell_world_pos	= get_center_of_cell_by_map(map)
+	var cell_entities	: = get_entities_at_map(map)
+	var cell_tile_id	: = get_cellv(map)
+	var cell_world_pos	: = get_center_of_cell_by_map(map)
+	
 	return MapCell.new(cell_entities, cell_tile_id, cell_world_pos, map)
 
 func filter_entities_in_map_range(original : Array, map_one : Vector2, map_two : Vector2) -> Array:
-	var filtered = []
-	var top_right = Vector2(min(map_one.x, map_two.x), min(map_one.y, map_two.y))
-	var bottom_left = Vector2(max(map_one.x, map_two.x), max(map_one.y, map_two.y))
+	var filtered	: = []
+	var top_right	: = Vector2(min(map_one.x, map_two.x), min(map_one.y, map_two.y))
+	var bottom_left	: = Vector2(max(map_one.x, map_two.x), max(map_one.y, map_two.y))
+	var map_entity	: Vector2
+	
 	for entity in original:
-		var map_entity = world_to_map(entity.position)
+		map_entity = world_to_map(entity.position)
 		if (map_entity.x >= top_right.x and
 			map_entity.y >= top_right.y and
 			map_entity.x <= bottom_left.x and
 			map_entity.y <= bottom_left.y):
 			filtered.push_back(entity)
+	
 	return filtered
+
 func filter_entities_in_tile_distance(original : Array, map : Vector2, distance : int) -> Array:
-	var filtered = []
+	var filtered		: = []
+	var map_entity		: Vector2
+	var distance_vector	: Vector2
+	var tile_distance	: int
+	
 	for entity in original:
-		var map_entity = world_to_map(entity.position)
-		var distance_vector = map_entity - map
-		var tile_distance = abs(distance_vector.x) + abs(distance_vector.y)
+		map_entity = world_to_map(entity.position)
+		distance_vector = map_entity - map
+		tile_distance = abs(distance_vector.x) + abs(distance_vector.y)
 		if tile_distance <= distance:
 			filtered.push_back(entity)
+	
 	return filtered
 
 func get_neighbour_entities_of_map(map : Vector2, distance : int, distance_type : int, include_center : bool = false) -> Array:
-	var neighbours = []
+	var neighbours : = []
+	
 	assert(distance_type in GLOBALS.DISTANCES.values(), "Unknown neighbourhood type given: %s" % distance_type)
 	match distance_type:
 		GLOBALS.DISTANCES.MANHATTAN:
@@ -211,18 +226,15 @@ func get_neighbour_entities_of_map(map : Vector2, distance : int, distance_type 
 	if not include_center:
 		for center_neighbour in filter_entities_at_map(neighbours, map):
 			neighbours.erase(center_neighbour)
+	
 	return neighbours
 
 func center_entities() -> void:
 	for entity in entities:
 		if not entity is Entity:
 			continue
-		(entity as Entity).position = get_center_of_cell_by_world((entity as Entity).position)
+		(entity as Entity).set_position(get_center_of_cell_by_world((entity as Entity).position))
 
-func clear_entities_by_flag() -> void:
-	# until map is editable at runtime this cache does not need clearing
-	#cache_tiles_by_id.clear()
-	cache_entities_by_flags.clear()
 func push_entity_in_cache_at_map(entity : Entity, map : Vector2) -> void:
 	if not cache_entities_by_map.has(map):
 		cache_entities_by_map[map] = []
@@ -253,8 +265,9 @@ func add_entities(new_entities : Array) -> void:
 		if entity is Entity:
 			add_entity(entity)
 
+#[deprecated:TODO]
 func handle_position_selection(map : Vector2) -> void:
-	var selectable_entities = get_entities_with_flags(Entity.E_EntityFlags.Selectable)
+	var selectable_entities = get_entities_with_flags(Entity.E_Flags.Selectable)
 	var clicked_entities = filter_entities_at_map(selectable_entities, map)
 	if len(clicked_entities) == 0:
 		#print_debug("Empty space clicked")
@@ -281,6 +294,7 @@ func handle_position_selection(map : Vector2) -> void:
 
 """ Pathfinding methods """
 
+#[deprecated:TODO]
 func find_path(map_start : Vector2, map_end : Vector2) -> Array:
 	if map_start == map_end:
 		return []
@@ -289,13 +303,14 @@ func find_path(map_start : Vector2, map_end : Vector2) -> Array:
 		return bfs
 	return []
 
+#[deprecated:TODO]
 func breadth_first_search(map_start : Vector2, map_end : Vector2) -> Array:
 	#print_debug(self, "Doing bfs from", map_start, "to", map_end)
 	var found_end = false
 	var expansions = [Vector2.UP, Vector2.LEFT, Vector2.DOWN, Vector2.RIGHT]
 	var paths = [[map_start]]
 	var blocked_tiles = []
-	for entity in get_entities_with_flags(Entity.E_EntityFlags.Blocking):
+	for entity in get_entities_with_flags(Entity.E_Flags.Blocking):
 		blocked_tiles.append(world_to_map(entity.position))
 	var traversed_tiles = [map_start]
 	while(len(paths) > 0 and not found_end):
@@ -310,6 +325,7 @@ func breadth_first_search(map_start : Vector2, map_end : Vector2) -> Array:
 				continue
 			if path.has(new_point):
 				continue
+			#[deprecated:TODO]
 			if deep_has_over_traversal:
 				if deep_has(paths, new_point):
 					continue
@@ -329,6 +345,7 @@ func breadth_first_search(map_start : Vector2, map_end : Vector2) -> Array:
 				return path
 	return []
 
+#[deprecated:TODO]
 func deep_has(array_of_arrays : Array, elem) -> bool:
 	if array_of_arrays.has(elem):
 		return true
@@ -339,28 +356,31 @@ func deep_has(array_of_arrays : Array, elem) -> bool:
 
 """ Events """
 
+#[deprecated:TODO]
 func _on_deep_has_over_traversal_changed(_old_value : bool, new_value : bool) -> void:
 	deep_has_over_traversal = new_value
 	config.set_entry_value("deep_has_over_traversal", new_value)
 
 func _on_entity_position_updated(entity : Entity, old_position : Vector2, new_position : Vector2) -> void:
-	var old_map_pos = world_to_map(old_position)
-	var new_map_pos = world_to_map(new_position)
+	var old_map_pos : = world_to_map(old_position)
+	var new_map_pos : = world_to_map(new_position)
+	
 	if old_map_pos != new_map_pos:
 		erase_entity_in_cache_at_map(entity, old_map_pos)
 		push_entity_in_cache_at_map(entity, new_map_pos)
 
-func _on_entity_flags_updated(entity : Entity, old_flags : int, new_flags : int) -> void:
-	pass
+func _on_entity_flags_updated(_entity : Entity, old_flags : int, new_flags : int) -> void:
+	if old_flags != new_flags:
+		cache_entities_by_flags.clear()
 
 func _on_entity_spawned(spawn_scene : PackedScene, initial_position : Vector2) -> void:
-	if not spawn_scene is PackedScene:
-		return
-	var entity = spawn_scene.instance()
-	if not entity is Entity:
-		entity.queue_free()
-	(entity as Entity).position = initial_position
-	add_child(entity)
+	var entity : Entity
+	
+	assert(spawn_scene != null, "Trying to spawn entity with null scene!")
+	entity = spawn_scene.instance()
+	assert(entity is Entity, "Spawned non-Entity scene in _on_entity_spawned!")
+	(entity as Entity).set_position(initial_position)
+	add_child(entity, true)
 	entity.owner = self
 	add_entity(entity)
 
@@ -370,8 +390,12 @@ func _on_entity_exiting_tree(entity : Entity) -> void:
 	entities.erase(entity)
 
 func _on_request_neighbours(actor : Actor, distance_type : int) -> void:
-	var map_actor = world_to_map(actor.position)
-	var neighbours = get_neighbour_entities_of_map(map_actor, actor.vision_range, distance_type)
+	var map_actor	: Vector2
+	var neighbours	: Array
+	
+	assert(actor in entities, "Received 'request_neighbours' signal from unknown actor: %s" % actor)
+	map_actor = world_to_map(actor.position)
+	neighbours = get_neighbour_entities_of_map(map_actor, actor.vision_range, distance_type)
 	actor.set_neighbours(neighbours)
 
 
