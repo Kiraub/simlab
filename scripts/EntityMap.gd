@@ -8,8 +8,6 @@ class_name EntityMap
 """ Variables """
 
 export var provide_random_targets	: bool = false
-#[deprecated:TODO]
-export var deep_has_over_traversal	: bool = false
 
 var config					: ConfigWrapper			setget , get_config_wrapper
 var pseudo_rng 				: RandomNumberGenerator
@@ -31,6 +29,8 @@ var cache_entities_by_map	: = {}
 # written inside: get_used_cells_by_id
 # never cleared, tile ids dont change (yet)
 var cache_tiles_by_id		: = {}
+# written inside: tile_is_blocked
+# never cleared, since tile ids dont change, their blocking property doesnt change either
 var cache_blocking_by_map	: = {}
 
 """ Initialization """
@@ -42,13 +42,12 @@ func _init():
 	config		= ConfigWrapper.new("EntityMap")
 	pseudo_rng	= RandomNumberGenerator.new()
 	
-	#[deprecated:TODO]
-	config.add_config_entry("deep_has_over_traversal", {
-		ConfigWrapper.FIELDS.LABEL_TEXT		: "Deep has over traversal",
-		ConfigWrapper.FIELDS.DEFAULT_VALUE	: deep_has_over_traversal,
-		ConfigWrapper.FIELDS.SIGNAL_NAME	: "deep_has_over_traversal_changed"
+	config.add_config_entry("provide_random_targets" , {
+		ConfigWrapper.FIELDS.LABEL_TEXT: "Assign random target if idle",
+		ConfigWrapper.FIELDS.DEFAULT_VALUE: provide_random_targets,
+		ConfigWrapper.FIELDS.SIGNAL_NAME: "provide_random_targets_changed"
 	})
-	config.connect("deep_has_over_traversal_changed", self, "_on_deep_has_over_traversal_changed")
+	config.connect("provide_random_targets_changed", self, "_on_provide_random_targets_changed")
 	
 	pseudo_rng.randomize()
 	pseudo_rng.set_seed(hash(pseudo_rng.get_seed()))
@@ -179,9 +178,8 @@ func filter_entities_at_map(original : Array, map : Vector2) -> Array:
 func get_mapcell_at_map(map : Vector2) -> MapCell:
 	var cell_entities	: = get_entities_at_map(map)
 	var cell_tile_id	: = get_cellv(map)
-	var cell_world_pos	: = get_center_of_cell_by_map(map)
 	
-	return MapCell.new(cell_entities, cell_tile_id, cell_world_pos, map)
+	return MapCell.new(cell_entities, cell_tile_id, map)
 
 func filter_entities_in_map_range(original : Array, map_one : Vector2, map_two : Vector2) -> Array:
 	var filtered	: = []
@@ -208,7 +206,7 @@ func filter_entities_in_tile_distance(original : Array, map : Vector2, distance 
 	for entity in original:
 		map_entity = world_to_map(entity.position)
 		distance_vector = map_entity - map
-		tile_distance = abs(distance_vector.x) + abs(distance_vector.y)
+		tile_distance = int(floor(abs(distance_vector.x) + abs(distance_vector.y)))
 		if tile_distance <= distance:
 			filtered.push_back(entity)
 	
@@ -217,11 +215,11 @@ func filter_entities_in_tile_distance(original : Array, map : Vector2, distance 
 func get_neighbour_entities_of_map(map : Vector2, distance : int, distance_type : int, include_center : bool = false) -> Array:
 	var neighbours : = []
 	
-	assert(distance_type in GLOBALS.DISTANCES.values(), "Unknown neighbourhood type given: %s" % distance_type)
+	assert(distance_type in GLOBALS.DISTANCE_TYPES.values(), "Unknown neighbourhood type given: %s" % distance_type)
 	match distance_type:
-		GLOBALS.DISTANCES.MANHATTAN:
+		GLOBALS.DISTANCE_TYPES.MANHATTAN:
 			neighbours = filter_entities_in_tile_distance(entities, map, distance)
-		GLOBALS.DISTANCES.CHEBYSHEV:
+		GLOBALS.DISTANCE_TYPES.CHEBYSHEV:
 			neighbours = filter_entities_in_map_range(entities, map + (Vector2.ONE * distance), map - (Vector2.ONE * distance))
 	if not include_center:
 		for center_neighbour in filter_entities_at_map(neighbours, map):
@@ -323,12 +321,8 @@ func breadth_first_search(map_start : Vector2, map_end : Vector2) -> Array:
 			elif tile_is_blocked(new_point):
 				blocked_tiles.append(new_point)
 				continue
-			if path.has(new_point):
+			elif path.has(new_point):
 				continue
-			#[deprecated:TODO]
-			if deep_has_over_traversal:
-				if deep_has(paths, new_point):
-					continue
 			elif traversed_tiles.has(new_point):
 				continue
 			else:
@@ -345,21 +339,7 @@ func breadth_first_search(map_start : Vector2, map_end : Vector2) -> Array:
 				return path
 	return []
 
-#[deprecated:TODO]
-func deep_has(array_of_arrays : Array, elem) -> bool:
-	if array_of_arrays.has(elem):
-		return true
-	for array in array_of_arrays:
-		if array is Array and deep_has(array, elem):
-			return true
-	return false
-
 """ Events """
-
-#[deprecated:TODO]
-func _on_deep_has_over_traversal_changed(_old_value : bool, new_value : bool) -> void:
-	deep_has_over_traversal = new_value
-	config.set_entry_value("deep_has_over_traversal", new_value)
 
 func _on_entity_position_updated(entity : Entity, old_position : Vector2, new_position : Vector2) -> void:
 	var old_map_pos : = world_to_map(old_position)
@@ -389,16 +369,19 @@ func _on_entity_exiting_tree(entity : Entity) -> void:
 	erase_entity_in_cache_at_map(entity, world_to_map(entity.position))
 	entities.erase(entity)
 
-func _on_request_neighbours(actor : Actor, distance_type : int) -> void:
+#####TODO: change this so it sets an array of MapCells
+func _on_request_neighbours(actor : Actor, distance_type : int, distance : int) -> void:
 	var map_actor	: Vector2
 	var neighbours	: Array
 	
 	assert(actor in entities, "Received 'request_neighbours' signal from unknown actor: %s" % actor)
 	map_actor = world_to_map(actor.position)
-	neighbours = get_neighbour_entities_of_map(map_actor, actor.vision_range, distance_type)
+	neighbours = get_neighbour_entities_of_map(map_actor, distance, distance_type)
 	actor.set_neighbours(neighbours)
 
-
+func _on_provide_random_targets_changed(_old_value : bool, new_value : bool) -> void:
+	provide_random_targets = new_value
+	config.set_entry_value("provide_random_targets", provide_random_targets)
 
 
 

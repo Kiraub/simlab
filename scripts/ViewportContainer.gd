@@ -16,6 +16,7 @@ extends ViewportContainer
 
 export(int, 0, 5) var margin_tile_count : int = 0
 
+#[override]
 func _draw() -> void:
 	if Engine.is_editor_hint():
 		refresh()

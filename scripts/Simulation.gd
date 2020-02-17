@@ -12,7 +12,6 @@ signal simulation_stepped
 var title			: String	= "Simulation"	setget set_title
 var paused			: bool		= true			setget set_paused
 var partial_steps	: bool		= false			setget set_partial_steps
-var random_targets	: bool		= false			setget set_random_targets
 var highlighted		: bool		= false			#setget set_highlighted
 var step_delay		: float		= 1_000.0		setget set_step_delay
 var step_size		: float		= 1.0			setget set_step_size
@@ -28,6 +27,7 @@ onready var titleLabel	: Label		= $VSplitContainer/HSplitContainer/Title
 
 """ Initialization """
 
+#[override]
 func _ready() -> void:
 	titleLabel.text = title
 	
@@ -50,11 +50,6 @@ func _ready() -> void:
 		ConfigWrapper.FIELDS.DEFAULT_VALUE: partial_steps,
 		ConfigWrapper.FIELDS.SIGNAL_NAME: "partial_steps_changed"
 	})
-	config.add_config_entry("random_targets" , {
-		ConfigWrapper.FIELDS.LABEL_TEXT: "Random targets",
-		ConfigWrapper.FIELDS.DEFAULT_VALUE: random_targets,
-		ConfigWrapper.FIELDS.SIGNAL_NAME: "random_targets_changed"
-	})
 	config.add_config_entry("step_delay", {
 		ConfigWrapper.FIELDS.LABEL_TEXT: "Step delay (ms)",
 		ConfigWrapper.FIELDS.DEFAULT_VALUE: step_delay,
@@ -72,7 +67,6 @@ func _ready() -> void:
 	})
 	config.connect("title_changed", self, "_on_title_changed")
 	config.connect("partial_steps_changed", self, "_on_partial_steps_changed")
-	config.connect("random_targets_changed", self, "_on_random_targets_changed")
 	config.connect("step_delay_changed", self, "_on_step_delay_changed")
 	config.connect("step_size_changed", self, "_on_step_size_changed")
 	config.connect("entity_map_changed", self, "_on_entity_map_changed")
@@ -94,6 +88,7 @@ func step_by(amount : float = 1.0) -> void:
 
 """ Godot process """
 
+#[override]
 func _process(delta_in_seconds : float) -> void:
 	if paused:
 		return
@@ -110,16 +105,10 @@ func set_title(new_title : String) -> void:
 
 func set_paused(new_value : bool) -> void:
 	paused = new_value
-	config.set_entry_value("paused", paused)
 
 func set_partial_steps(new_value : bool) -> void:
 	partial_steps = new_value
 	config.set_entry_value("partial_steps", partial_steps)
-
-func set_random_targets(new_value : bool) -> void:
-	random_targets = new_value
-	config.set_entry_value("random_targets", random_targets)
-	entity_map.provide_random_targets = random_targets
 
 func set_step_delay(new_value : float) -> void:
 	step_delay = new_value
@@ -143,6 +132,7 @@ func handle_lmb_click(event : InputEventMouseButton) -> void:
 
 """ Events """
 
+#[deprecated:TODO]
 func _unhandled_input(event : InputEvent) -> void:
 	# Events for EntityMap
 	if not entity_map is EntityMap:
@@ -151,6 +141,7 @@ func _unhandled_input(event : InputEvent) -> void:
 		if event.button_index == BUTTON_LEFT and event.pressed:
 			handle_lmb_click(event)
 
+#[deprecated:TODO]
 func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == BUTTON_LEFT and event.pressed:
@@ -161,9 +152,6 @@ func _on_title_changed(_old_value : String, new_value : String) -> void:
 
 func _on_partial_steps_changed(_old_value : bool, new_value : bool) -> void:
 	set_partial_steps(new_value)
-
-func _on_random_targets_changed(_old_value : bool, new_value : bool) -> void:
-	set_random_targets(new_value)
 
 func _on_step_delay_changed(_old_value : float, new_value : float) -> void:
 	set_step_delay(new_value)

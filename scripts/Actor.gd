@@ -17,14 +17,16 @@ const DEFAULT_SPEED	: float	= 1.0
 export var vision_range	: int	= 1
 export var speed		: float setget set_speed, get_speed
 
-var targets		: Array setget set_targets, get_targets
-var neighbours	: Array setget set_neighbours, get_neighbours
+var targets		: Array	setget set_targets, get_targets
+var neighbours	: Array	setget set_neighbours, get_neighbours_volatile
+
+var life_state	: int	setget set_life_state, get_life_state
 
 """ Initialization """
 
 #[override]
 func _init(i_name : String = 'Actor').(GLOBALS.Z_INDICIES.ACTIVE, i_name) -> void:
-	set_speed(DEFAULT_SPEED)
+	speed = DEFAULT_SPEED
 	targets = []
 
 """ Simulation step """
@@ -53,10 +55,15 @@ func set_neighbours(new_value : Array) -> void:
 	for neighbour in new_value:
 		assert(neighbour is Entity, "Trying to set non Entity neighbour: %s" % neighbour)
 	neighbours = new_value
-func get_neighbours() -> Array:
+func get_neighbours_volatile() -> Array:
 	var volatile = neighbours.duplicate()
 	neighbours = []
 	return volatile
+
+func set_life_state(new_value : int) -> void:
+	life_state = new_value
+func get_life_state() -> int:
+	return life_state
 
 """ Methods """
 
@@ -109,8 +116,8 @@ func move_towards_target(travel_distance : float) -> void:
 		remove_target(0)
 		move_towards_target(travel_distance)
 
-func request_neighbours(neighbourhood_type : int) -> void:
-	emit_signal("request_neighbours", self, neighbourhood_type)
+func request_neighbours(distance_type : int, distance : int = 1) -> void:
+	emit_signal("request_neighbours", self, distance_type, distance)
 
 """ Events """
 

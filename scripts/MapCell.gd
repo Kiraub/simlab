@@ -14,24 +14,25 @@ class_name MapCell
 
 """ Variables """
 
-var _entities	: Array		setget , get_entities
-var _tile_id	: int		setget , get_tile_id
-var _world_v	: Vector2	setget , get_world_v
-var _map_v		: Vector2	setget , get_map_v
+var _entities		: Array		setget , get_entities
+var _tile_id		: int		setget , get_tile_id
+var _absolute_v		: Vector2	setget , get_absolute_v
+var _relative_v		: Vector2	setget , get_relative_v
 
 """ Initialization """
 
+#[override]
 func _init(
 		entities	: Array		= [],
 		tile_id		: int		= -1,
-		world_v		: Vector2	= Vector2.ZERO,
-		map_v		: Vector2	= Vector2.ZERO
+		absolute_v	: Vector2	= Vector2.ZERO,
+		relative_v	: Vector2	= Vector2.ZERO
 		) -> void	:
 	
-	self._entities	= entities
-	self._tile_id	= tile_id
-	self._world_v	= world_v
-	self._map_v		= map_v
+	self._entities		= entities
+	self._tile_id		= tile_id
+	self._absolute_v	= absolute_v
+	self._relative_v	= relative_v
 
 """ Simulation step """
 
@@ -47,11 +48,11 @@ func get_entities() -> Array:
 func get_tile_id() -> int:
 	return _tile_id
 
-func get_world_v() -> Vector2:
-	return _world_v
+func get_absolute_v() -> Vector2:
+	return _absolute_v
 
-func get_map_v() -> Vector2:
-	return _map_v
+func get_relative_v() -> Vector2:
+	return _relative_v
 
 """ Methods """
 
@@ -60,6 +61,26 @@ func has_entities() -> bool:
 		return true
 	return false
 
+func make_relative_to(reference_v : Vector2) -> void:
+	_relative_v = reference_v - _absolute_v
+
+func distance_to_map(other_map : Vector2, distance_type : int) -> float:
+	var distance : float
+	match distance_type:
+		GLOBALS.DISTANCE_TYPES.MANHATTAN:
+			distance = abs(other_map.x - _absolute_v.x) + abs(other_map.y - _absolute_v.y)
+		GLOBALS.DISTANCE_TYPES.CHEBYSHEV:
+			distance = min(abs(other_map.x - _absolute_v.x), abs(other_map.y - _absolute_v.y))
+	return distance
+
+func distance_to_map_cell(other_map_cell : MapCell, distance_type : int) -> float:
+	return distance_to_map(other_map_cell.get_absolute_v(), distance_type)
+
 """ Event Listeners """
+
+
+
+
+
 
 

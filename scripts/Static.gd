@@ -8,5 +8,6 @@ class_name Static
 
 """ Initialization """
 
+#[override]
 func _init(i_name : String = 'Static', i_position := Vector2(0,0)).(GLOBALS.Z_INDICIES.STATIC, i_name):
 	set_position(i_position)

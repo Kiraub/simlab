@@ -29,6 +29,7 @@ var configurable		: = {}
 
 """ Initialization """
 
+#[override]
 func _init(i_wrapped_class_name : String) -> void:
 	wrapped_class_name = i_wrapped_class_name
 
@@ -39,6 +40,7 @@ func set_wrapped_class_name(new_value : String) -> void:
 
 #[dynamic:new_value]
 func set_entry_value(key : String, new_value):
+	assert(configurable.has(key), "Trying to set non-existent entry's value: %s:%s" % [key, new_value])
 	if configurable.has(key):
 		assert(typeof(configurable[key].value) == typeof(new_value), "Trying to assign value of different type %s than configuration entry %s." % [new_value, configurable[key].value])
 		configurable[key].value = new_value

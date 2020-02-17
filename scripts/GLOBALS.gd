@@ -22,7 +22,7 @@ enum SEARCH_STRATEGIES {
 	DFS			= 1
 }
 
-enum DISTANCES {
+enum DISTANCE_TYPES {
 	MANHATTAN	= 4 # without diagonal, Von Neumann neighbourhood
 	CHEBYSHEV	= 8 # with diagonal, Moore neighbourhood
 }

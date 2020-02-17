@@ -12,6 +12,7 @@ export(PackedScene) var spawn : PackedScene
 
 """ Initialization """
 
+#[override]
 func _init(i_name : String = 'Portal').(i_name):
 	pass
 

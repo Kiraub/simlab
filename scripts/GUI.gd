@@ -8,6 +8,7 @@ onready var inspector_container	: Control		= $VSplitContainer/HSplitContainer/Ri
 
 """ Initialization """
 
+#[override]
 func _ready() -> void:
 	for child in simulation_list.get_children():
 		if not child is Simulation:
