@@ -14,5 +14,5 @@ texture = ExtResource( 1 )
 wait_time = 5.0
 
 [node name="TooltipPanel" parent="." instance=ExtResource( 3 )]
-[connection signal="renamed" from="." to="TooltipPanel" method="_on_parent_renamed"]
+[connection signal="name_updated" from="." to="TooltipPanel" method="_on_parent_name_updated"]
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

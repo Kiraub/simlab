@@ -6,7 +6,6 @@
 
 [node name="Waiter" type="Position2D"]
 script = ExtResource( 1 )
-EntityFlags = 3
 
 [node name="TooltipPanel" parent="." instance=ExtResource( 3 )]
 hint_tooltip = "Waiter"
@@ -14,4 +13,4 @@ hint_tooltip = "Waiter"
 [node name="Sprite" type="Sprite" parent="."]
 use_parent_material = true
 texture = ExtResource( 2 )
-[connection signal="renamed" from="." to="TooltipPanel" method="_on_parent_renamed"]
+[connection signal="name_updated" from="." to="TooltipPanel" method="_on_parent_name_updated"]
