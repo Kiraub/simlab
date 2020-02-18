@@ -54,8 +54,8 @@ func get_targets() -> Array:
   return targets.duplicate(true)
 
 func set_neighbours(new_value : Dictionary) -> void:
-  for neighbour in new_value:
-    assert(neighbour is Entity, "Trying to set non Entity neighbour: %s" % neighbour)
+  for neighbour in new_value.values():
+    assert(neighbour is MapCell, "Trying to set non MapCell neighbour: %s" % neighbour)
   neighbours = new_value
 func get_neighbours_volatile() -> Dictionary:
   var volatile = neighbours.duplicate()

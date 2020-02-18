@@ -105,9 +105,6 @@ func search_table() -> void:
   if len(volatile_neighbours) == 0:
     request_neighbours(GLOBALS.DISTANCE_TYPES.MANHATTAN, vision_range)
     return
-  for neighbour in volatile_neighbours:
-    return
-    assert(neighbour is MapCell, "Non MapCell object contained in neighbours: %s" % neighbour)
   
   #todo
 

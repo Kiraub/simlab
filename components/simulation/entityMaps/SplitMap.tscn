@@ -21,16 +21,12 @@ position = Vector2( 76.5419, 273.27 )
 
 [node name="Portal" parent="Node" instance=ExtResource( 1 )]
 position = Vector2( 80.3559, 431.604 )
-spawn = ExtResource( 3 )
 
 [node name="Waiter" parent="Node" instance=ExtResource( 3 )]
 position = Vector2( 46.714, 46.714 )
-speed = 1.0
 
 [node name="Customer" parent="Node" instance=ExtResource( 4 )]
 position = Vector2( 110.382, 430.77 )
-EntityFlags = 1
-speed = 1.0
 
 [node name="Node2" type="Node" parent="."]
 
@@ -39,16 +35,12 @@ position = Vector2( 240.617, 274.174 )
 
 [node name="Portal2" parent="Node2" instance=ExtResource( 1 )]
 position = Vector2( 238.969, 429.032 )
-spawn = ExtResource( 3 )
 
 [node name="Waiter2" parent="Node2" instance=ExtResource( 3 )]
 position = Vector2( 202.35, 48.9726 )
-speed = 1.0
 
 [node name="Customer2" parent="Node2" instance=ExtResource( 4 )]
 position = Vector2( 268.995, 430.77 )
-EntityFlags = 1
-speed = 1.0
 
 [node name="Node3" type="Node" parent="."]
 
@@ -57,16 +49,12 @@ position = Vector2( 403.357, 272.932 )
 
 [node name="Portal3" parent="Node3" instance=ExtResource( 1 )]
 position = Vector2( 402.726, 427.317 )
-spawn = ExtResource( 3 )
 
 [node name="Waiter3" parent="Node3" instance=ExtResource( 3 )]
 position = Vector2( 372.177, 49.4667 )
-speed = 1.0
 
 [node name="Customer3" parent="Node3" instance=ExtResource( 4 )]
 position = Vector2( 430.18, 427.341 )
-EntityFlags = 1
-speed = 1.0
 
 [node name="Node4" type="Node" parent="."]
 
@@ -75,16 +63,12 @@ position = Vector2( 563.298, 273.836 )
 
 [node name="Portal4" parent="Node4" instance=ExtResource( 1 )]
 position = Vector2( 563.054, 429.032 )
-spawn = ExtResource( 3 )
 
 [node name="Waiter4" parent="Node4" instance=ExtResource( 3 )]
 position = Vector2( 528.192, 47.3127 )
-speed = 1.0
 
 [node name="Customer4" parent="Node4" instance=ExtResource( 4 )]
 position = Vector2( 589.651, 432.485 )
-EntityFlags = 1
-speed = 1.0
 [connection signal="entity_spawned" from="Node/Portal" to="." method="_on_entity_spawned"]
 [connection signal="entity_spawned" from="Node2/Portal2" to="." method="_on_entity_spawned"]
 [connection signal="entity_spawned" from="Node3/Portal3" to="." method="_on_entity_spawned"]
