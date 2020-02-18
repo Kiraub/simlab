@@ -9,6 +9,11 @@ script/source = "extends Control
 
 func _init():
 	pass
+
+
+func _on_SpinBox_value_changed(value):
+	print_debug(value)
+	pass # Replace with function body.
 "
 
 [node name="Control" type="Control"]
@@ -467,3 +472,4 @@ step = 0.001
 __meta__ = {
 "_edit_use_anchors_": false
 }
+[connection signal="value_changed" from="TabContainer2/ScrollContainer/all container/HSplitContainer/SpinBox" to="." method="_on_SpinBox_value_changed"]

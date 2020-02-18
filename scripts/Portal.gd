@@ -14,8 +14,8 @@ export(PackedScene) var spawn : PackedScene
 
 #[override]
 func _init(i_name : String = 'Portal').(i_name):
-	pass
+  pass
 
 func _on_Timer_timeout():
-	#print_debug("Timer timeout")
-	emit_signal("entity_spawned", spawn, position)
+  #print_debug("Timer timeout")
+  emit_signal("entity_spawned", spawn, position)

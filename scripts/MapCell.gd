@@ -1,9 +1,9 @@
 """
-	A MapCell holds information about a cell on an EntityMap
-	It is used for communication between Entities and the EntityMap
-	
-	For that purpose it extends Reference to be easily passed between functions and automatically cleaned up after usage.
-	It only features a constructor and getters since its values are not to be directly modified after construction.
+  A MapCell holds information about a cell on an EntityMap
+  It is used for communication between Entities and the EntityMap
+  
+  For that purpose it extends Reference to be easily passed between functions and automatically cleaned up after usage.
+  It only features a constructor and getters since its values are not to be directly modified after construction.
 """
 
 extends Reference
@@ -14,25 +14,25 @@ class_name MapCell
 
 """ Variables """
 
-var _entities		: Array		setget , get_entities
-var _tile_id		: int		setget , get_tile_id
-var _absolute_v		: Vector2	setget , get_absolute_v
-var _relative_v		: Vector2	setget , get_relative_v
+var _tile_id    : int     setget , get_tile_id
+var _absolute_v : Vector2 setget , get_absolute_v
+var _entity     : Entity  setget , get_entity
+var _relative_v : Vector2 setget , get_relative_v
 
 """ Initialization """
 
 #[override]
 func _init(
-		entities	: Array		= [],
-		tile_id		: int		= -1,
-		absolute_v	: Vector2	= Vector2.ZERO,
-		relative_v	: Vector2	= Vector2.ZERO
-		) -> void	:
-	
-	self._entities		= entities
-	self._tile_id		= tile_id
-	self._absolute_v	= absolute_v
-	self._relative_v	= relative_v
+    tile_id     : int,
+    absolute_v  : Vector2,
+    entity      : Entity  = null,
+    relative_v  : Vector2 = Vector2.ZERO
+    ) -> void:
+  
+  self._tile_id     = tile_id
+  self._absolute_v  = absolute_v
+  self._entity      = entity
+  self._relative_v  = relative_v
 
 """ Simulation step """
 
@@ -42,39 +42,39 @@ func _init(
 
 """ Setters / Getters """
 
-func get_entities() -> Array:
-	return _entities
-
 func get_tile_id() -> int:
-	return _tile_id
+  return _tile_id
 
 func get_absolute_v() -> Vector2:
-	return _absolute_v
+  return _absolute_v
+
+func get_entity() -> Entity:
+  return _entity
 
 func get_relative_v() -> Vector2:
-	return _relative_v
+  return _relative_v
 
 """ Methods """
 
-func has_entities() -> bool:
-	if _entities is Array and len(_entities) > 0:
-		return true
-	return false
+func has_entity() -> bool:
+  if _entity is Entity and _entity != null:
+    return true
+  return false
 
 func make_relative_to(reference_v : Vector2) -> void:
-	_relative_v = reference_v - _absolute_v
+  _relative_v = reference_v - _absolute_v
 
 func distance_to_map(other_map : Vector2, distance_type : int) -> float:
-	var distance : float
-	match distance_type:
-		GLOBALS.DISTANCE_TYPES.MANHATTAN:
-			distance = abs(other_map.x - _absolute_v.x) + abs(other_map.y - _absolute_v.y)
-		GLOBALS.DISTANCE_TYPES.CHEBYSHEV:
-			distance = min(abs(other_map.x - _absolute_v.x), abs(other_map.y - _absolute_v.y))
-	return distance
+  var distance : float
+  match distance_type:
+    GLOBALS.DISTANCE_TYPES.MANHATTAN:
+      distance = abs(other_map.x - _absolute_v.x) + abs(other_map.y - _absolute_v.y)
+    GLOBALS.DISTANCE_TYPES.CHEBYSHEV:
+      distance = min(abs(other_map.x - _absolute_v.x), abs(other_map.y - _absolute_v.y))
+  return distance
 
 func distance_to_map_cell(other_map_cell : MapCell, distance_type : int) -> float:
-	return distance_to_map(other_map_cell.get_absolute_v(), distance_type)
+  return distance_to_map(other_map_cell.get_absolute_v(), distance_type)
 
 """ Event Listeners """
 
