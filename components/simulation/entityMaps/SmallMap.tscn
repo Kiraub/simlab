@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Assets/tilesets/omise.tres" type="TileSet" id=1]
 [ext_resource path="res://scripts/EntityMap.gd" type="Script" id=2]
 [ext_resource path="res://components/entities/Table.tscn" type="PackedScene" id=3]
 [ext_resource path="res://components/entities/Waiter.tscn" type="PackedScene" id=4]
+[ext_resource path="res://components/entities/Customer.tscn" type="PackedScene" id=5]
 
 [node name="SmallMap" type="TileMap"]
 tile_set = ExtResource( 1 )
@@ -16,11 +17,6 @@ script = ExtResource( 2 )
 
 [node name="Waiter" parent="Node" instance=ExtResource( 4 )]
 position = Vector2( 46.714, 46.714 )
-speed = 1.0
-
-[node name="Waiter2" parent="Node" instance=ExtResource( 4 )]
-position = Vector2( 275.319, 46.4393 )
-speed = 32.0
 
 [node name="Node2" type="Node" parent="."]
 
@@ -32,3 +28,8 @@ position = Vector2( 147.328, 238.703 )
 
 [node name="Table3" parent="Node2" instance=ExtResource( 3 )]
 position = Vector2( 142.195, 111.908 )
+
+[node name="Node3" type="Node" parent="."]
+
+[node name="Customer" parent="Node3" instance=ExtResource( 5 )]
+position = Vector2( 148.934, 144.617 )

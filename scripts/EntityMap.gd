@@ -29,7 +29,7 @@ func _ready():
   _spawned_parent.owner = self
   
   for cell_v in get_used_cells():
-    mapcells[cell_v] = MapCell.new(get_cellv(cell_v), cell_v)
+    mapcells[cell_v] = MapCell.new(get_cellv(cell_v), cell_v, center_worldv_in_cell(map_to_world(cell_v)))
   
   add_entities(collect_child_entities(self))
   center_entities_in_cells()
@@ -54,7 +54,7 @@ static func collect_child_entities(node : Node) -> Array:
 
 """ Simulation step """
 
-func step_by(amount : float) -> void:
+func step_by(amount : int) -> void:
   var actors  : = []
   var actor   : Actor
   
@@ -64,8 +64,9 @@ func step_by(amount : float) -> void:
     actor = (entity as Actor)
     actors.append(actor)
   
-  for actor in actors:
-    actor.step_by(amount)
+  for __ in range(0, amount):
+    for actor in actors:
+      actor.step()
 
 """ Setters / Getters """
 
@@ -76,7 +77,6 @@ func get_config_wrapper() -> ConfigWrapper:
 
 func get_neighbourhood_by_map(center_map : Vector2, distance : int, distance_type : int) -> Dictionary:
   var neighbourhood : = {}
-  var cell_distance : int
   var map_absolute  : Vector2
   var map_relative  : Vector2
   var mapcell       : MapCell
@@ -89,16 +89,12 @@ func get_neighbourhood_by_map(center_map : Vector2, distance : int, distance_typ
       map_absolute = Vector2(x_coord, y_coord)
       if not mapcells.has(map_absolute):
         continue
-      map_relative = map_absolute - center_map
-      match distance_type:
-        GLOBALS.DISTANCE_TYPES.MANHATTAN:
-          cell_distance = int(floor(abs(map_relative.x) + abs(map_relative.y)))
-        GLOBALS.DISTANCE_TYPES.CHEBYSHEV:
-          cell_distance = int(floor(min(abs(map_relative.x), abs(map_relative.y))))
-      if cell_distance > distance:
-        continue
       mapcell = mapcells[map_absolute]
-      neighbourhood[map_relative] = MapCell.new(mapcell.get_tile_id(), mapcell.get_absolute_v(), mapcell.get_entity())
+      if mapcell.distance_to_map(center_map, distance_type) > distance:
+        continue
+      map_relative = map_absolute - center_map
+      neighbourhood[map_relative] = MapCell.new(mapcell.get_tile_id(), mapcell.get_absolute_v(), mapcell.get_center_v(), mapcell.get_entity())
+      (neighbourhood[map_relative] as MapCell).make_relative_to(center_map)
   
   return neighbourhood
 
@@ -130,7 +126,7 @@ func add_entity(entity : Entity) -> void:
   assert(mapcells.has(map_v), "Trying to add Entity at unknown cell: %s" % entity)
   mapcell = mapcells[map_v]
   assert(not mapcell.has_entity(), "Trying to add Entity at cell that already holds one: %s" % entity)
-  mapcells[map_v] = MapCell.new(mapcell.get_tile_id(), mapcell.get_absolute_v(), entity)
+  mapcells[map_v] = MapCell.new(mapcell.get_tile_id(), mapcell.get_absolute_v(), mapcell.get_center_v(), entity)
   entities.append(entity)
   entity.connect("position_updated", self, "_on_entity_position_updated")
   entity.connect("tree_exiting", self, "_on_entity_exiting_tree", [entity])
@@ -163,8 +159,8 @@ func _on_entity_position_updated(entity : Entity, old_world_v : Vector2, new_wor
     new_mapcell = mapcells[new_map_v]
     assert(old_mapcell.get_entity() == entity, "Entity changed position from cell that did not contain it: %s" % old_mapcell)
     assert(not new_mapcell.has_entity(), "Entity changed position to cell that already contains an Entity: %s" % new_mapcell)
-    mapcells[old_map_v] = MapCell.new(old_mapcell.get_tile_id(), old_mapcell.get_absolute_v())
-    mapcells[new_map_v] = MapCell.new(new_mapcell.get_tile_id(), new_mapcell.get_absolute_v(), entity)
+    mapcells[old_map_v] = MapCell.new(old_mapcell.get_tile_id(), old_mapcell.get_absolute_v(), old_mapcell.get_center_v())
+    mapcells[new_map_v] = MapCell.new(new_mapcell.get_tile_id(), new_mapcell.get_absolute_v(), new_mapcell.get_center_v(), entity)
 
 func _on_entity_spawned(spawn_scene : PackedScene, mapcell : MapCell) -> void:
   var entity  : Entity
@@ -181,12 +177,14 @@ func _on_entity_spawned(spawn_scene : PackedScene, mapcell : MapCell) -> void:
   add_entity(entity)
 
 func _on_entity_exiting_tree(entity : Entity) -> void:
-  var map_v : Vector2
+  var map_v   : Vector2
+  var mapcell : MapCell
   
   assert(entity in entities, "Received 'tree_exiting' signal from unknown entity: %s" % entity)
   map_v = world_to_map(entity.position)
   assert(mapcells.has(map_v), "Entity exiting tree from illegal cell: %s" % map_v)
-  mapcells[map_v] = MapCell.new(get_cellv(map_v), map_v)
+  mapcell = mapcells[map_v]
+  mapcells[map_v] = MapCell.new(mapcell.get_tile_id(), mapcell.get_absolute_v(), mapcell.get_center_v())
   entities.erase(entity)
 
 func _on_request_neighbours(actor : Actor, distance_type : int, distance : int) -> void:

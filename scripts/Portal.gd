@@ -9,7 +9,7 @@ signal entity_spawned
 """ Variables """
 
 export(PackedScene) var spawn_scene : PackedScene
-export var spawn_delay : float setget set_spawn_delay
+export var spawn_delay : int setget set_spawn_delay
 
 """ Initialization """
 
@@ -25,8 +25,8 @@ func _init(i_name : String = 'Portal').(i_name) -> void:
 """ Simulation step """
 
 #[override]
-func step_by(amount : float) -> void:
-  _action_time_accu += amount
+func step() -> void:
+  _action_time_accu += 1
   if _action_time_accu >= spawn_delay:
     if spawn_on_free_neighbour():
       _action_time_accu = 0.0
@@ -36,7 +36,7 @@ func step_by(amount : float) -> void:
 func get_config_wrapper() -> ConfigWrapper:
   return config
 
-func set_spawn_delay(new_value : float) -> void:
+func set_spawn_delay(new_value : int) -> void:
   spawn_delay = new_value
   config.set_entry_value("spawn_delay", new_value)
 
@@ -44,21 +44,20 @@ func set_spawn_delay(new_value : float) -> void:
 
 func spawn_on_free_neighbour() -> bool:
   var mapcell             : MapCell
-  var volatile_neighbours : Dictionary = get_neighbours_volatile()
   
-  if len(volatile_neighbours) == 0:
-    request_neighbours(GLOBALS.DISTANCE_TYPES.MANHATTAN)
+  request_neighbours(used_distance_type)
+  if len(neighbours.keys()) == 0:
     return false
-  for map_v in volatile_neighbours.keys():
-    mapcell = volatile_neighbours[map_v]
-    if not (mapcell.has_entity() or GLOBALS.BLOCKING_TILE_IDS.values().has(mapcell.get_tile_id())):
+  for map_v in neighbours.keys():
+    mapcell = neighbours[map_v]
+    if not (mapcell.has_entity() or mapcell.get_tile_id() in GLOBALS.BLOCKING_TILE_IDS):
       emit_signal("entity_spawned", spawn_scene, mapcell)
       return true
   return false
 
 """ Events """
 
-func _on_spawn_delay_changed(_old_value : float, new_value : float) -> void:
+func _on_spawn_delay_changed(_old_value : int, new_value : int) -> void:
   set_spawn_delay(new_value)
 
 

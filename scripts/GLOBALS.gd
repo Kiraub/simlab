@@ -11,21 +11,22 @@ extends Node
 
 """ Constants """
 
-enum Z_INDICIES {
-  BACKGROUND  = -10
-  STATIC      = -8
+const Z_INDICIES = {
+  BACKGROUND  = -10,
+  STATIC      = -8,
   ACTIVE      = -5
 }
 
-enum DISTANCE_TYPES {
-  MANHATTAN = 4 # without diagonal, Von Neumann neighbourhood
+const DISTANCE_TYPES = {
+  MANHATTAN = 4, # without diagonal, Von Neumann neighbourhood
   CHEBYSHEV = 8 # with diagonal, Moore neighbourhood
 }
 
-enum BLOCKING_TILE_IDS {
-  INVALID = -1
-  WALL    = 1
-}
+const TILE_INVALID  : int = -1
+const TILE_FLOOR    : int = 0
+const TILE_WALL     : int = 1
+
+const BLOCKING_TILE_IDS = [TILE_INVALID, TILE_WALL]
 
 """ Variables """
 

@@ -6,6 +6,8 @@ extends Entity
 
 class_name Actor
 
+signal movement_started
+signal movement_ended
 signal request_neighbours
 
 """ Constants """
@@ -14,15 +16,17 @@ const DEFAULT_SPEED   : float = 1.0
 
 """ Variables """
 
-var vision_range      : int = 1
-var speed             : float setget set_speed, get_speed
+var vision_range        : int   = 2
+var speed               : float       setget set_speed, get_speed
 
-var targets           : Array       setget set_targets, get_targets
-var neighbours        : Dictionary  setget set_neighbours, get_neighbours_volatile
-var life_state        : int         setget set_life_state, get_life_state
+var targets             : Array       setget set_targets, get_targets
+var neighbours          : Dictionary  setget set_neighbours, get_neighbours
+var life_state          : int         setget set_life_state, get_life_state
+var used_distance_type  : int   = GLOBALS.DISTANCE_TYPES.MANHATTAN
 
-var _action_time_accu : float = 0.0
-var _map_memory       :       = {} 
+var _action_time_accu   : float = 0.0
+var _map_memory         :       = {}
+var _traversed_mapv     :       = []
 
 """ Initialization """
 
@@ -33,10 +37,24 @@ func _init(i_name : String = 'Actor').(GLOBALS.Z_INDICIES.ACTIVE, i_name) -> voi
 
 """ Simulation step """
 
-func step_by(amount : float) -> void:
-  if len(targets) > 0 and amount > 0:
-    var travel_distance : = get_speed() * amount
+func step() -> void:
+  if len(targets) > 0:
+    var travel_distance : = get_speed()
     move_towards_target(travel_distance)
+
+""" Static Methods """
+
+static func get_expansions_by_distance_type(distance_type : int) -> Array:
+  var expansions  : Array
+  match distance_type:
+    GLOBALS.DISTANCE_TYPES.MANHATTAN:
+      expansions = [Vector2.UP, Vector2.RIGHT, Vector2.DOWN, Vector2.LEFT]
+    GLOBALS.DISTANCE_TYPES.CHEBYSHEV:
+      expansions = [
+        Vector2.UP+Vector2.LEFT, Vector2.UP, Vector2.UP+Vector2.RIGHT, Vector2.RIGHT,
+        Vector2.DOWN+Vector2.RIGHT, Vector2.DOWN, Vector2.DOWN+Vector2.LEFT, Vector2.LEFT
+      ]
+  return expansions
 
 """ Setters / Getters """
 
@@ -57,10 +75,8 @@ func set_neighbours(new_value : Dictionary) -> void:
   for neighbour in new_value.values():
     assert(neighbour is MapCell, "Trying to set non MapCell neighbour: %s" % neighbour)
   neighbours = new_value
-func get_neighbours_volatile() -> Dictionary:
-  var volatile = neighbours.duplicate()
-  neighbours = {}
-  return volatile
+func get_neighbours() -> Dictionary:
+  return neighbours
 
 func set_life_state(new_value : int) -> void:
   life_state = new_value
@@ -122,20 +138,44 @@ func next_life_state() -> void:
   set_life_state(life_state + 1)
   _action_time_accu = 0
 
-func like_memory(map_cell : MapCell) -> bool:
+func is_in_vision(target : MapCell, from : MapCell, mapcells_by_rel : Dictionary) -> bool:
+  var delta_v             : Vector2 = from.get_relative_v() - target.get_relative_v()
+  var horizontal_v        : Vector2 = Vector2.RIGHT * sign(delta_v.x) + target.get_relative_v()
+  var vertical_v          : Vector2 = Vector2.DOWN * sign(delta_v.y) + target.get_relative_v()
+  
+  if from.get_relative_v() == horizontal_v or from.get_relative_v() == vertical_v:
+    return true
+  if ( horizontal_v != target.get_relative_v()
+    and mapcells_by_rel.has(horizontal_v)
+    and not mapcells_by_rel[horizontal_v].get_tile_id() in GLOBALS.BLOCKING_TILE_IDS
+    and is_in_vision(mapcells_by_rel[horizontal_v], from, mapcells_by_rel)
+    ):
+    return true
+  if ( vertical_v != target.get_relative_v()
+    and mapcells_by_rel.has(vertical_v)
+    and not mapcells_by_rel[vertical_v].get_tile_id() in GLOBALS.BLOCKING_TILE_IDS
+    and is_in_vision(mapcells_by_rel[vertical_v], from, mapcells_by_rel)
+    ):
+    return true
+  return false
+
+func get_path_from_memory(target : MapCell, from : MapCell) -> Array:
+  return []
+
+func like_memory(mapcell : MapCell) -> bool:
   var memory_cell : MapCell
   
-  if not _map_memory.has(map_cell.get_map_v()):
+  if not _map_memory.has(mapcell.get_absolute_v()):
     return false
-  memory_cell = _map_memory[map_cell.get_map_v()]
-  if memory_cell.get_tile_id() == map_cell.get_tile_id():
+  memory_cell = _map_memory[mapcell.get_absolute_v()]
+  if memory_cell.get_tile_id() == mapcell.get_tile_id():
     return false
-  if len(memory_cell.get_entities()) != len(map_cell.get_entities()):
+  if memory_cell.get_entity() != mapcell.get_entity():
     return false
   return true
 
-func update_memory(map_cell : MapCell) -> void:
-  _map_memory[map_cell.get_map_v()] = map_cell
+func update_memory(mapcell : MapCell) -> void:
+  _map_memory[mapcell.get_absolute_v()] = mapcell
 
 func request_neighbours(distance_type : int, distance : int = 1) -> void:
   emit_signal("request_neighbours", self, distance_type, distance)

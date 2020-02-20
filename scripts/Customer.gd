@@ -21,11 +21,16 @@ const E_LifeState = {
 export var decide_delay   : float = 5.0
 export var process_delay  : float = 2.5
 
+var _portal_memory        : Array
+var _table_memory         : Array
+
 """ Initialization """
 
 #[override]
 func _init(i_name : String = 'Customer').(i_name) -> void:
   life_state = E_LifeState.ENTER_SCENE
+  _portal_memory = []
+  _table_memory = []
   
   config.add_config_entry("vision_range",  {
     ConfigWrapper.FIELDS.LABEL_TEXT: "Vision range (tile)",
@@ -49,9 +54,9 @@ func _init(i_name : String = 'Customer').(i_name) -> void:
 """ Simulation step """
 
 #[override]
-func step_by(amount : float) -> void:
+func step() -> void:
   if len(targets) > 0:
-    .step_by(amount)
+    .step()
     return
   match life_state:
     E_LifeState.ENTER_SCENE:
@@ -59,13 +64,13 @@ func step_by(amount : float) -> void:
     E_LifeState.SEARCH_TABLE:
       search_table()
     E_LifeState.DECIDE_ORDER:
-      decide_order(amount)
+      decide_order()
     E_LifeState.MAKE_ORDER:
       make_order()
     E_LifeState.WAIT_ORDER:
       wait_order()
     E_LifeState.PROCESS_ORDER:
-      process_order(amount)
+      process_order()
     E_LifeState.PAY_ORDER:
       pay_order()
     E_LifeState.SEARCH_EXIT:
@@ -97,19 +102,26 @@ func set_process_delay(new_value : float) -> void:
 """ Methods """
 
 func enter_scene() -> void:
+  var origin_mapcell      : MapCell
+  var neighbour_mapcell   : MapCell
+  
+  request_neighbours(used_distance_type, vision_range)
+  if len(neighbours.keys()) == 0:
+    return
+  assert(neighbours.has(Vector2.ZERO), "Non empty neighbours missing (0,0) key: %s" % neighbours)
+  origin_mapcell = neighbours[Vector2.ZERO]
+  for rel_v in neighbours:
+    neighbour_mapcell = neighbours[rel_v]
+    if is_in_vision(neighbour_mapcell, origin_mapcell, neighbours):
+      if not like_memory(neighbour_mapcell):
+        update_memory(neighbour_mapcell)
   next_life_state()
 
 func search_table() -> void:
-  var volatile_neighbours: Dictionary = get_neighbours_volatile()
-  
-  if len(volatile_neighbours) == 0:
-    request_neighbours(GLOBALS.DISTANCE_TYPES.MANHATTAN, vision_range)
-    return
-  
-  #todo
+  next_life_state()
 
-func decide_order(amount : float) -> void:
-  _action_time_accu += amount
+func decide_order() -> void:
+  _action_time_accu += 1
   if _action_time_accu >= decide_delay:
     next_life_state()
 
@@ -119,8 +131,8 @@ func make_order() -> void:
 func wait_order() -> void:
   next_life_state()
 
-func process_order(amount : float) -> void:
-  _action_time_accu += amount
+func process_order() -> void:
+  _action_time_accu += 1
   if _action_time_accu >= process_delay:
     next_life_state()
 
@@ -132,6 +144,23 @@ func search_exit() -> void:
 
 func leave_scene() -> void:
   queue_free()
+
+#[override]
+func update_memory(mapcell : MapCell) -> void:
+  var map_v             : Vector2 = mapcell.get_absolute_v()
+  var in_table_memory   : bool    = _table_memory.has(map_v)
+  var in_portal_memory  : bool    = _portal_memory.has(map_v)
+  if in_table_memory != mapcell.get_entity() is Table:
+    if in_table_memory:
+      _table_memory.push_back(map_v)
+    else:
+      _table_memory.erase(map_v)
+  if in_portal_memory != mapcell.get_entity() is Portal:
+    if in_portal_memory:
+      _portal_memory.push_back(map_v)
+    else:
+      _portal_memory.erase(map_v)
+  .update_memory(mapcell)
 
 """ Events """
 
