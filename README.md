@@ -1,4 +1,4 @@
-# SimLab
+# SimLab simplified branch
 
 ## About the engine
 
@@ -11,8 +11,8 @@ Note that the used version of Godot was 3.1.2 at first and later switched to 3.2
 ## About the program
 
 This program contains an abstract simulation of a restaurant with waiters, customers, tables and entrancess/ exits which are grouped together as portals.
-It features a GUI to contain multiple simulation views, each with their own set of buttons for controlling it.
-The simulations expose configurable objects to the GUI which the user can open and configure freely.
+It features a GUI to contain a single simulation view, with a set of buttons for controlling it.
+The simulation exposes configurable objects to the GUI which the user can open and configure freely.
 
 ## Background
 
