@@ -31,7 +31,8 @@ func _ready():
   for cell_v in get_used_cells():
     mapcells[cell_v] = MapCell.new(get_cellv(cell_v), cell_v, center_worldv_in_cell(map_to_world(cell_v)))
   
-  add_entities(collect_child_entities(self))
+  for entity in collect_child_entities(self):
+    add_entity(entity)
   center_entities_in_cells()
 
 """ Static methods """
@@ -57,11 +58,13 @@ static func collect_child_entities(node : Node) -> Array:
 func step_by(amount : int) -> void:
   var actors  : = []
   var actor   : Actor
+  var map_v   : Vector2
   
   for entity in entities:
     if not entity is Actor:
       continue
     actor = (entity as Actor)
+    map_v = world_to_map(actor.position)
     actors.append(actor)
   
   for __ in range(0, amount):

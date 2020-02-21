@@ -6,18 +6,14 @@ extends Entity
 
 class_name Actor
 
-signal movement_started
-signal movement_ended
-signal request_neighbours
+signal position_updated(old_position, new_Position)
+signal requested_neighbours(entity, distance_type, distance)
 
 """ Constants """
-
-const DEFAULT_SPEED   : float = 1.0
 
 """ Variables """
 
 var vision_range        : int   = 2
-var speed               : float       setget set_speed, get_speed
 
 var targets             : Array       setget set_targets, get_targets
 var neighbours          : Dictionary  setget set_neighbours, get_neighbours
@@ -32,36 +28,14 @@ var _traversed_mapv     :       = []
 
 #[override]
 func _init(i_name : String = 'Actor').(GLOBALS.Z_INDICIES.ACTIVE, i_name) -> void:
-  speed   = DEFAULT_SPEED
   targets = []
 
 """ Simulation step """
 
 func step() -> void:
-  if len(targets) > 0:
-    var travel_distance : = get_speed()
-    move_towards_target(travel_distance)
-
-""" Static Methods """
-
-static func get_expansions_by_distance_type(distance_type : int) -> Array:
-  var expansions  : Array
-  match distance_type:
-    GLOBALS.DISTANCE_TYPES.MANHATTAN:
-      expansions = [Vector2.UP, Vector2.RIGHT, Vector2.DOWN, Vector2.LEFT]
-    GLOBALS.DISTANCE_TYPES.CHEBYSHEV:
-      expansions = [
-        Vector2.UP+Vector2.LEFT, Vector2.UP, Vector2.UP+Vector2.RIGHT, Vector2.RIGHT,
-        Vector2.DOWN+Vector2.RIGHT, Vector2.DOWN, Vector2.DOWN+Vector2.LEFT, Vector2.LEFT
-      ]
-  return expansions
+  pass
 
 """ Setters / Getters """
-
-func set_speed(new_speed : float) -> void:
-  speed = new_speed
-func get_speed() -> float:
-  return speed
 
 func set_targets(new_targets : Array) -> void:
   for target in new_targets:
@@ -178,7 +152,7 @@ func update_memory(mapcell : MapCell) -> void:
   _map_memory[mapcell.get_absolute_v()] = mapcell
 
 func request_neighbours(distance_type : int, distance : int = 1) -> void:
-  emit_signal("request_neighbours", self, distance_type, distance)
+  emit_signal("requested_neighbours", self, distance_type, distance)
 
 """ Events """
 

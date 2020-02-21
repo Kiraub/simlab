@@ -1,0 +1,80 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://themes/new_theme.tres" type="Theme" id=1]
+[ext_resource path="res://components/interface/containers/TabContainer.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scripts/GUI.gd" type="Script" id=3]
+[ext_resource path="res://Assets/icons/icon_add.svg" type="Texture" id=4]
+
+[node name="GUI" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 1 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VSplitContainer" type="VSplitContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+dragger_visibility = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSplitContainer2" type="HSplitContainer" parent="VSplitContainer"]
+margin_right = 1600.0
+margin_bottom = 40.0
+dragger_visibility = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VSplitContainer/HSplitContainer2"]
+margin_right = 244.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AddSimulationBtn" type="Button" parent="VSplitContainer/HSplitContainer2/HBoxContainer"]
+margin_right = 244.0
+margin_bottom = 40.0
+text = "Add Simulation"
+icon = ExtResource( 4 )
+
+[node name="Panel" type="Panel" parent="VSplitContainer/HSplitContainer2"]
+margin_left = 244.0
+margin_right = 1600.0
+margin_bottom = 40.0
+
+[node name="HSplitContainer" type="HSplitContainer" parent="VSplitContainer"]
+margin_top = 40.0
+margin_right = 1600.0
+margin_bottom = 900.0
+split_offset = 950
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LeftPanel" type="Panel" parent="VSplitContainer/HSplitContainer"]
+margin_right = 950.0
+margin_bottom = 860.0
+
+[node name="RightPanel" type="Panel" parent="VSplitContainer/HSplitContainer"]
+margin_left = 958.0
+margin_right = 1600.0
+margin_bottom = 860.0
+
+[node name="Background" parent="VSplitContainer/HSplitContainer/RightPanel" instance=ExtResource( 2 )]
+tab_align = 2
+tabs_visible = false
+
+[node name="InspectorContainer" type="ScrollContainer" parent="VSplitContainer/HSplitContainer/RightPanel/Background"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 5.0
+margin_top = 5.0
+margin_right = -5.0
+margin_bottom = -5.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+scroll_horizontal_enabled = false
+[connection signal="pressed" from="VSplitContainer/HSplitContainer2/HBoxContainer/AddSimulationBtn" to="." method="_on_AddSimulationBtn_pressed"]
