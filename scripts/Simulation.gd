@@ -2,35 +2,28 @@ extends Control
 
 class_name Simulation
 
-signal configuration_opened
 signal simulation_stepped
 
 """ Constants """
 
 """ Variables """
 
-var title         : String  = "Simulation"  setget set_title
 var paused        : bool    = true          setget set_paused
-var step_delay    : float   = 1_000.0       setget set_step_delay
+var step_delay    : float   = 50.0          setget set_step_delay
 var step_size     : int     = 1             setget set_step_size
 var _delay_acc    : float   = 0.0
 
 var config        : ConfigWrapper           setget , get_config_wrapper
 var entity_map    : EntityMap
-var viewport      : Viewport
-var titleLabel    : Label
+
+onready var viewport      : Viewport  = $ViewportContainer/Viewport
 
 """ Initialization """
 
 #[override]
 func _ready() -> void:
   var bound : bool
-
-  viewport    = get_node_or_null("VSplitContainer/ViewportContainer/Viewport")
   assert(viewport != null, "No Viewport bound in Simulation: %s" % self)
-  titleLabel  = get_node_or_null("VSplitContainer/HSplitContainer/Title")
-  assert(titleLabel != null, "No TitleLabel bound in Simulation: %s" % self)
-  titleLabel.text = title
   
   bound = false
   for child in viewport.get_children():
@@ -41,11 +34,6 @@ func _ready() -> void:
   assert(bound, "No EntityMap found under Simulation->Viewport: %s->%s" % [self,viewport])
   
   config = ConfigWrapper.new("Simulation")
-  config.add_config_entry("title", {
-    ConfigWrapper.FIELDS.LABEL_TEXT: "Title",
-    ConfigWrapper.FIELDS.DEFAULT_VALUE: title,
-    ConfigWrapper.FIELDS.SIGNAL_NAME: "title_changed"
-  })
   config.add_config_entry("step_delay", {
     ConfigWrapper.FIELDS.LABEL_TEXT: "Step delay (ms)",
     ConfigWrapper.FIELDS.DEFAULT_VALUE: step_delay,
@@ -61,7 +49,6 @@ func _ready() -> void:
     ConfigWrapper.FIELDS.DEFAULT_VALUE: entity_map,
     ConfigWrapper.FIELDS.SIGNAL_NAME: "entity_map_changed"
   })
-  config.connect("title_changed", self, "_on_title_changed")
   config.connect("step_delay_changed", self, "_on_step_delay_changed")
   config.connect("step_size_changed", self, "_on_step_size_changed")
   config.connect("entity_map_changed", self, "_on_entity_map_changed")
@@ -86,10 +73,6 @@ func _process(delta_in_seconds : float) -> void:
 
 """ Setters / Getters """
 
-func set_title(new_title : String) -> void:
-  title = new_title
-  titleLabel.text = title
-
 func set_paused(new_value : bool) -> void:
   paused = new_value
 
@@ -106,10 +89,7 @@ func get_config_wrapper() -> ConfigWrapper:
 
 """ Methods """
 
-""" Events """
-
-func _on_title_changed(_old_value : String, new_value : String) -> void:
-  set_title(new_value)
+""" Config signal handlers """
 
 func _on_step_delay_changed(_old_value : float, new_value : float) -> void:
   set_step_delay(new_value)
@@ -120,15 +100,18 @@ func _on_step_size_changed(_old_value : int, new_value : int) -> void:
 func _on_entity_map_changed() -> void:
   pass
 
-func _on_ConfigBtn_pressed() -> void:
-  emit_signal("configuration_opened", config)
+""" GUI Events """
 
-func _on_PlayPauseBtn_pressed(play : bool) -> void:
-  set_paused(!play)
+func _on_PlayBtn_pressed():
+  set_paused(false)
 
-func _on_StepBtn_pressed(amount : int = step_size):
+func _on_PauseBtn_pressed():
+  set_paused(true)
+
+func _on_StepBtn_pressed():
   if paused:
-    step_by(amount)
+    step_by(step_size)
 
-func _on_DeleteBtn_pressed():
-  self.queue_free()
+func _on_StepOneBtn_pressed():
+  if paused:
+    step_by(1)

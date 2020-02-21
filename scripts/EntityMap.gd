@@ -11,23 +11,15 @@ var config          : ConfigWrapper setget , get_config_wrapper
 var entities        : = []
 var mapcells        : = {}
 
-var _spawned_parent : Node
-
 """ Initialization """
 
 #[override]
 func _init():
   self.name = "EntityMap"
-  z_index   = GLOBALS.Z_INDICIES.BACKGROUND
   config    = ConfigWrapper.new("EntityMap")
-  _spawned_parent = Node.new()
-  _spawned_parent.name = "Spawned entities"
 
 #[override]
 func _ready():
-  add_child(_spawned_parent)
-  _spawned_parent.owner = self
-  
   for cell_v in get_used_cells():
     mapcells[cell_v] = MapCell.new(get_cellv(cell_v), cell_v, center_worldv_in_cell(map_to_world(cell_v)))
   
@@ -64,11 +56,12 @@ func step_by(amount : int) -> void:
     if not entity is Actor:
       continue
     actor = (entity as Actor)
-    map_v = world_to_map(actor.position)
     actors.append(actor)
   
   for __ in range(0, amount):
     for actor in actors:
+      map_v = world_to_map(actor.position)
+      actor.set_neighbours(get_neighbourhood_by_map(map_v, actor.get_vision_range(), actor.get_distance_type()))
       actor.step()
 
 """ Setters / Getters """
@@ -93,10 +86,10 @@ func get_neighbourhood_by_map(center_map : Vector2, distance : int, distance_typ
       if not mapcells.has(map_absolute):
         continue
       mapcell = mapcells[map_absolute]
-      if mapcell.distance_to_map(center_map, distance_type) > distance:
+      if mapcell.distance_to_v(center_map, distance_type) > distance:
         continue
       map_relative = map_absolute - center_map
-      neighbourhood[map_relative] = MapCell.new(mapcell.get_tile_id(), mapcell.get_absolute_v(), mapcell.get_center_v(), mapcell.get_entity())
+      neighbourhood[map_relative] = MapCell.new(mapcell.get_tile_id(), mapcell.get_absolute_v(), mapcell.get_world_v(), mapcell.get_entity())
       (neighbourhood[map_relative] as MapCell).make_relative_to(center_map)
   
   return neighbourhood
@@ -129,7 +122,7 @@ func add_entity(entity : Entity) -> void:
   assert(mapcells.has(map_v), "Trying to add Entity at unknown cell: %s" % entity)
   mapcell = mapcells[map_v]
   assert(not mapcell.has_entity(), "Trying to add Entity at cell that already holds one: %s" % entity)
-  mapcells[map_v] = MapCell.new(mapcell.get_tile_id(), mapcell.get_absolute_v(), mapcell.get_center_v(), entity)
+  mapcells[map_v] = MapCell.new(mapcell.get_tile_id(), mapcell.get_absolute_v(), mapcell.get_world_v(), entity)
   entities.append(entity)
   entity.connect("position_updated", self, "_on_entity_position_updated")
   entity.connect("tree_exiting", self, "_on_entity_exiting_tree", [entity])
@@ -139,13 +132,6 @@ func add_entity(entity : Entity) -> void:
       ConfigWrapper.FIELDS.DEFAULT_VALUE: entity,
       ConfigWrapper.FIELDS.SIGNAL_NAME: "unused_entity_changed"
     })
-  if entity is Actor:
-    (entity as Actor).connect("request_neighbours", self, "_on_request_neighbours")
-
-func add_entities(new_entities : Array) -> void:
-  for entity in new_entities:
-    assert(entity is Entity, "Trying to add non-Entity object to EntityMap: %s" % entity)
-    add_entity(entity)
 
 """ Events """
 
@@ -162,8 +148,8 @@ func _on_entity_position_updated(entity : Entity, old_world_v : Vector2, new_wor
     new_mapcell = mapcells[new_map_v]
     assert(old_mapcell.get_entity() == entity, "Entity changed position from cell that did not contain it: %s" % old_mapcell)
     assert(not new_mapcell.has_entity(), "Entity changed position to cell that already contains an Entity: %s" % new_mapcell)
-    mapcells[old_map_v] = MapCell.new(old_mapcell.get_tile_id(), old_mapcell.get_absolute_v(), old_mapcell.get_center_v())
-    mapcells[new_map_v] = MapCell.new(new_mapcell.get_tile_id(), new_mapcell.get_absolute_v(), new_mapcell.get_center_v(), entity)
+    mapcells[old_map_v] = MapCell.new(old_mapcell.get_tile_id(), old_mapcell.get_absolute_v(), old_mapcell.get_world_v())
+    mapcells[new_map_v] = MapCell.new(new_mapcell.get_tile_id(), new_mapcell.get_absolute_v(), new_mapcell.get_world_v(), entity)
 
 func _on_entity_spawned(spawn_scene : PackedScene, mapcell : MapCell) -> void:
   var entity  : Entity
@@ -175,8 +161,8 @@ func _on_entity_spawned(spawn_scene : PackedScene, mapcell : MapCell) -> void:
   world_v = center_worldv_in_cell(map_to_world(mapcell.get_absolute_v()))
   (entity as Entity).set_position(world_v)
   entity.set_name("Spawned %s" % entity.name)
-  _spawned_parent.add_child(entity, true)
-  entity.owner = _spawned_parent
+  add_child(entity, true)
+  entity.owner = self
   add_entity(entity)
 
 func _on_entity_exiting_tree(entity : Entity) -> void:
@@ -187,17 +173,9 @@ func _on_entity_exiting_tree(entity : Entity) -> void:
   map_v = world_to_map(entity.position)
   assert(mapcells.has(map_v), "Entity exiting tree from illegal cell: %s" % map_v)
   mapcell = mapcells[map_v]
-  mapcells[map_v] = MapCell.new(mapcell.get_tile_id(), mapcell.get_absolute_v(), mapcell.get_center_v())
+  mapcells[map_v] = MapCell.new(mapcell.get_tile_id(), mapcell.get_absolute_v(), mapcell.get_world_v())
   entities.erase(entity)
 
-func _on_request_neighbours(actor : Actor, distance_type : int, distance : int) -> void:
-  var map_actor   : Vector2
-  var neighbours  : Dictionary
-  
-  assert(actor in entities, "Received 'request_neighbours' signal from unknown actor: %s" % actor)
-  map_actor = world_to_map(actor.position)
-  neighbours = get_neighbourhood_by_map(map_actor, distance, distance_type)
-  actor.set_neighbours(neighbours)
 
 
 

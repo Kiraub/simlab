@@ -6,44 +6,95 @@ extends Entity
 
 class_name Actor
 
-signal position_updated(old_position, new_Position)
-signal requested_neighbours(entity, distance_type, distance)
-
 """ Constants """
+
+const DEFAULT_VISION_RANGE    : int   = 1
+const DEFAULT_DISTANCE_TYPE   : int   = GLOBALS.DISTANCE_TYPES.MANHATTAN
 
 """ Variables """
 
-var vision_range        : int   = 2
-
-var targets             : Array       setget set_targets, get_targets
-var neighbours          : Dictionary  setget set_neighbours, get_neighbours
+var vision_range        : int         setget set_vision_range, get_vision_range
+var distance_type       : int         setget set_distance_type, get_distance_type
 var life_state          : int         setget set_life_state, get_life_state
-var used_distance_type  : int   = GLOBALS.DISTANCE_TYPES.MANHATTAN
+var neighbours          : Dictionary  setget set_neighbours, get_neighbours
+var target              : Vector2     setget set_target, get_target
 
 var _action_time_accu   : float = 0.0
 var _map_memory         :       = {}
-var _traversed_mapv     :       = []
+var _visited            :       = []
+var _path               :       = []
 
 """ Initialization """
 
 #[override]
-func _init(i_name : String = 'Actor').(GLOBALS.Z_INDICIES.ACTIVE, i_name) -> void:
-  targets = []
+func _init(i_name : String = 'Actor').(i_name) -> void:
+  set_vision_range(DEFAULT_VISION_RANGE)
+  set_distance_type(DEFAULT_DISTANCE_TYPE)
 
 """ Simulation step """
 
 func step() -> void:
-  pass
+  for neighbour in neighbours.values():
+    if not like_memory(neighbour):
+      update_memory(neighbour)
+  observe_neighbours()
+  perform_action()
+
+func observe_neighbours() -> void:
+  # set target to first floor cell in sight without entities in between that is not in _visited
+  for rel_v in neighbours:
+    var mapcell := (neighbours[rel_v] as MapCell)
+    if  ( not mapcell.get_absolute_v() in _visited
+          and not mapcell.get_tile_id() in GLOBALS.BLOCKING_TILE_IDS
+          and not mapcell.has_entity()
+          and is_in_vision(mapcell)
+        ):
+      set_target(mapcell.get_absolute_v())
+      return
+  # Backtrack to earlier
+  if len(_path) == 0:
+    printerr("%s is stuck." % name)
+    return
+  var previous = _path.pop_back()
+  set_target(previous)
+
+func perform_action() -> void:
+  var current_v       : Vector2 = current_mapcell().get_absolute_v()
+  var next_mapcell    : MapCell
+  var path_to_target  : Array
+  
+  if not current_v in _visited:
+    _visited.push_back(current_v)
+  if not target in _visited:
+    if len(_path) == 0 or _path.back() != current_v:
+      _path.push_back(current_v)
+  # default Actor action is to try to move towards target by one cell
+  assert(_map_memory.has(target), "%s has target outside of map memory: %s" % [name, target])
+  path_to_target = path_to(_map_memory[target])
+  if len(path_to_target) > 0:
+    next_mapcell = path_to_target.front()
+    set_position(next_mapcell.get_world_v())
 
 """ Setters / Getters """
 
-func set_targets(new_targets : Array) -> void:
-  for target in new_targets:
-    if not target is Vector2:
-      print_debug("trying to set non Vector2 target")
-  targets = new_targets.duplicate(true)
-func get_targets() -> Array:
-  return targets.duplicate(true)
+func set_vision_range(new_value : int) -> void:
+  vision_range = new_value
+
+func get_vision_range() -> int:
+  return vision_range
+
+func set_distance_type(new_value : int) -> void:
+  assert(new_value in GLOBALS.DISTANCE_TYPES.values(), "Trying to set an invalid distance type: %s" % new_value)
+  distance_type = new_value
+
+func get_distance_type() -> int:
+  return distance_type
+
+func set_target(new_value : Vector2) -> void:
+  target = new_value
+
+func get_target() -> Vector2:
+  return target
 
 func set_neighbours(new_value : Dictionary) -> void:
   for neighbour in new_value.values():
@@ -59,82 +110,78 @@ func get_life_state() -> int:
 
 """ Methods """
 
-func get_next_target() -> Vector2:
-  if len(targets) > 0:
-    return targets.front()
-  return position
-
-func get_final_target() -> Vector2:
-  if len(targets) > 0:
-    return targets.back()
-  return position
-
-func push_target_front(additional_target : Vector2) -> void:
-  targets.push_front(additional_target)
-
-func push_targets_front(additional_targets : Array) -> void:
-  for target in additional_targets:
-    if target is Vector2:
-      push_target_front(target)
-    else:
-      print_debug("trying to add non Vector2 target")
-
-func push_target_back(additional_target : Vector2) -> void:
-  targets.push_back(additional_target)
-
-func push_targets_back(additional_targets : Array) -> void:
-  for target in additional_targets:
-    if target is Vector2:
-      push_target_back(target)
-    else:
-      print_debug("trying to add non Vector2 target")
-
-func remove_target(index : int) -> void:
-  if len(targets) > index:
-    targets.remove(index)
-
-func move_towards_target(travel_distance : float) -> void:
-  if len(targets) == 0:
-    return
-  var next_target = targets.front()
-  var direction_to_next : Vector2 = (next_target - position).normalized()
-  var distance_to_next : float = (next_target - position).length()
-  if travel_distance < distance_to_next:
-    set_position(position + direction_to_next * travel_distance)
-    travel_distance = 0
-  else:
-    travel_distance -= distance_to_next
-    set_position(next_target)
-    remove_target(0)
-    move_towards_target(travel_distance)
+func current_mapcell() -> MapCell:
+  var current : MapCell
+  assert(neighbours.has(Vector2.ZERO))
+  current = neighbours[Vector2.ZERO]
+  return current
 
 func next_life_state() -> void:
   set_life_state(life_state + 1)
   _action_time_accu = 0
 
-func is_in_vision(target : MapCell, from : MapCell, mapcells_by_rel : Dictionary) -> bool:
-  var delta_v             : Vector2 = from.get_relative_v() - target.get_relative_v()
-  var horizontal_v        : Vector2 = Vector2.RIGHT * sign(delta_v.x) + target.get_relative_v()
-  var vertical_v          : Vector2 = Vector2.DOWN * sign(delta_v.y) + target.get_relative_v()
+func is_in_range(other : MapCell, distance : int, entities_block : bool) -> bool:
+  var current             : MapCell = current_mapcell()
+  var delta_v             : Vector2
+  var horizontal_v        : Vector2
+  var vertical_v          : Vector2
   
-  if from.get_relative_v() == horizontal_v or from.get_relative_v() == vertical_v:
+  if current.distance_to_mapcell(other, distance_type) > distance:
+    return false
+  delta_v       = current.get_absolute_v() - other.get_absolute_v()
+  horizontal_v  = Vector2.RIGHT * sign(delta_v.x) + other.get_absolute_v()
+  vertical_v    = Vector2.DOWN * sign(delta_v.y) + other.get_absolute_v()
+  if current.get_absolute_v() == horizontal_v or current.get_absolute_v() == vertical_v:
     return true
-  if ( horizontal_v != target.get_relative_v()
-    and mapcells_by_rel.has(horizontal_v)
-    and not mapcells_by_rel[horizontal_v].get_tile_id() in GLOBALS.BLOCKING_TILE_IDS
-    and is_in_vision(mapcells_by_rel[horizontal_v], from, mapcells_by_rel)
-    ):
+  if  ( horizontal_v != other.get_absolute_v()
+        and _map_memory.has(horizontal_v)
+        and not _map_memory[horizontal_v].get_tile_id() in GLOBALS.BLOCKING_TILE_IDS
+        and not (entities_block and _map_memory[horizontal_v].has_entity())
+        and is_in_range(_map_memory[horizontal_v].get_absolute_v(), distance-1, entities_block)
+      ):
     return true
-  if ( vertical_v != target.get_relative_v()
-    and mapcells_by_rel.has(vertical_v)
-    and not mapcells_by_rel[vertical_v].get_tile_id() in GLOBALS.BLOCKING_TILE_IDS
-    and is_in_vision(mapcells_by_rel[vertical_v], from, mapcells_by_rel)
-    ):
+  if  ( vertical_v != other.get_absolute_v()
+        and _map_memory.has(vertical_v)
+        and not _map_memory[vertical_v].get_tile_id() in GLOBALS.BLOCKING_TILE_IDS
+        and not (entities_block and _map_memory[vertical_v].has_entity())
+        and is_in_range(_map_memory[vertical_v].get_absolute_v(), distance-1, entities_block)
+      ):
     return true
   return false
 
-func get_path_from_memory(target : MapCell, from : MapCell) -> Array:
-  return []
+func is_in_vision(other : MapCell) -> bool:
+  return is_in_range(other, vision_range, false)
+
+func path_to(other : MapCell) -> Array:
+  var path      : Array   = []
+  var current_v : Vector2 = current_mapcell().get_absolute_v()
+  var other_v   : Vector2 = other.get_absolute_v()
+  var next_v    : Vector2
+  var next_cell : MapCell
+  var choices   : Array
+  
+  if not _map_memory.has(other_v):
+    return path
+  if other_v == current_v:
+    path.push_back(other)
+    return path
+  for direction in GLOBALS.DIRECTIONS_BY_DISTANCE_TYPE[distance_type]:
+    next_v = other_v + direction
+    if not _map_memory.has(next_v):
+      continue
+    next_cell = _map_memory[next_v]
+    if next_v == current_v:
+      path.push_back(other)
+      return path
+    if next_cell.has_entity() or next_cell.get_tile_id() in GLOBALS.BLOCKING_TILE_IDS:
+      continue
+    choices.push_back(next_cell)
+  for choice in choices:
+    path = path_to(choice)
+    if len(path) > 0:
+      path.push_front(choice)
+      return path
+  return path
 
 func like_memory(mapcell : MapCell) -> bool:
   var memory_cell : MapCell
@@ -150,9 +197,6 @@ func like_memory(mapcell : MapCell) -> bool:
 
 func update_memory(mapcell : MapCell) -> void:
   _map_memory[mapcell.get_absolute_v()] = mapcell
-
-func request_neighbours(distance_type : int, distance : int = 1) -> void:
-  emit_signal("requested_neighbours", self, distance_type, distance)
 
 """ Events """
 

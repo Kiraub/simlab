@@ -1,15 +1,10 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://scripts/Table.gd" type="Script" id=1]
 [ext_resource path="res://Assets/sprites/table.png" type="Texture" id=2]
-[ext_resource path="res://components/interface/TooltipPanel.tscn" type="PackedScene" id=3]
 
 [node name="Table" type="Position2D"]
 script = ExtResource( 1 )
-flags = 1
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 2 )
-
-[node name="TooltipPanel" parent="." instance=ExtResource( 3 )]
-[connection signal="name_updated" from="." to="TooltipPanel" method="_on_parent_name_updated"]

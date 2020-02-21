@@ -40,10 +40,13 @@ func set_wrapped_class_name(new_value : String) -> void:
 
 #[dynamic:new_value]
 func set_entry_value(key : String, new_value):
+  var value_to_assign = new_value
   assert(configurable.has(key), "Trying to set non-existent entry's value: %s:%s" % [key, new_value])
   if configurable.has(key):
-    assert(typeof(configurable[key].value) == typeof(new_value), "Trying to assign value of different type %s than configuration entry %s." % [new_value, configurable[key].value])
-    configurable[key].value = new_value
+    if typeof(configurable[key].value) == TYPE_INT and typeof(value_to_assign) == TYPE_REAL:
+      value_to_assign = int(floor(value_to_assign))
+    assert(typeof(configurable[key].value) == typeof(value_to_assign), "Trying to assign value %s of different type than configuration entry %s." % [new_value, configurable[key].value])
+    configurable[key].value = value_to_assign
 #[dynamic:returned value]
 func get_entry_value_or_default(key : String, default = null):
   if configurable.has(key):

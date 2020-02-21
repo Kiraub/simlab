@@ -14,6 +14,7 @@ tool
 
 extends ViewportContainer
 
+export(bool) var auto_resize : bool = false
 export(int, 0, 5) var margin_tile_count : int = 0
 
 #[override]
@@ -22,6 +23,8 @@ func _draw() -> void:
     refresh()
 
 func refresh() -> void:
+  if not auto_resize:
+    return
   for child in self.get_children():
     if not child is Viewport:
       continue

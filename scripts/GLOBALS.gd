@@ -12,15 +12,23 @@ extends Node
 """ Constants """
 
 const Z_INDICIES = {
-  BACKGROUND  = -10,
-  STATIC      = -8,
-  ACTIVE      = -5
+  BACKGROUND  = 0,
+  STATIC      = 0,
+  ACTIVE      = 0
 }
 
 const DISTANCE_TYPES = {
   MANHATTAN = 4, # without diagonal, Von Neumann neighbourhood
   CHEBYSHEV = 8 # with diagonal, Moore neighbourhood
 }
+
+const DIRECTIONS_BY_DISTANCE_TYPE = {
+  DISTANCE_TYPES.MANHATTAN : [Vector2.UP, Vector2.RIGHT, Vector2.DOWN, Vector2.LEFT],
+  DISTANCE_TYPES.CHEBYSHEV : [
+        Vector2.UP+Vector2.LEFT, Vector2.UP, Vector2.UP+Vector2.RIGHT, Vector2.RIGHT,
+        Vector2.DOWN+Vector2.RIGHT, Vector2.DOWN, Vector2.DOWN+Vector2.LEFT, Vector2.LEFT
+      ]
+ }
 
 const TILE_INVALID  : int = -1
 const TILE_FLOOR    : int = 0

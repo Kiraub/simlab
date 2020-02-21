@@ -1,4 +1,4 @@
-extends Static
+extends Thing
 
 class_name Table, "res://Assets/sprites/table.png"
 

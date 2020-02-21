@@ -11,10 +11,13 @@ signal entity_spawned
 export(PackedScene) var spawn_scene : PackedScene
 export var spawn_delay : int setget set_spawn_delay
 
+var config : ConfigWrapper
+
 """ Initialization """
 
 #[override]
 func _init(i_name : String = 'Portal').(i_name) -> void:
+  config = ConfigWrapper.new(name)
   config.add_config_entry("spawn_delay", {
     ConfigWrapper.FIELDS.LABEL_TEXT     : "Spawn delay",
     ConfigWrapper.FIELDS.DEFAULT_VALUE  : spawn_delay,
@@ -45,7 +48,6 @@ func set_spawn_delay(new_value : int) -> void:
 func spawn_on_free_neighbour() -> bool:
   var mapcell             : MapCell
   
-  request_neighbours(used_distance_type)
   if len(neighbours.keys()) == 0:
     return false
   for map_v in neighbours.keys():

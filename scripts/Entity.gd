@@ -1,23 +1,19 @@
-extends Position2D
+extends Node2D
 
 class_name Entity
 
-signal name_updated
-signal position_updated
+signal name_updated(new_name)
+signal position_updated(entity, old_position, new_position)
 
 """ Constants """
 
 """ Variables """
 
-var config : ConfigWrapper
-
 """ Initialization """
 
 #[override]
-func _init(entity_z_index : int, entity_name : String = 'Entity') -> void:
+func _init(entity_name : String = 'Entity') -> void:
   name    = entity_name
-  z_index = entity_z_index
-  config  = ConfigWrapper.new(name)
 
 #[override]
 func _ready() -> void:
@@ -32,8 +28,9 @@ func set_name(new_value : String) -> void:
 
 #[override]
 func set_position(new_value : Vector2) -> void:
-  emit_signal("position_updated", self, position, new_value)
+  var old_value = position
   .set_position(new_value)
+  emit_signal("position_updated", self, old_value, new_value)
 
 """ Methods """
 
