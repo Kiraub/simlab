@@ -39,7 +39,7 @@ margin_bottom = 40.0
 dragger_visibility = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="GUI/VSplitContainer/HSplitContainer2"]
-margin_right = 486.0
+margin_right = 720.0
 margin_bottom = 40.0
 custom_constants/separation = 0
 __meta__ = {
@@ -73,8 +73,20 @@ margin_bottom = 40.0
 text = "Step"
 icon = ExtResource( 9 )
 
-[node name="Panel" type="Panel" parent="GUI/VSplitContainer/HSplitContainer2"]
+[node name="ZoomOutBtn" type="Button" parent="GUI/VSplitContainer/HSplitContainer2/HBoxContainer"]
 margin_left = 486.0
+margin_right = 610.0
+margin_bottom = 40.0
+text = "Zoom out"
+
+[node name="ZoomInBtn" type="Button" parent="GUI/VSplitContainer/HSplitContainer2/HBoxContainer"]
+margin_left = 610.0
+margin_right = 720.0
+margin_bottom = 40.0
+text = "Zoom in"
+
+[node name="Panel" type="Panel" parent="GUI/VSplitContainer/HSplitContainer2"]
+margin_left = 720.0
 margin_right = 1600.0
 margin_bottom = 40.0
 
@@ -103,12 +115,9 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 auto_resize = true
-margin_tile_count = 1
 
 [node name="Viewport" type="Viewport" parent="GUI/VSplitContainer/HSplitContainer/Simulation/ViewportContainer"]
-size = Vector2( 672, 480 )
-transparent_bg = true
-handle_input_locally = false
+size = Vector2( 736, 544 )
 msaa = 2
 hdr = false
 usage = 0
@@ -142,4 +151,6 @@ scroll_horizontal_enabled = false
 [connection signal="pressed" from="GUI/VSplitContainer/HSplitContainer2/HBoxContainer/PauseBtn" to="GUI/VSplitContainer/HSplitContainer/Simulation" method="_on_PauseBtn_pressed"]
 [connection signal="pressed" from="GUI/VSplitContainer/HSplitContainer2/HBoxContainer/StepOneBtn" to="GUI/VSplitContainer/HSplitContainer/Simulation" method="_on_StepOneBtn_pressed"]
 [connection signal="pressed" from="GUI/VSplitContainer/HSplitContainer2/HBoxContainer/StepBtn" to="GUI/VSplitContainer/HSplitContainer/Simulation" method="_on_StepBtn_pressed"]
+[connection signal="pressed" from="GUI/VSplitContainer/HSplitContainer2/HBoxContainer/ZoomOutBtn" to="GUI/VSplitContainer/HSplitContainer/Simulation/ViewportContainer" method="_on_ZoomOutBtn_pressed"]
+[connection signal="pressed" from="GUI/VSplitContainer/HSplitContainer2/HBoxContainer/ZoomInBtn" to="GUI/VSplitContainer/HSplitContainer/Simulation/ViewportContainer" method="_on_ZoomInBtn_pressed"]
 [connection signal="timeout" from="GUI/VSplitContainer/HSplitContainer/Simulation/ViewportContainer/Timer" to="GUI/VSplitContainer/HSplitContainer/Simulation/ViewportContainer" method="_on_Timer_timeout"]

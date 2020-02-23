@@ -1,7 +1,7 @@
 """
   A ConfigWrapper mirrors all configurable properties of a containing class.
   Instances are to be used as properties of other classes.
-  
+
   This class works with rare dynamic typing to allow dynamic config GUI creation.
   These functions/ variables are marked with a '#[dynamic:<what>]' tag.
 """
@@ -70,7 +70,7 @@ func create_gui_configuration() -> Control:
   var all_container: = VBoxContainer.new()
   var all_pad: = HSeparator.new()
   var self_container: = GridContainer.new()
-  
+
   gui_element.name = "%s's configuration" % wrapped_class_name
   wrapped_class_label.text = wrapped_class_name
   wrapped_class_label.name = "Label for wrapped config of %s" % wrapped_class_name
@@ -78,12 +78,12 @@ func create_gui_configuration() -> Control:
   all_container.name = "All configurations"
   self_container.columns = 2
   self_container.name = "Own configurations"
-  
+
   all_container.add_child(self_container)
   gui_element.add_child(wrapped_class_label)
   gui_element.add_child(wrapped_class_hpad)
   gui_element.add_child(all_container)
-  
+
   for config_key in configurable:
     #[dynamic:config_value]
     var config_value  = configurable[config_key].value
@@ -91,7 +91,7 @@ func create_gui_configuration() -> Control:
     var nested_element: HSplitContainer
     var label: Label
     var left_pad: VSeparator
-    
+
     if input == null:
       input = Label.new()
       (input as Label).text = "Handled type %d not yet implemented." % typeof(config_value)
@@ -101,7 +101,7 @@ func create_gui_configuration() -> Control:
       label.text= String(configurable[config_key].label_text)
       label.name= "Label for input of %s" % String(config_key)
       label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-      
+
       self_container.add_child(label)
       self_container.add_child(input)
     else:
@@ -110,11 +110,11 @@ func create_gui_configuration() -> Control:
       left_pad = VSeparator.new()
       left_pad.name = "Nest padding"
       input.name += " (nested)"
-      
+
       nested_element.add_child(left_pad)
       nested_element.add_child(input)
       all_container.add_child(nested_element)
-  
+
   all_container.add_child(all_pad)
   return gui_element
 
@@ -162,7 +162,7 @@ func create_gui_input_by_value(key : String, value) -> Control:
 func _on_config_changed(event_value, key : String) -> void:
   var old_value= configurable[key].value
   var signal_name= configurable[key].signal_name
-  
+
   set_entry_value(key, event_value)
   assert(has_user_signal(signal_name), "%s is trying to emit nonexistent signal: %s" % [self, signal_name])
   emit_signal(configurable[key].signal_name, old_value, event_value)
@@ -170,7 +170,7 @@ func _on_config_changed(event_value, key : String) -> void:
 
 func _on_nested_config_changed(key : String) -> void:
   var signal_name= configurable[key].signal_name
-  
+
   assert(has_user_signal(signal_name), "%s is trying to emit nonexistent signal: %s" % [self, signal_name])
   emit_signal(configurable[key].signal_name)
   emit_signal("nested_config_changed")

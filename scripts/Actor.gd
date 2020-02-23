@@ -62,7 +62,7 @@ func perform_action() -> void:
   var current_v       : Vector2 = current_mapcell().get_absolute_v()
   var next_mapcell    : MapCell
   var path_to_target  : Array
-  
+
   if not current_v in _visited:
     _visited.push_back(current_v)
   if not target in _visited:
@@ -125,7 +125,7 @@ func is_in_range(other : MapCell, distance : int, entities_block : bool) -> bool
   var delta_v             : Vector2
   var horizontal_v        : Vector2
   var vertical_v          : Vector2
-  
+
   if current.distance_to_mapcell(other, distance_type) > distance:
     return false
   delta_v       = current.get_absolute_v() - other.get_absolute_v()
@@ -159,7 +159,7 @@ func path_to(other : MapCell) -> Array:
   var next_v    : Vector2
   var next_cell : MapCell
   var choices   : Array
-  
+
   if not _map_memory.has(other_v):
     return path
   if other_v == current_v:
@@ -185,7 +185,7 @@ func path_to(other : MapCell) -> Array:
 
 func like_memory(mapcell : MapCell) -> bool:
   var memory_cell : MapCell
-  
+
   if not _map_memory.has(mapcell.get_absolute_v()):
     return false
   memory_cell = _map_memory[mapcell.get_absolute_v()]

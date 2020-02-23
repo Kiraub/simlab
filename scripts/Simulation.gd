@@ -24,7 +24,7 @@ onready var viewport      : Viewport  = $ViewportContainer/Viewport
 func _ready() -> void:
   var bound : bool
   assert(viewport != null, "No Viewport bound in Simulation: %s" % self)
-  
+
   bound = false
   for child in viewport.get_children():
     if child is EntityMap:
@@ -32,7 +32,7 @@ func _ready() -> void:
       bound = true
       break
   assert(bound, "No EntityMap found under Simulation->Viewport: %s->%s" % [self,viewport])
-  
+
   config = ConfigWrapper.new("Simulation")
   config.add_config_entry("step_delay", {
     ConfigWrapper.FIELDS.LABEL_TEXT: "Step delay (ms)",

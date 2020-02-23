@@ -80,7 +80,7 @@ func enter_scene() -> void:
 
 func search_table() -> void:
   var next_to_table_v : Vector2
-  
+
   print("%s is searching for a table..." % name)
   for map_v in _table_memory:
     if is_in_range(_map_memory[map_v], 1, false):

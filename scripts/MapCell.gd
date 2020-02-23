@@ -1,7 +1,7 @@
 """
   A MapCell holds information about a cell on an EntityMap
   It is used for communication between Entities and the EntityMap
-  
+
   For that purpose it extends Reference to be easily passed between functions and automatically cleaned up after usage.
   It only features a constructor and getters since its values are not to be directly modified after construction.
 """
@@ -30,7 +30,7 @@ func _init(
     entity      : Entity  = null,
     relative_v  : Vector2 = Vector2.ZERO
     ) -> void:
-  
+
   self._tile_id     = tile_id
   self._absolute_v  = absolute_v
   self._world_v     = world_v

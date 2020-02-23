@@ -47,7 +47,7 @@ func set_spawn_delay(new_value : int) -> void:
 
 func spawn_on_free_neighbour() -> bool:
   var mapcell             : MapCell
-  
+
   if len(neighbours.keys()) == 0:
     return false
   for map_v in neighbours.keys():
