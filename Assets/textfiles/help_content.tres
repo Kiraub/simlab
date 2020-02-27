@@ -1,0 +1,96 @@
+
+[center][b]1. General[/b][/center][indent]
+[b]1.1. Layout[/b][indent]
+At the top of the window is the 'menuband' with buttons that trigger different functionality.
+
+At the left side is the 'simulation view' that reacts to left and right mouse clicks. It is a visual representation of the simulated world.
+
+On the right side is the 'configuration panel' which contains all user configurable settings of the simulation and its contents.
+It is updated automatically as configurable elements are added or removed.
+[/indent]
+[b]1.2. Menuband[/b][indent]
+Each button is clickable at all times. The underlying functionality is dependent on the simulation state.
+For example will the pause button have no effect, if the simlation is already paused.
+The step buttons only have an effect while the simulation is paused.
+[/indent]
+[b]1.3. Simulation view[/b][indent]
+The simulation view shows the visual representation of the simulated world and offers some direct interaction.
+Each interaction automatically pauses the simulation.
+
+The simulated world is separated in square shaped tiles, each with a tile type and the possibility to contain an entity.
+
+A left mouse click on a world tile changes the tile type by cycling through the available ones.
+
+A right mouse click on a world tile changes the contained entity by cycling through possible ones including no entity.
+Spawned entities cannot be added through right clicking.
+[/indent]
+[b]1.4. Configuration panel[/b][indent]
+The configuration panel contains inputs for all user configurable settings of the simulation, the simulated world and its entities.
+
+It automatically expands or shrinks as configurable objects are added or removed.
+[/indent][/indent]
+[center][b]2. Simulation parameters[/b][/center][indent]
+[b]2.1. Inside the simulation view[/b][indent]
+Since the map tiles and contained entities can be changed by the user, they are of course relevant to the simulation result.
+
+Possible tile types are:[indent]
+[code]Floor[/code]
+represented by brown/light-brown interchanging horizontal lines
+
+[code]Wall[/code]
+represented by dark-brown color
+
+[code]Empty[/code]
+represented by grey color
+[/indent]
+Possible entity types are:[indent]
+[code]Waiter[/code]
+represented by the letter [b]W[/b] in a light-green circle
+
+[code]Table[/code]
+represented by the letter [b]T[/b] in a dark-brown circle
+
+[code]Entrance/Exit[/code]
+represented by the letter [b]E[/b] in a square whose color can be changed
+
+[code]Customer[/code]
+represented by the letter [b]C[/b] in a konvex shape with a purple color of varying brightness
+they change their color to blue once they are happy and to red once they are angry and tired of waiting
+[/indent][/indent]
+[b]2.2. Inside the configuration panel[/b][indent]
+Certain objects in the simulation expose configurable parameters to the user through the configuration panel.
+Configurable objects and their parameters are:[indent]
+[code]Simulation[/code][indent]
+[code]Step delay (ms)[/code]
+how long the simulation idles before stepping, used to regulate speed
+
+[code]Step size[/code]
+the amount of steps the simulation performes at once before idling again
+[/indent]
+[code]Map[/code][indent]
+The map itself exposes no further configuration beyond the ability to configure it using the simulation view.
+However it contains the configurations of its entities.
+[/indent]
+[code]Entrance/Exit[/code][indent]
+[code]Color hue[/code]
+the color of the entrance/exit entity to be able to visually differentiate them
+
+[code]Spawn delay[/code]
+number of steps between increasing the spawn amount
+
+[code]Spawn batch size[/code]
+number of customers that will be added to the spawn amount each time the spawn delay is reached
+
+[code]Customer's vision range[/code]
+number of tiles the newly spawned customers are able to see
+[/indent]
+[/indent][/indent]
+[b]2.3. Internal[/b][indent]
+To make each simulation run unique, random distributions are used for certain unexposed parameters.
+
+[code]Customer's patience[/code]
+Every customer gets an internal value that is set using an exponential distribution to decide after how many steps of remaining in one state he will get angry and try to leave.
+
+[code]Customer's eating speed[/code]
+Every customer gets an internal value that is set using a normal distribution to decide how many steps he will stay at a table after having been served.
+[/indent][/indent]

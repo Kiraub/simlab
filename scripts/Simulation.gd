@@ -13,12 +13,16 @@ var step_delay    : float   = 50.0          setget set_step_delay
 var step_size     : int     = 1             setget set_step_size
 var _delay_acc    : float   = 0.0
 
+var statistics    : Dictionary              setget , get_statistics
 var config        : ConfigWrapper           setget , get_config_wrapper
 var entity_map    : EntityMap
 
 onready var viewport      : Viewport  = $ViewportContainer/Viewport
 
 """ Initialization """
+
+func _init() -> void:
+  statistics = {}
 
 #[override]
 func _ready() -> void:
@@ -45,7 +49,7 @@ func _ready() -> void:
     ConfigWrapper.FIELDS.SIGNAL_NAME: "step_size_changed"
   })
   config.add_config_entry("entity_map",  {
-    ConfigWrapper.FIELDS.LABEL_TEXT: "Entity Map",
+    ConfigWrapper.FIELDS.LABEL_TEXT: "Map",
     ConfigWrapper.FIELDS.DEFAULT_VALUE: entity_map,
     ConfigWrapper.FIELDS.SIGNAL_NAME: "entity_map_changed"
   })
@@ -84,6 +88,9 @@ func set_step_size(new_value : int) -> void:
   step_size = new_value
   config.set_entry_value("step_size", step_size)
 
+func get_statistics() -> Dictionary:
+  return statistics
+
 func get_config_wrapper() -> ConfigWrapper:
   return config
 
@@ -102,6 +109,25 @@ func _on_entity_map_changed() -> void:
 
 """ GUI Events """
 
+func _on_statistics_set(given_key : String, given_value : int) -> void:
+  var key : String
+  key = given_key.strip_escapes()
+  statistics[key] = given_value
+
+func _on_statistics_incremented(given_key : String) -> void:
+  var key : String
+  key = given_key.strip_escapes()
+  if not statistics.has(key):
+    statistics[key] = 0
+  statistics[key] += 1
+
+func _on_statistics_decremented(given_key : String) -> void:
+  var key : String
+  key = given_key.strip_escapes()
+  if not statistics.has(key):
+    statistics[key] = 0
+  statistics[key] -= 1
+
 func _on_PlayBtn_pressed():
   set_paused(false)
 
@@ -115,3 +141,6 @@ func _on_StepBtn_pressed():
 func _on_StepOneBtn_pressed():
   if paused:
     step_by(1)
+
+func _on_ViewportController_received_mouse_click():
+  set_paused(true)

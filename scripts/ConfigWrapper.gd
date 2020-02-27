@@ -10,6 +10,8 @@ extends Reference
 
 class_name ConfigWrapper
 
+""" Godot signals """
+
 signal nested_config_changed
 
 """ Constants """
@@ -24,34 +26,29 @@ const HANDLED_TYPES : = [TYPE_INT, TYPE_REAL, TYPE_STRING, TYPE_COLOR, TYPE_BOOL
 
 """ Variables """
 
-var wrapped_class_name: String setget set_wrapped_class_name
-var configurable: = {}
+var _wrapped_class_name : String setget set_wrapped_class_name
+var _configurable : = {}
 
 """ Initialization """
 
 #[override]
 func _init(i_wrapped_class_name : String) -> void:
-  wrapped_class_name = i_wrapped_class_name
+  set_wrapped_class_name(i_wrapped_class_name)
 
 """ Setters / Getters """
 
 func set_wrapped_class_name(new_value : String) -> void:
-  wrapped_class_name = new_value
+  _wrapped_class_name = new_value
 
 #[dynamic:new_value]
-func set_entry_value(key : String, new_value):
+func set_entry_value(key : String, new_value) -> void:
   var value_to_assign = new_value
-  assert(configurable.has(key), "Trying to set non-existent entry's value: %s:%s" % [key, new_value])
-  if configurable.has(key):
-    if typeof(configurable[key].value) == TYPE_INT and typeof(value_to_assign) == TYPE_REAL:
+  assert(_configurable.has(key), "Trying to set non-existent entry's value: %s:%s" % [key, new_value])
+  if _configurable.has(key):
+    if typeof(_configurable[key].value) == TYPE_INT and typeof(value_to_assign) == TYPE_REAL:
       value_to_assign = int(floor(value_to_assign))
-    assert(typeof(configurable[key].value) == typeof(value_to_assign), "Trying to assign value %s of different type than configuration entry %s." % [new_value, configurable[key].value])
-    configurable[key].value = value_to_assign
-#[dynamic:returned value]
-func get_entry_value_or_default(key : String, default = null):
-  if configurable.has(key):
-    return configurable[key].value
-  return default
+    assert(typeof(_configurable[key].value) == typeof(value_to_assign), "Trying to assign value %s of different type than configuration entry %s." % [new_value, _configurable[key].value])
+    _configurable[key].value = value_to_assign
 
 """ Methods """
 
@@ -61,7 +58,11 @@ func add_config_entry(key : String, entry : Dictionary) -> void:
   var signal_name := String(entry.signal_name)
   if not has_user_signal(signal_name):
     add_user_signal(signal_name)
-  configurable[key] = entry
+  _configurable[key] = entry
+
+func remove_config_entry(key : String) -> void:
+  assert(_configurable.has(key), "Trying to remove non existent config entry: %s" % key)
+  _configurable.erase(key)
 
 func create_gui_configuration() -> Control:
   var gui_element: = VBoxContainer.new()
@@ -71,9 +72,9 @@ func create_gui_configuration() -> Control:
   var all_pad: = HSeparator.new()
   var self_container: = GridContainer.new()
 
-  gui_element.name = "%s's configuration" % wrapped_class_name
-  wrapped_class_label.text = wrapped_class_name
-  wrapped_class_label.name = "Label for wrapped config of %s" % wrapped_class_name
+  gui_element.name = "%s's configuration" % _wrapped_class_name
+  wrapped_class_label.text = "%s's configuration" % _wrapped_class_name
+  wrapped_class_label.name = "Label for wrapped config of %s" % _wrapped_class_name
   wrapped_class_label.align = Label.ALIGN_CENTER
   all_container.name = "All configurations"
   self_container.columns = 2
@@ -84,9 +85,9 @@ func create_gui_configuration() -> Control:
   gui_element.add_child(wrapped_class_hpad)
   gui_element.add_child(all_container)
 
-  for config_key in configurable:
+  for config_key in _configurable:
     #[dynamic:config_value]
-    var config_value  = configurable[config_key].value
+    var config_value  = _configurable[config_key].value
     var input: = create_gui_input_by_value(config_key, config_value)
     var nested_element: HSplitContainer
     var label: Label
@@ -98,7 +99,7 @@ func create_gui_configuration() -> Control:
     input.name = String(config_key)
     if not input is Container:
       label = Label.new()
-      label.text= String(configurable[config_key].label_text)
+      label.text= String(_configurable[config_key].label_text)
       label.name= "Label for input of %s" % String(config_key)
       label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
@@ -160,20 +161,17 @@ func create_gui_input_by_value(key : String, value) -> Control:
 
 #[dynamic:event_value]
 func _on_config_changed(event_value, key : String) -> void:
-  var old_value= configurable[key].value
-  var signal_name= configurable[key].signal_name
+  var old_value= _configurable[key].value
+  var signal_name= _configurable[key].signal_name
 
   set_entry_value(key, event_value)
   assert(has_user_signal(signal_name), "%s is trying to emit nonexistent signal: %s" % [self, signal_name])
-  emit_signal(configurable[key].signal_name, old_value, event_value)
+  emit_signal(_configurable[key].signal_name, old_value, event_value)
   emit_signal("nested_config_changed")
 
 func _on_nested_config_changed(key : String) -> void:
-  var signal_name= configurable[key].signal_name
+  var signal_name= _configurable[key].signal_name
 
   assert(has_user_signal(signal_name), "%s is trying to emit nonexistent signal: %s" % [self, signal_name])
-  emit_signal(configurable[key].signal_name)
+  emit_signal(_configurable[key].signal_name)
   emit_signal("nested_config_changed")
-
-
-

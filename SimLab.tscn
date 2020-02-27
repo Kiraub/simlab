@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://scripts/ViewportContainer.gd" type="Script" id=1]
 [ext_resource path="res://components/interface/containers/TabContainer.tscn" type="PackedScene" id=2]
@@ -7,8 +7,11 @@
 [ext_resource path="res://scripts/GUI.gd" type="Script" id=5]
 [ext_resource path="res://Assets/icons/icon_play.svg" type="Texture" id=6]
 [ext_resource path="res://Assets/icons/icon_pause.svg" type="Texture" id=7]
+[ext_resource path="res://Assets/fonts/firacode-bold.tres" type="DynamicFont" id=8]
 [ext_resource path="res://Assets/icons/icon_play_start.svg" type="Texture" id=9]
+[ext_resource path="res://Assets/fonts/firacode-light.tres" type="DynamicFont" id=10]
 [ext_resource path="res://components/simulation/entityMaps/SplitMap.tscn" type="PackedScene" id=11]
+[ext_resource path="res://Assets/fonts/firacode-retina.tres" type="DynamicFont" id=12]
 
 [node name="SimLab" type="Node"]
 
@@ -39,9 +42,8 @@ margin_bottom = 40.0
 dragger_visibility = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="GUI/VSplitContainer/HSplitContainer2"]
-margin_right = 720.0
+margin_right = 1054.0
 margin_bottom = 40.0
-custom_constants/separation = 0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -53,40 +55,61 @@ text = "Play"
 icon = ExtResource( 6 )
 
 [node name="PauseBtn" type="Button" parent="GUI/VSplitContainer/HSplitContainer2/HBoxContainer"]
-margin_left = 104.0
-margin_right = 222.0
+margin_left = 108.0
+margin_right = 226.0
 margin_bottom = 40.0
 text = "Pause"
 icon = ExtResource( 7 )
 
 [node name="StepOneBtn" type="Button" parent="GUI/VSplitContainer/HSplitContainer2/HBoxContainer"]
-margin_left = 222.0
-margin_right = 382.0
+margin_left = 230.0
+margin_right = 390.0
 margin_bottom = 40.0
 text = "Step one"
 icon = ExtResource( 9 )
 
 [node name="StepBtn" type="Button" parent="GUI/VSplitContainer/HSplitContainer2/HBoxContainer"]
-margin_left = 382.0
-margin_right = 486.0
+margin_left = 394.0
+margin_right = 498.0
 margin_bottom = 40.0
 text = "Step"
 icon = ExtResource( 9 )
 
 [node name="ZoomOutBtn" type="Button" parent="GUI/VSplitContainer/HSplitContainer2/HBoxContainer"]
-margin_left = 486.0
-margin_right = 610.0
+margin_left = 502.0
+margin_right = 626.0
 margin_bottom = 40.0
 text = "Zoom out"
 
 [node name="ZoomInBtn" type="Button" parent="GUI/VSplitContainer/HSplitContainer2/HBoxContainer"]
-margin_left = 610.0
-margin_right = 720.0
+margin_left = 630.0
+margin_right = 740.0
 margin_bottom = 40.0
 text = "Zoom in"
 
+[node name="StatisticsBtn" type="Button" parent="GUI/VSplitContainer/HSplitContainer2/HBoxContainer"]
+margin_left = 744.0
+margin_right = 896.0
+margin_bottom = 40.0
+text = "Statistics"
+
+[node name="HelpBtn" type="Button" parent="GUI/VSplitContainer/HSplitContainer2/HBoxContainer"]
+margin_left = 900.0
+margin_right = 968.0
+margin_bottom = 40.0
+text = "Help"
+
+[node name="AboutBtn" type="Button" parent="GUI/VSplitContainer/HSplitContainer2/HBoxContainer"]
+margin_left = 972.0
+margin_right = 1054.0
+margin_bottom = 40.0
+text = "About"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Panel" type="Panel" parent="GUI/VSplitContainer/HSplitContainer2"]
-margin_left = 720.0
+margin_left = 1054.0
 margin_right = 1600.0
 margin_bottom = 40.0
 
@@ -114,14 +137,17 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-auto_resize = true
+shown_tile_count = 23
 
 [node name="Viewport" type="Viewport" parent="GUI/VSplitContainer/HSplitContainer/Simulation/ViewportContainer"]
-size = Vector2( 736, 544 )
+size = Vector2( 736, 736 )
+handle_input_locally = false
 msaa = 2
 hdr = false
 usage = 0
 render_target_update_mode = 3
+
+[node name="Camera2D" type="Camera2D" parent="GUI/VSplitContainer/HSplitContainer/Simulation/ViewportContainer/Viewport"]
 
 [node name="SplitMap" parent="GUI/VSplitContainer/HSplitContainer/Simulation/ViewportContainer/Viewport" instance=ExtResource( 11 )]
 
@@ -146,11 +172,408 @@ margin_right = -5.0
 margin_bottom = -5.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-scroll_horizontal_enabled = false
+
+[node name="StatisticsPopupDialog" type="WindowDialog" parent="GUI"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -300.0
+margin_top = -300.0
+margin_right = 300.0
+margin_bottom = 300.0
+window_title = "Statistics"
+resizable = true
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="StatisticsLabel" type="RichTextLabel" parent="GUI/StatisticsPopupDialog"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 3 )
+custom_fonts/mono_font = ExtResource( 10 )
+custom_fonts/bold_font = ExtResource( 8 )
+custom_fonts/normal_font = ExtResource( 12 )
+tab_size = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HelpPopupDialog" type="WindowDialog" parent="GUI"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -400.0
+margin_top = -300.0
+margin_right = 400.0
+margin_bottom = 300.0
+window_title = "Help"
+resizable = true
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="HelpLabel" type="RichTextLabel" parent="GUI/HelpPopupDialog"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 3 )
+custom_fonts/mono_font = ExtResource( 12 )
+custom_fonts/bold_font = ExtResource( 8 )
+custom_fonts/normal_font = ExtResource( 10 )
+bbcode_enabled = true
+bbcode_text = "
+[center][b]1. General[/b][/center][indent]
+[b]1.1. Layout[/b][indent]
+At the top of the window is the 'menuband' with buttons that trigger different functionality.
+
+At the left side is the 'simulation view' that reacts to left and right mouse clicks. It is a visual representation of the simulated world.
+
+On the right side is the 'configuration panel' which contains all user configurable settings of the simulation and its contents.
+It is updated automatically as configurable elements are added or removed.
+[/indent]
+[b]1.2. Menuband[/b][indent]
+Each button is clickable at all times. The underlying functionality is dependent on the simulation state.
+For example will the pause button have no effect, if the simlation is already paused.
+The step buttons only have an effect while the simulation is paused.
+[/indent]
+[b]1.3. Simulation view[/b][indent]
+The simulation view shows the visual representation of the simulated world and offers some direct interaction.
+Each interaction automatically pauses the simulation.
+
+The simulated world is separated in square shaped tiles, each with a tile type and the possibility to contain an entity.
+
+A left mouse click on a world tile changes the tile type by cycling through the available ones.
+
+A right mouse click on a world tile changes the contained entity by cycling through possible ones including no entity.
+Spawned entities cannot be added through right clicking.
+[/indent]
+[b]1.4. Configuration panel[/b][indent]
+The configuration panel contains inputs for all user configurable settings of the simulation, the simulated world and its entities.
+
+It automatically expands or shrinks as configurable objects are added or removed.
+[/indent][/indent]
+[center][b]2. Simulation parameters[/b][/center][indent]
+[b]2.1. Inside the simulation view[/b][indent]
+Since the map tiles and contained entities can be changed by the user, they are of course relevant to the simulation result.
+
+Possible tile types are:[indent]
+[code]Floor[/code]
+represented by brown/light-brown interchanging horizontal lines
+
+[code]Wall[/code]
+represented by dark-brown color
+
+[code]Empty[/code]
+represented by grey color
+[/indent]
+Possible entity types are:[indent]
+[code]Waiter[/code]
+represented by the letter [b]W[/b] in a light-green circle
+
+[code]Table[/code]
+represented by the letter [b]T[/b] in a dark-brown circle
+
+[code]Entrance/Exit[/code]
+represented by the letter [b]E[/b] in a square whose color can be changed
+
+[code]Customer[/code]
+represented by the letter [b]C[/b] in a konvex shape with a purple color of varying brightness
+they change their color to blue once they are happy and to red once they are angry and tired of waiting
+[/indent][/indent]
+[b]2.2. Inside the configuration panel[/b][indent]
+Certain objects in the simulation expose configurable parameters to the user through the configuration panel.
+Configurable objects and their parameters are:[indent]
+[code]Simulation[/code][indent]
+[code]Step delay (ms)[/code]
+how long the simulation idles before stepping, used to regulate speed
+
+[code]Step size[/code]
+the amount of steps the simulation performes at once before idling again
+[/indent]
+[code]Map[/code][indent]
+The map itself exposes no further configuration beyond the ability to configure it using the simulation view.
+However it contains the configurations of its entities.
+[/indent]
+[code]Entrance/Exit[/code][indent]
+[code]Color hue[/code]
+the color of the entrance/exit entity to be able to visually differentiate them
+
+[code]Spawn delay[/code]
+number of steps between increasing the spawn amount
+
+[code]Spawn batch size[/code]
+number of customers that will be added to the spawn amount each time the spawn delay is reached
+
+[code]Customer's vision range[/code]
+number of tiles the newly spawned customers are able to see
+[/indent]
+[/indent][/indent]
+[b]2.3. Internal[/b][indent]
+To make each simulation run unique, random distributions are used for certain unexposed parameters.
+
+[code]Customer's patience[/code]
+Every customer gets an internal value that is set using an exponential distribution to decide after how many steps of remaining in one state he will get angry and try to leave.
+
+[code]Customer's eating speed[/code]
+Every customer gets an internal value that is set using a normal distribution to decide how many steps he will stay at a table after having been served.
+[/indent][/indent]
+"
+tab_size = 2
+text = "
+1. General	
+1.1. Layout	
+At the top of the window is the 'menuband' with buttons that trigger different functionality.
+
+At the left side is the 'simulation view' that reacts to left and right mouse clicks. It is a visual representation of the simulated world.
+
+On the right side is the 'configuration panel' which contains all user configurable settings of the simulation and its contents.
+It is updated automatically as configurable elements are added or removed.
+
+1.2. Menuband	
+Each button is clickable at all times. The underlying functionality is dependent on the simulation state.
+For example will the pause button have no effect, if the simlation is already paused.
+The step buttons only have an effect while the simulation is paused.
+
+1.3. Simulation view	
+The simulation view shows the visual representation of the simulated world and offers some direct interaction.
+Each interaction automatically pauses the simulation.
+
+The simulated world is separated in square shaped tiles, each with a tile type and the possibility to contain an entity.
+
+A left mouse click on a world tile changes the tile type by cycling through the available ones.
+
+A right mouse click on a world tile changes the contained entity by cycling through possible ones including no entity.
+Spawned entities cannot be added through right clicking.
+
+1.4. Configuration panel	
+The configuration panel contains inputs for all user configurable settings of the simulation, the simulated world and its entities.
+
+It automatically expands or shrinks as configurable objects are added or removed.
+
+2. Simulation parameters	
+2.1. Inside the simulation view	
+Since the map tiles and contained entities can be changed by the user, they are of course relevant to the simulation result.
+
+Possible tile types are:	
+Floor
+represented by brown/light-brown interchanging horizontal lines
+
+Wall
+represented by dark-brown color
+
+Empty
+represented by grey color
+
+Possible entity types are:	
+Waiter
+represented by the letter W in a light-green circle
+
+Table
+represented by the letter T in a dark-brown circle
+
+Entrance/Exit
+represented by the letter E in a square whose color can be changed
+
+Customer
+represented by the letter C in a konvex shape with a purple color of varying brightness
+they change their color to blue once they are happy and to red once they are angry and tired of waiting
+
+2.2. Inside the configuration panel	
+Certain objects in the simulation expose configurable parameters to the user through the configuration panel.
+Configurable objects and their parameters are:	
+Simulation	
+Step delay (ms)
+how long the simulation idles before stepping, used to regulate speed
+
+Step size
+the amount of steps the simulation performes at once before idling again
+
+Map	
+The map itself exposes no further configuration beyond the ability to configure it using the simulation view.
+However it contains the configurations of its entities.
+
+Entrance/Exit	
+Color hue
+the color of the entrance/exit entity to be able to visually differentiate them
+
+Spawn delay
+number of steps between increasing the spawn amount
+
+Spawn batch size
+number of customers that will be added to the spawn amount each time the spawn delay is reached
+
+Customer's vision range
+number of tiles the newly spawned customers are able to see
+
+
+2.3. Internal	
+To make each simulation run unique, random distributions are used for certain unexposed parameters.
+
+Customer's patience
+Every customer gets an internal value that is set using an exponential distribution to decide after how many steps of remaining in one state he will get angry and try to leave.
+
+Customer's eating speed
+Every customer gets an internal value that is set using a normal distribution to decide how many steps he will stay at a table after having been served.
+
+"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AboutPopupDialog" type="WindowDialog" parent="GUI"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -300.0
+margin_top = -400.0
+margin_right = 300.0
+margin_bottom = 400.0
+window_title = "About"
+resizable = true
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="AboutLabel" type="RichTextLabel" parent="GUI/AboutPopupDialog"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "# SimLab simplified branch
+
+## About the engine
+
+Made using the Godot Engine and written entirely in GDScript.
+
+To open it inside your local Godot installation simply clone the repo and add the directory /simlab to your project list.
+
+Note that the used version of Godot was 3.1.2 at first and later switched to 3.2.
+
+## About the program
+
+This program contains an abstract simulation of a restaurant with waiters, customers, tables and entrances/ exits which are grouped together as portals.
+It features a GUI to contain a single simulation view, with a set of buttons for controlling it.
+The simulation exposes configurable objects to the GUI which the user can open and configure freely.
+
+## Background
+
+This project was made during my traineeship for a school related task.
+
+It was my first time using the Godot Engine and programming in GDScript.
+
+Therefore a lot of the code is organically grown and it developed as i got more familiar with the engine and its features.
+
+## Licenses
+
+### FiraCode
+
+Copyright (c) 2014, The Fira Code Project Authors (https://github.com/tonsky/FiraCode)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+This license is copied below, and is also available with a FAQ at:
+http://scripts.sil.org/OFL
+
+
+-----------------------------------------------------------
+SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+-----------------------------------------------------------
+
+PREAMBLE
+The goals of the Open Font License (OFL) are to stimulate worldwide
+development of collaborative font projects, to support the font creation
+efforts of academic and linguistic communities, and to provide a free and
+open framework in which fonts may be shared and improved in partnership
+with others.
+
+The OFL allows the licensed fonts to be used, studied, modified and
+redistributed freely as long as they are not sold by themselves. The
+fonts, including any derivative works, can be bundled, embedded,
+redistributed and/or sold with any software provided that any reserved
+names are not used by derivative works. The fonts and derivatives,
+however, cannot be released under any other type of license. The
+requirement for fonts to remain under this license does not apply
+to any document created using the fonts or their derivatives.
+
+DEFINITIONS
+\"Font Software\" refers to the set of files released by the Copyright
+Holder(s) under this license and clearly marked as such. This may
+include source files, build scripts and documentation.
+
+\"Reserved Font Name\" refers to any names specified as such after the
+copyright statement(s).
+
+\"Original Version\" refers to the collection of Font Software components as
+distributed by the Copyright Holder(s).
+
+\"Modified Version\" refers to any derivative made by adding to, deleting,
+or substituting -- in part or in whole -- any of the components of the
+Original Version, by changing formats or by porting the Font Software to a
+new environment.
+
+\"Author\" refers to any designer, engineer, programmer, technical
+writer or other person who contributed to the Font Software.
+
+PERMISSION & CONDITIONS
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of the Font Software, to use, study, copy, merge, embed, modify,
+redistribute, and sell modified and unmodified copies of the Font
+Software, subject to the following conditions:
+
+1) Neither the Font Software nor any of its individual components,
+in Original or Modified Versions, may be sold by itself.
+
+2) Original or Modified Versions of the Font Software may be bundled,
+redistributed and/or sold with any software, provided that each copy
+contains the above copyright notice and this license. These can be
+included either as stand-alone text files, human-readable headers or
+in the appropriate machine-readable metadata fields within text or
+binary files as long as those fields can be easily viewed by the user.
+
+3) No Modified Version of the Font Software may use the Reserved Font
+Name(s) unless explicit written permission is granted by the corresponding
+Copyright Holder. This restriction only applies to the primary font name as
+presented to the users.
+
+4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font
+Software shall not be used to promote, endorse or advertise any
+Modified Version, except to acknowledge the contribution(s) of the
+Copyright Holder(s) and the Author(s) or with their explicit written
+permission.
+
+5) The Font Software, modified or unmodified, in part or in whole,
+must be distributed entirely under this license, and must not be
+distributed under any other license. The requirement for fonts to
+remain under this license does not apply to any document created
+using the Font Software.
+
+TERMINATION
+This license becomes null and void if any of the above conditions are
+not met.
+
+DISCLAIMER
+THE FONT SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
+OTHER DEALINGS IN THE FONT SOFTWARE.
+"
 [connection signal="pressed" from="GUI/VSplitContainer/HSplitContainer2/HBoxContainer/PlayBtn" to="GUI/VSplitContainer/HSplitContainer/Simulation" method="_on_PlayBtn_pressed"]
 [connection signal="pressed" from="GUI/VSplitContainer/HSplitContainer2/HBoxContainer/PauseBtn" to="GUI/VSplitContainer/HSplitContainer/Simulation" method="_on_PauseBtn_pressed"]
 [connection signal="pressed" from="GUI/VSplitContainer/HSplitContainer2/HBoxContainer/StepOneBtn" to="GUI/VSplitContainer/HSplitContainer/Simulation" method="_on_StepOneBtn_pressed"]
 [connection signal="pressed" from="GUI/VSplitContainer/HSplitContainer2/HBoxContainer/StepBtn" to="GUI/VSplitContainer/HSplitContainer/Simulation" method="_on_StepBtn_pressed"]
 [connection signal="pressed" from="GUI/VSplitContainer/HSplitContainer2/HBoxContainer/ZoomOutBtn" to="GUI/VSplitContainer/HSplitContainer/Simulation/ViewportContainer" method="_on_ZoomOutBtn_pressed"]
 [connection signal="pressed" from="GUI/VSplitContainer/HSplitContainer2/HBoxContainer/ZoomInBtn" to="GUI/VSplitContainer/HSplitContainer/Simulation/ViewportContainer" method="_on_ZoomInBtn_pressed"]
+[connection signal="pressed" from="GUI/VSplitContainer/HSplitContainer2/HBoxContainer/StatisticsBtn" to="GUI" method="_on_StatisticsBtn_pressed"]
+[connection signal="pressed" from="GUI/VSplitContainer/HSplitContainer2/HBoxContainer/HelpBtn" to="GUI" method="_on_HelpBtn_pressed"]
+[connection signal="pressed" from="GUI/VSplitContainer/HSplitContainer2/HBoxContainer/AboutBtn" to="GUI" method="_on_AboutBtn_pressed"]
+[connection signal="received_mouse_click" from="GUI/VSplitContainer/HSplitContainer/Simulation/ViewportContainer" to="GUI/VSplitContainer/HSplitContainer/Simulation" method="_on_ViewportController_received_mouse_click"]
+[connection signal="config_entries_changed" from="GUI/VSplitContainer/HSplitContainer/Simulation/ViewportContainer/Viewport/SplitMap" to="GUI" method="_on_config_entries_changed"]
+[connection signal="statistics_decremented" from="GUI/VSplitContainer/HSplitContainer/Simulation/ViewportContainer/Viewport/SplitMap" to="GUI/VSplitContainer/HSplitContainer/Simulation" method="_on_statistics_decremented"]
+[connection signal="statistics_incremented" from="GUI/VSplitContainer/HSplitContainer/Simulation/ViewportContainer/Viewport/SplitMap" to="GUI/VSplitContainer/HSplitContainer/Simulation" method="_on_statistics_incremented"]
+[connection signal="statistics_set" from="GUI/VSplitContainer/HSplitContainer/Simulation/ViewportContainer/Viewport/SplitMap" to="GUI/VSplitContainer/HSplitContainer/Simulation" method="_on_statistics_set"]
 [connection signal="timeout" from="GUI/VSplitContainer/HSplitContainer/Simulation/ViewportContainer/Timer" to="GUI/VSplitContainer/HSplitContainer/Simulation/ViewportContainer" method="_on_Timer_timeout"]

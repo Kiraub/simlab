@@ -63,9 +63,9 @@ func get_relative_v() -> Vector2:
 """ Methods """
 
 func has_entity() -> bool:
-  if _entity is Entity and _entity != null:
-    return true
-  return false
+  if _entity == null:
+    return false
+  return true
 
 func make_relative_to(reference_v : Vector2) -> void:
   _relative_v = _absolute_v - reference_v

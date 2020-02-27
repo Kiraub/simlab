@@ -9,7 +9,6 @@ class_name Actor
 """ Constants """
 
 const DEFAULT_VISION_RANGE    : int   = 1
-const DEFAULT_DISTANCE_TYPE   : int   = GLOBALS.DISTANCE_TYPES.MANHATTAN
 
 """ Variables """
 
@@ -19,7 +18,8 @@ var life_state          : int         setget set_life_state, get_life_state
 var neighbours          : Dictionary  setget set_neighbours, get_neighbours
 var target              : Vector2     setget set_target, get_target
 
-var _action_time_accu   : float = 0.0
+var _life_time_accu     : int = 0
+var _action_time_accu   : int = 0
 var _map_memory         :       = {}
 var _visited            :       = []
 var _path               :       = []
@@ -29,11 +29,13 @@ var _path               :       = []
 #[override]
 func _init(i_name : String = 'Actor').(i_name) -> void:
   set_vision_range(DEFAULT_VISION_RANGE)
-  set_distance_type(DEFAULT_DISTANCE_TYPE)
+  set_distance_type(GLOBALS.DISTANCE_TYPES.DEFAULT)
 
 """ Simulation step """
 
 func step() -> void:
+  _life_time_accu += 1
+  _action_time_accu += 1
   for neighbour in neighbours.values():
     if not like_memory(neighbour):
       update_memory(neighbour)
@@ -53,7 +55,7 @@ func observe_neighbours() -> void:
       return
   # Backtrack to earlier
   if len(_path) == 0:
-    printerr("%s is stuck." % name)
+    _visited.clear()
     return
   var previous = _path.pop_back()
   set_target(previous)
@@ -73,7 +75,12 @@ func perform_action() -> void:
   path_to_target = path_to(_map_memory[target])
   if len(path_to_target) > 0:
     next_mapcell = path_to_target.front()
-    set_position(next_mapcell.get_world_v())
+    if next_mapcell.get_tile_id() in GLOBALS.BLOCKING_TILE_IDS:
+      _path.clear()
+      _visited.clear()
+      return
+    if not next_mapcell.has_entity():
+      set_position(next_mapcell.get_world_v())
 
 """ Setters / Getters """
 
@@ -100,11 +107,13 @@ func set_neighbours(new_value : Dictionary) -> void:
   for neighbour in new_value.values():
     assert(neighbour is MapCell, "Trying to set non MapCell neighbour: %s" % neighbour)
   neighbours = new_value
+
 func get_neighbours() -> Dictionary:
   return neighbours
 
 func set_life_state(new_value : int) -> void:
   life_state = new_value
+
 func get_life_state() -> int:
   return life_state
 
@@ -118,6 +127,7 @@ func current_mapcell() -> MapCell:
 
 func next_life_state() -> void:
   set_life_state(life_state + 1)
+  _visited.clear()
   _action_time_accu = 0
 
 func is_in_range(other : MapCell, distance : int, entities_block : bool) -> bool:
@@ -137,28 +147,28 @@ func is_in_range(other : MapCell, distance : int, entities_block : bool) -> bool
         and _map_memory.has(horizontal_v)
         and not _map_memory[horizontal_v].get_tile_id() in GLOBALS.BLOCKING_TILE_IDS
         and not (entities_block and _map_memory[horizontal_v].has_entity())
-        and is_in_range(_map_memory[horizontal_v].get_absolute_v(), distance-1, entities_block)
+        and is_in_range(_map_memory[horizontal_v], distance-1, entities_block)
       ):
     return true
   if  ( vertical_v != other.get_absolute_v()
         and _map_memory.has(vertical_v)
         and not _map_memory[vertical_v].get_tile_id() in GLOBALS.BLOCKING_TILE_IDS
         and not (entities_block and _map_memory[vertical_v].has_entity())
-        and is_in_range(_map_memory[vertical_v].get_absolute_v(), distance-1, entities_block)
+        and is_in_range(_map_memory[vertical_v], distance-1, entities_block)
       ):
     return true
   return false
 
 func is_in_vision(other : MapCell) -> bool:
-  return is_in_range(other, vision_range, false)
+  return is_in_range(other, vision_range, true)
 
-func path_to(other : MapCell) -> Array:
+func path_to(other : MapCell, checked:Array=[]) -> Array:
   var path      : Array   = []
+  var choices   : Array   = []
   var current_v : Vector2 = current_mapcell().get_absolute_v()
   var other_v   : Vector2 = other.get_absolute_v()
   var next_v    : Vector2
   var next_cell : MapCell
-  var choices   : Array
 
   if not _map_memory.has(other_v):
     return path
@@ -169,17 +179,20 @@ func path_to(other : MapCell) -> Array:
     next_v = other_v + direction
     if not _map_memory.has(next_v):
       continue
-    next_cell = _map_memory[next_v]
     if next_v == current_v:
       path.push_back(other)
       return path
+    next_cell = _map_memory[next_v]
     if next_cell.has_entity() or next_cell.get_tile_id() in GLOBALS.BLOCKING_TILE_IDS:
+      continue
+    if next_cell in checked:
       continue
     choices.push_back(next_cell)
   for choice in choices:
-    path = path_to(choice)
+    checked.push_back(choice)
+    path = path_to(choice, checked)
     if len(path) > 0:
-      path.push_front(choice)
+      path.push_back(choice)
       return path
   return path
 
@@ -189,19 +202,11 @@ func like_memory(mapcell : MapCell) -> bool:
   if not _map_memory.has(mapcell.get_absolute_v()):
     return false
   memory_cell = _map_memory[mapcell.get_absolute_v()]
-  if memory_cell.get_tile_id() == mapcell.get_tile_id():
+  if memory_cell.get_tile_id() != mapcell.get_tile_id():
     return false
-  if memory_cell.get_entity() != mapcell.get_entity():
+  if hash(memory_cell.get_entity()) != hash(mapcell.get_entity()):
     return false
   return true
 
 func update_memory(mapcell : MapCell) -> void:
   _map_memory[mapcell.get_absolute_v()] = mapcell
-
-""" Events """
-
-
-
-
-
-
